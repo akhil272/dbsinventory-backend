@@ -14,6 +14,9 @@ import { CreateStockDto } from './dto/create-stock.dto';
 import { GetStocksFilterDto } from './dto/get-stocks-filter.dto';
 import { Stock } from './stock.entity';
 import { AuthGuard } from '@nestjs/passport';
+import { UpdateStockDto } from './dto/update-stock.dto';
+import { GetUser } from 'src/auth/get-user.decorator';
+import { User } from 'src/auth/user.entity';
 
 @Controller('stocks')
 @UseGuards(AuthGuard())
@@ -40,11 +43,12 @@ export class StocksController {
     return this.stocksService.deleteStock(id);
   }
 
-  @Patch('/:id/quantity')
+  @Patch('/:id')
   updateStockQuantity(
     @Param('id') id: string,
-    @Body('quantity') quantity: string,
+    @Body() updateStockDto: UpdateStockDto,
+    @GetUser() user: User,
   ): Promise<Stock> {
-    return this.stocksService.updateStockById(id, quantity);
+    return this.stocksService.updateStockById(id, updateStockDto, user);
   }
 }

@@ -1,29 +1,44 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { StockStatus } from './stock-status-enum';
-
+import { Type } from 'class-transformer';
 @Entity()
 export class Stock {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
+  product_line: string;
+
+  @Column()
   brand: string;
 
   @Column()
-  size: string;
+  tyre_size: string;
 
   @Column()
-  pattern: string;
+  pattern_name: string;
+
+  @Column()
+  dom: string;
+
+  @Column()
+  purchase_date: Date | null;
+
+  @Type(() => Date)
+  @Column({ type: Date, nullable: true })
+  sale_date: Date;
+
+  @Column()
+  transport_mode: string;
 
   @Column()
   vendor: string;
+
+  @Column()
+  location: string;
 
   @Column()
   quantity: number;
 
   @Column()
   cost: number;
-
-  @Column()
-  status: StockStatus;
 }
