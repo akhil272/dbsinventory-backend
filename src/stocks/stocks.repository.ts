@@ -29,10 +29,12 @@ export class StocksRepository extends Repository<Stock> {
     }
 
     try {
-      const stocks = await query.getMany();
+      const stocks = await query
+        .leftJoinAndSelect('stock.user', 'user')
+        .getMany();
       return stocks;
     } catch (error) {
-      throw new InternalServerErrorException();
+      throw new InternalServerErrorException('Shit happens');
     }
   }
 
@@ -67,7 +69,7 @@ export class StocksRepository extends Repository<Stock> {
       quantity,
       cost,
       user,
-      createdBy: user.username,
+      created_by: user.username,
     });
     await this.save(stock);
     return stock;

@@ -1,5 +1,5 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Exclude, Type } from 'class-transformer';
+import { Type } from 'class-transformer';
 import { User } from 'src/users/entities/user.entity';
 @Entity()
 export class Stock {
@@ -22,7 +22,7 @@ export class Stock {
   dom: string;
 
   @Column()
-  purchase_date: Date | null;
+  purchase_date: Date;
 
   @Type(() => Date)
   @Column({ type: Date, nullable: true })
@@ -44,9 +44,8 @@ export class Stock {
   cost: number;
 
   @Column()
-  createdBy: string;
+  created_by: string;
 
   @ManyToOne((_type) => User, (user) => user.stocks, { eager: false })
-  @Exclude({ toPlainOnly: true })
   user: User;
 }

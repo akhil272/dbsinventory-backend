@@ -25,7 +25,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post('/admin')
-  @Roles(Role.ADMIN)
+  @Roles(Role.USER)
   createAdmin(@Body() createUserDto: CreateUserDto): Promise<void> {
     return this.usersService.createAdmin(createUserDto);
   }
