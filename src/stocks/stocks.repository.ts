@@ -2,11 +2,14 @@ import { EntityRepository, Repository } from 'typeorm';
 import { Stock } from './stock.entity';
 import { CreateStockDto } from './dto/create-stock.dto';
 import { GetStocksFilterDto } from './dto/get-stocks-filter.dto';
+import { User } from 'src/users/entities/user.entity';
+import { InternalServerErrorException } from '@nestjs/common';
 
 @EntityRepository(Stock)
 export class StocksRepository extends Repository<Stock> {
   async getStocks(filterDto: GetStocksFilterDto): Promise<Stock[]> {
     const { brand, size, search } = filterDto;
+
     const query = this.createQueryBuilder('stock');
 
     if (brand) {
@@ -25,11 +28,18 @@ export class StocksRepository extends Repository<Stock> {
       );
     }
 
-    const stocks = await query.getMany();
-    return stocks;
+    try {
+      const stocks = await query.getMany();
+      return stocks;
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
   }
 
-  async createStock(createStockDto: CreateStockDto): Promise<Stock> {
+  async createStock(
+    createStockDto: CreateStockDto,
+    user: User,
+  ): Promise<Stock> {
     const {
       product_line,
       brand,
@@ -56,6 +66,8 @@ export class StocksRepository extends Repository<Stock> {
       location,
       quantity,
       cost,
+      user,
+      createdBy: user.username,
     });
     await this.save(stock);
     return stock;

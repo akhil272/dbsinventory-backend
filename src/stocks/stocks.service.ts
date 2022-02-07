@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/auth/user.entity';
+import { User } from 'src/users/entities/user.entity';
 import { CreateStockDto } from './dto/create-stock.dto';
 import { GetStocksFilterDto } from './dto/get-stocks-filter.dto';
 import { UpdateStockDto } from './dto/update-stock.dto';
@@ -29,8 +29,8 @@ export class StocksService {
     return this.stocksRepository.getStocks(filterDto);
   }
 
-  createStock(createStockDto: CreateStockDto): Promise<Stock> {
-    return this.stocksRepository.createStock(createStockDto);
+  createStock(createStockDto: CreateStockDto, user: User): Promise<Stock> {
+    return this.stocksRepository.createStock(createStockDto, user);
   }
 
   async deleteStock(id: string): Promise<void> {
@@ -49,7 +49,6 @@ export class StocksService {
     const stock = await this.getStockById(id);
     stock.quantity = quantity;
     stock.sale_date = sale_date;
-    console.log(user.username);
     await this.stocksRepository.save(stock);
     return stock;
   }

@@ -1,7 +1,10 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { AuthCredentialsDto, SignInCredentialsDto } from './dto/auth-credentials.dto';
-import { UsersRepository } from './users.repository';
+import {
+  AuthCredentialsDto,
+  SignInCredentialsDto,
+} from './dto/auth-credentials.dto';
+import { UsersRepository } from '../users/users.repository';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './dto/jwt.payload';

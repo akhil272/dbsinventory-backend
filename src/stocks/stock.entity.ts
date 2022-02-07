@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { Type } from 'class-transformer';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Exclude, Type } from 'class-transformer';
+import { User } from 'src/users/entities/user.entity';
 @Entity()
 export class Stock {
   @PrimaryGeneratedColumn('uuid')
@@ -41,4 +42,11 @@ export class Stock {
 
   @Column()
   cost: number;
+
+  @Column()
+  createdBy: string;
+
+  @ManyToOne((_type) => User, (user) => user.stocks, { eager: false })
+  @Exclude({ toPlainOnly: true })
+  user: User;
 }

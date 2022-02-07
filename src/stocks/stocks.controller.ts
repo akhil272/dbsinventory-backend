@@ -16,34 +16,45 @@ import { Stock } from './stock.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { UpdateStockDto } from './dto/update-stock.dto';
 import { GetUser } from 'src/auth/get-user.decorator';
-import { User } from 'src/auth/user.entity';
+import { User } from 'src/users/entities/user.entity';
+import { RolesGuard } from 'src/users/roles.gaurd';
+import { Roles } from 'src/users/roles.decorator';
+import { Role } from 'src/users/entities/role.enum';
 
 @Controller('stocks')
-@UseGuards(AuthGuard())
+@UseGuards(AuthGuard(), RolesGuard)
 export class StocksController {
   constructor(private stocksService: StocksService) {}
 
   @Get()
+  @Roles(Role.ADMIN, Role.MANAGER, Role.USER)
   getStocks(@Query() filterDto: GetStocksFilterDto): Promise<Stock[]> {
     return this.stocksService.getStocks(filterDto);
   }
 
   @Get('/:id')
+  @Roles(Role.ADMIN, Role.MANAGER, Role.USER)
   getStockById(@Param('id') id: string): Promise<Stock> {
     return this.stocksService.getStockById(id);
   }
 
   @Post()
-  createStock(@Body() createStockDto: CreateStockDto): Promise<Stock> {
-    return this.stocksService.createStock(createStockDto);
+  @Roles(Role.ADMIN, Role.MANAGER)
+  createStock(
+    @Body() createStockDto: CreateStockDto,
+    @GetUser() user: User,
+  ): Promise<Stock> {
+    return this.stocksService.createStock(createStockDto, user);
   }
 
   @Delete('/:id')
+  @Roles(Role.ADMIN, Role.MANAGER)
   deleteStock(@Param('id') id: string): Promise<void> {
     return this.stocksService.deleteStock(id);
   }
 
   @Patch('/:id')
+  @Roles(Role.ADMIN, Role.MANAGER)
   updateStockQuantity(
     @Param('id') id: string,
     @Body() updateStockDto: UpdateStockDto,
