@@ -1,6 +1,13 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Type } from 'class-transformer';
 import { User } from 'src/users/entities/user.entity';
+import { Order } from 'src/orders/entities/order.entity';
 @Entity()
 export class Stock {
   @PrimaryGeneratedColumn('uuid')
@@ -43,9 +50,9 @@ export class Stock {
   @Column()
   cost: number;
 
-  @Column()
-  created_by: string;
-
   @ManyToOne((_type) => User, (user) => user.stocks, { eager: false })
   user: User;
+
+  @OneToMany((_type) => Order, (order) => order.stock)
+  orders: Order[];
 }

@@ -69,7 +69,6 @@ export class StocksRepository extends Repository<Stock> {
       quantity,
       cost,
       user,
-      created_by: user.username,
     });
     await this.save(stock);
     return stock;

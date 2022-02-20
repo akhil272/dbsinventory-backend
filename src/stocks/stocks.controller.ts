@@ -1,5 +1,6 @@
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
@@ -8,6 +9,7 @@ import {
   Post,
   Query,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { StocksService } from './stocks.service';
 import { CreateStockDto } from './dto/create-stock.dto';
@@ -23,6 +25,7 @@ import { Role } from 'src/users/entities/role.enum';
 
 @Controller('stocks')
 @UseGuards(AuthGuard(), RolesGuard)
+@UseInterceptors(ClassSerializerInterceptor)
 export class StocksController {
   constructor(private stocksService: StocksService) {}
 

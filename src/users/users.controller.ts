@@ -8,6 +8,8 @@ import {
   Delete,
   Query,
   UseGuards,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user-dto';
@@ -20,6 +22,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from './roles.gaurd';
 
 @Controller('users')
+@UseInterceptors(ClassSerializerInterceptor)
 @UseGuards(AuthGuard(), RolesGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
