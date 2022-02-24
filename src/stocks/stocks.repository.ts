@@ -30,7 +30,7 @@ export class StocksRepository extends Repository<Stock> {
 
     try {
       const stocks = await query
-        .leftJoinAndSelect('stock.user', 'user')
+        .where('stock.sold_out= :sold_out', { sold_out: false })
         .getMany();
       return stocks;
     } catch (error) {
@@ -62,7 +62,6 @@ export class StocksRepository extends Repository<Stock> {
       pattern_name,
       dom,
       purchase_date,
-      sale_date: null,
       transport_mode,
       vendor,
       location,

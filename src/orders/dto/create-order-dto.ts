@@ -5,10 +5,10 @@ export class CreateOrderDto {
   id: string;
 
   @IsNotEmpty()
-  update_by_user: string;
+  sold_by_user: string;
 
   @IsNotEmpty()
-  sale_date: string;
+  sold_price: number;
 
   @IsNotEmpty()
   quantity: number;

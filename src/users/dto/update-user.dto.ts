@@ -1,4 +1,4 @@
-import { IsEnum } from 'class-validator';
+import { IsEnum, IsString } from 'class-validator';
 import { Role } from '../entities/role.enum';
 
 export class UpdateUserDto {

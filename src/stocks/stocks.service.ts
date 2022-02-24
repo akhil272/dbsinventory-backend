@@ -48,7 +48,7 @@ export class StocksService {
     const { quantity, sale_date } = updateStockDto;
     const stock = await this.getStockById(id);
     stock.quantity = quantity;
-    stock.sale_date = sale_date;
+
     await this.stocksRepository.save(stock);
     return stock;
   }

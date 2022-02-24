@@ -5,7 +5,6 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Type } from 'class-transformer';
 import { User } from 'src/users/entities/user.entity';
 import { Order } from 'src/orders/entities/order.entity';
 @Entity()
@@ -31,10 +30,6 @@ export class Stock {
   @Column()
   purchase_date: Date;
 
-  @Type(() => Date)
-  @Column({ type: Date, nullable: true })
-  sale_date: Date;
-
   @Column()
   transport_mode: string;
 
@@ -49,6 +44,9 @@ export class Stock {
 
   @Column()
   cost: number;
+
+  @Column('boolean', { default: false })
+  sold_out: boolean;
 
   @ManyToOne((_type) => User, (user) => user.stocks, { eager: false })
   user: User;
