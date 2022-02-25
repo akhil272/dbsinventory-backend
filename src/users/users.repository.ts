@@ -57,7 +57,11 @@ export class UsersRepository extends Repository<User> {
 
   async getUsers(filterDto: GetUsersFilterDto): Promise<User[]> {
     const query = this.createQueryBuilder('user');
-    const users = await query.getMany();
+    const users = await query
+      .where('user.roles IN (:...roles)', {
+        roles: ['admin', 'manager', 'user'],
+      })
+      .getMany();
     return users;
   }
 }

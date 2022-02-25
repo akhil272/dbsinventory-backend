@@ -42,4 +42,8 @@ export class OrdersService {
     await this.stockRepo.save(result);
     return order;
   }
+
+  getOrders(id: string): Promise<Order[]> {
+    return this.ordersRepository.getOrders(id);
+  }
 }

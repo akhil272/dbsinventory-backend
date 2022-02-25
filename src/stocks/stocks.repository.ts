@@ -8,15 +8,21 @@ import { InternalServerErrorException } from '@nestjs/common';
 @EntityRepository(Stock)
 export class StocksRepository extends Repository<Stock> {
   async getStocks(filterDto: GetStocksFilterDto): Promise<Stock[]> {
-    const { brand, size, search } = filterDto;
+    const { brand, size, pattern, search } = filterDto;
 
-    const query = this.createQueryBuilder('stock');
+    const query = this.createQueryBuilder('stock').where(
+      'stock.sold_out= :sold_out',
+      { sold_out: false },
+    );
 
     if (brand) {
       query.andWhere('stock.brand= :brand', { brand });
     }
     if (size) {
       query.andWhere('stock.tyre_size= :size', { size });
+    }
+    if (pattern) {
+      query.andWhere('stock.pattern_name= :pattern', { pattern });
     }
 
     if (search) {
@@ -29,9 +35,7 @@ export class StocksRepository extends Repository<Stock> {
     }
 
     try {
-      const stocks = await query
-        .where('stock.sold_out= :sold_out', { sold_out: false })
-        .getMany();
+      const stocks = await query.getMany();
       return stocks;
     } catch (error) {
       throw new InternalServerErrorException('Shit happens');

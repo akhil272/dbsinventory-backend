@@ -44,9 +44,9 @@ export class UsersService {
   }
 
   async deleteUser(id: string): Promise<void> {
-    const result = await this.usersRepository.delete({ id });
-    if (result.affected === 0) {
-      throw new NotFoundException(`User with ID "${id}" not found`);
-    }
+    const user = await this.getUserById(id);
+    user.roles = Role.DELETED;
+    user.password = user.password.concat('deleted');
+    await this.usersRepository.save(user);
   }
 }
