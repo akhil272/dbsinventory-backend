@@ -3,4 +3,6 @@ export class GetStocksFilterDto {
   size?: string;
   pattern?: string;
   search?: string;
+  take?: number;
+  page?: number;
 }

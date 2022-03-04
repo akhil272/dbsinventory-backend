@@ -17,7 +17,8 @@ export class OrdersService {
   ) {}
 
   async addOrder(createOrderDto: CreateOrderDto, user: User): Promise<Order> {
-    const { id, sold_price, quantity, sold_by_user } = createOrderDto;
+    const { id, sold_price, quantity, sold_by_user, customer_name } =
+      createOrderDto;
     const result = await this.stockRepo.findOne(id);
     if (result === null) {
       throw NotFoundError;
@@ -30,6 +31,7 @@ export class OrdersService {
       sold_by_user,
       sold_price,
       sale_date: new Date(),
+      customer_name,
     });
 
     result.quantity -= quantity;

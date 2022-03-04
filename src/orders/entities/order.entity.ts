@@ -20,6 +20,9 @@ export class Order {
   @Column()
   sold_by_user: string;
 
+  @Column()
+  customer_name: string;
+
   @ManyToOne((_type) => Stock, (stock) => stock.orders)
   stock: Stock;
 }

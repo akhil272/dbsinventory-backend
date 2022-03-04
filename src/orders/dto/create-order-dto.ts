@@ -12,4 +12,7 @@ export class CreateOrderDto {
 
   @IsNotEmpty()
   quantity: number;
+
+  @IsNotEmpty()
+  customer_name: string;
 }

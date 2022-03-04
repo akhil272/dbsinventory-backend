@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { CreateStockDto } from './dto/create-stock.dto';
 import { GetStocksFilterDto } from './dto/get-stocks-filter.dto';
+import { StocksMetaDto } from './dto/stocks-meta-dto';
 import { UpdateStockDto } from './dto/update-stock.dto';
 import { Stock } from './stock.entity';
 import { StocksRepository } from './stocks.repository';
@@ -25,7 +26,7 @@ export class StocksService {
     return found;
   }
 
-  getStocks(filterDto: GetStocksFilterDto): Promise<Stock[]> {
+  async getStocks(filterDto: GetStocksFilterDto): Promise<StocksMetaDto> {
     return this.stocksRepository.getStocks(filterDto);
   }
 

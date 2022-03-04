@@ -22,6 +22,7 @@ import { User } from 'src/users/entities/user.entity';
 import { RolesGuard } from 'src/users/roles.gaurd';
 import { Roles } from 'src/users/roles.decorator';
 import { Role } from 'src/users/entities/role.enum';
+import { StocksMetaDto } from './dto/stocks-meta-dto';
 
 @Controller('stocks')
 @UseGuards(AuthGuard(), RolesGuard)
@@ -31,7 +32,7 @@ export class StocksController {
 
   @Get()
   @Roles(Role.ADMIN, Role.MANAGER, Role.USER)
-  getStocks(@Query() filterDto: GetStocksFilterDto): Promise<Stock[]> {
+  getStocks(@Query() filterDto: GetStocksFilterDto): Promise<StocksMetaDto> {
     return this.stocksService.getStocks(filterDto);
   }
 
