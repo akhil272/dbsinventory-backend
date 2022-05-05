@@ -5,6 +5,11 @@ import { GetStocksFilterDto } from './dto/get-stocks-filter.dto';
 import { User } from 'src/users/entities/user.entity';
 import { InternalServerErrorException } from '@nestjs/common';
 import { StocksMetaDto } from './dto/stocks-meta-dto';
+import { Tyre } from 'src/tyre/entities/tyre.entity';
+import { Pattern } from 'src/pattern/entities/pattern.entity';
+import { Transport } from 'src/transport/entities/transport.entity';
+import { Vendor } from 'src/vendor/entities/vendor.entity';
+import { Location } from 'src/location/entities/location.entity';
 
 @EntityRepository(Stock)
 export class StocksRepository extends Repository<Stock> {
@@ -16,19 +21,16 @@ export class StocksRepository extends Repository<Stock> {
       { sold_out: false },
     );
 
-    if (brand) {
-      query.andWhere('stock.brand= :brand', { brand });
-    }
     if (size) {
       query.andWhere('stock.tyre_size= :size', { size });
     }
-    if (pattern) {
-      query.andWhere('stock.pattern_name= :pattern', { pattern });
-    }
+    // if (pattern) {
+    //   query.andWhere('stock.pattern= :pattern', { pattern });
+    // }
 
     if (search) {
       query.andWhere(
-        `LOWER(stock.brand) LIKE LOWER(:search) OR LOWER(stock.tyre_size) LIKE LOWER(:search)`,
+        `LOWER(stock.pattern) LIKE LOWER(:search) OR LOWER(stock.tyre) LIKE LOWER(:search)`,
         {
           search: `%${search}%`,
         },
@@ -37,6 +39,11 @@ export class StocksRepository extends Repository<Stock> {
     const skip = (page - 1) * take;
     try {
       const [stocks, total] = await query
+        .leftJoinAndSelect('stock.pattern', 'pattern')
+        .leftJoinAndSelect('pattern.brand', 'brand')
+        .leftJoinAndSelect('stock.vendor', 'vendor')
+        .leftJoinAndSelect('stock.location', 'location')
+        .leftJoinAndSelect('stock.transport', 'transport')
         .take(take)
         .skip(skip)
         .getManyAndCount();
@@ -62,28 +69,22 @@ export class StocksRepository extends Repository<Stock> {
   async createStock(
     createStockDto: CreateStockDto,
     user: User,
-  ): Promise<Stock> {
-    const {
-      product_line,
-      brand,
-      tyre_size,
-      pattern_name,
-      dom,
-      purchase_date,
-      transport_mode,
-      vendor,
-      location,
-      quantity,
-      cost,
-    } = createStockDto;
+    pattern: Pattern,
+    tyre_size: Tyre,
+    transport: Transport,
+    vendor: Vendor,
+    location: Location,
+  ) {
+    console.log(pattern, 'brand under stock');
+    console.log(tyre_size, 'tyre_size stock');
+    const { product_line, dom, purchase_date, quantity, cost } = createStockDto;
     const stock = this.create({
       product_line,
-      brand,
+      pattern,
       tyre_size,
-      pattern_name,
       dom,
       purchase_date,
-      transport_mode,
+      transport,
       vendor,
       location,
       quantity,

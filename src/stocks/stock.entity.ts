@@ -7,6 +7,11 @@ import {
 } from 'typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { Order } from 'src/orders/entities/order.entity';
+import { Tyre } from 'src/tyre/entities/tyre.entity';
+import { Pattern } from 'src/pattern/entities/pattern.entity';
+import { Transport } from 'src/transport/entities/transport.entity';
+import { Vendor } from 'src/vendor/entities/vendor.entity';
+import { Location } from 'src/location/entities/location.entity';
 @Entity()
 export class Stock {
   @PrimaryGeneratedColumn('uuid')
@@ -15,14 +20,11 @@ export class Stock {
   @Column()
   product_line: string;
 
-  @Column()
-  brand: string;
+  @ManyToOne((_type) => Pattern, (pattern) => pattern.stocks)
+  pattern: Pattern;
 
-  @Column()
-  tyre_size: string;
-
-  @Column()
-  pattern_name: string;
+  @ManyToOne((_type) => Tyre, (tyre) => tyre.stocks)
+  tyre_size: Tyre;
 
   @Column()
   dom: string;
@@ -30,14 +32,14 @@ export class Stock {
   @Column()
   purchase_date: Date;
 
-  @Column()
-  transport_mode: string;
+  @ManyToOne((_type) => Transport, (transport) => transport.stocks)
+  transport: Transport;
 
-  @Column()
-  vendor: string;
+  @ManyToOne((_type) => Vendor, (vendor) => vendor.stocks)
+  vendor: Vendor;
 
-  @Column()
-  location: string;
+  @ManyToOne((_type) => Location, (location) => location.stocks)
+  location: Location;
 
   @Column()
   quantity: number;

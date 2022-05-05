@@ -5,13 +5,10 @@ export class CreateStockDto {
   product_line: string;
 
   @IsNotEmpty()
-  brand: string;
+  pattern_id: string;
 
   @IsNotEmpty()
-  tyre_size: string;
-
-  @IsNotEmpty()
-  pattern_name: string;
+  tyre_size_id: string;
 
   @IsNotEmpty()
   dom: string;
@@ -20,13 +17,13 @@ export class CreateStockDto {
   purchase_date: Date;
 
   @IsNotEmpty()
-  transport_mode: string;
+  transport_id: string;
 
   @IsNotEmpty()
-  vendor: string;
+  vendor_id: string;
 
   @IsNotEmpty()
-  location: string;
+  location_id: string;
 
   @IsNotEmpty()
   quantity: number;
