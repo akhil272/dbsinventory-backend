@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dto/create-user-dto';
 import { GetUsersFilterDto } from './dto/get-users-filter.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Role } from './entities/role.enum';
 import { User } from './entities/user.entity';
 import { UsersRepository } from './users.repository';
 
@@ -44,9 +43,6 @@ export class UsersService {
   }
 
   async deleteUser(id: string): Promise<void> {
-    const user = await this.getUserById(id);
-    user.roles = Role.DELETED;
-    user.password = user.password.concat('deleted');
-    await this.usersRepository.save(user);
+    return this.usersRepository.deleteUser(id);
   }
 }

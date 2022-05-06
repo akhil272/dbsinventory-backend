@@ -40,6 +40,7 @@ export class StocksRepository extends Repository<Stock> {
     try {
       const [stocks, total] = await query
         .leftJoinAndSelect('stock.pattern', 'pattern')
+        .leftJoinAndSelect('stock.tyre_size', 'tyre_size')
         .leftJoinAndSelect('pattern.brand', 'brand')
         .leftJoinAndSelect('stock.vendor', 'vendor')
         .leftJoinAndSelect('stock.location', 'location')
@@ -75,8 +76,6 @@ export class StocksRepository extends Repository<Stock> {
     vendor: Vendor,
     location: Location,
   ) {
-    console.log(pattern, 'brand under stock');
-    console.log(tyre_size, 'tyre_size stock');
     const { product_line, dom, purchase_date, quantity, cost } = createStockDto;
     const stock = this.create({
       product_line,

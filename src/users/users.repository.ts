@@ -64,4 +64,12 @@ export class UsersRepository extends Repository<User> {
       .getMany();
     return users;
   }
+
+  async deleteUser(id: string): Promise<void> {
+    const query = this.createQueryBuilder('user');
+    const deleteUser = await query
+      .softDelete()
+      .where('id= :id', { id })
+      .execute();
+  }
 }

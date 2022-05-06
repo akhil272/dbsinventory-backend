@@ -1,6 +1,12 @@
 import { Exclude } from 'class-transformer';
 import { Stock } from 'src/stocks/stock.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  DeleteDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Role } from './role.enum';
 
 @Entity()
@@ -27,4 +33,7 @@ export class User {
 
   @OneToMany((_type) => Stock, (stock) => stock.user, { eager: true })
   stocks: Stock[];
+
+  @DeleteDateColumn()
+  deletedAt?: Date;
 }
