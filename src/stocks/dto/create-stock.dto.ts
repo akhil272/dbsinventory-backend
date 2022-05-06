@@ -5,10 +5,7 @@ export class CreateStockDto {
   product_line: string;
 
   @IsNotEmpty()
-  pattern_id: string;
-
-  @IsNotEmpty()
-  tyre_size_id: string;
+  tyre_detail_id: string;
 
   @IsNotEmpty()
   dom: string;

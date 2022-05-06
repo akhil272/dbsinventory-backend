@@ -1,5 +1,5 @@
 import { Brand } from 'src/brand/entities/brand.entity';
-import { Stock } from 'src/stocks/stock.entity';
+import { TyreDetail } from 'src/tyre-detail/entities/tyre-detail.entity';
 import {
   Column,
   Entity,
@@ -19,6 +19,6 @@ export class Pattern {
   @ManyToOne((_type) => Brand, (brand) => brand.patterns)
   brand: Brand;
 
-  @OneToMany((_type) => Stock, (stock) => stock.pattern)
-  stocks: Stock[];
+  @OneToMany(() => TyreDetail, (tyreDetail) => tyreDetail.pattern)
+  tyreDetails: TyreDetail[];
 }

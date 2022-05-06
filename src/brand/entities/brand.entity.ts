@@ -12,7 +12,4 @@ export class Brand {
 
   @OneToMany((_type) => Pattern, (pattern) => pattern.brand)
   patterns: Pattern[];
-
-  @OneToMany((_type) => Stock, (stock) => stock.pattern)
-  stocks: Stock[];
 }

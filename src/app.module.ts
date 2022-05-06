@@ -9,11 +9,12 @@ import { configValidationSchema } from './config.schema';
 import { UsersModule } from './users/users.module';
 import { OrdersModule } from './orders/orders.module';
 import { BrandModule } from './brand/brand.module';
-import { TyreModule } from './tyre/tyre.module';
 import { PatternModule } from './pattern/pattern.module';
 import { TransportModule } from './transport/transport.module';
 import { LocationModule } from './location/location.module';
 import { VendorModule } from './vendor/vendor.module';
+import { TyreSizeModule } from './tyre-size/tyre-size.module';
+import { TyreDetailModule } from './tyre-detail/tyre-detail.module';
 
 @Module({
   imports: [
@@ -47,11 +48,12 @@ import { VendorModule } from './vendor/vendor.module';
     UsersModule,
     OrdersModule,
     BrandModule,
-    TyreModule,
     PatternModule,
     TransportModule,
     LocationModule,
     VendorModule,
+    TyreSizeModule,
+    TyreDetailModule,
   ],
   controllers: [AppController],
   providers: [AppService],

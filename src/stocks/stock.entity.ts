@@ -7,11 +7,10 @@ import {
 } from 'typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { Order } from 'src/orders/entities/order.entity';
-import { Tyre } from 'src/tyre/entities/tyre.entity';
-import { Pattern } from 'src/pattern/entities/pattern.entity';
 import { Transport } from 'src/transport/entities/transport.entity';
 import { Vendor } from 'src/vendor/entities/vendor.entity';
 import { Location } from 'src/location/entities/location.entity';
+import { TyreDetail } from 'src/tyre-detail/entities/tyre-detail.entity';
 @Entity()
 export class Stock {
   @PrimaryGeneratedColumn('uuid')
@@ -20,26 +19,11 @@ export class Stock {
   @Column()
   product_line: string;
 
-  @ManyToOne((_type) => Pattern, (pattern) => pattern.stocks)
-  pattern: Pattern;
-
-  @ManyToOne((_type) => Tyre, (tyre) => tyre.stocks)
-  tyre_size: Tyre;
-
   @Column()
   dom: string;
 
   @Column()
   purchase_date: Date;
-
-  @ManyToOne((_type) => Transport, (transport) => transport.stocks)
-  transport: Transport;
-
-  @ManyToOne((_type) => Vendor, (vendor) => vendor.stocks)
-  vendor: Vendor;
-
-  @ManyToOne((_type) => Location, (location) => location.stocks)
-  location: Location;
 
   @Column()
   quantity: number;
@@ -49,6 +33,18 @@ export class Stock {
 
   @Column('boolean', { default: false })
   sold_out: boolean;
+
+  @ManyToOne(() => TyreDetail, (tyreDetail) => tyreDetail.stocks)
+  tyreDetail: TyreDetail;
+
+  @ManyToOne((_type) => Transport, (transport) => transport.stocks)
+  transport: Transport;
+
+  @ManyToOne((_type) => Vendor, (vendor) => vendor.stocks)
+  vendor: Vendor;
+
+  @ManyToOne((_type) => Location, (location) => location.stocks)
+  location: Location;
 
   @ManyToOne((_type) => User, (user) => user.stocks, { eager: false })
   user: User;

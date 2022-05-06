@@ -5,11 +5,10 @@ import { GetStocksFilterDto } from './dto/get-stocks-filter.dto';
 import { User } from 'src/users/entities/user.entity';
 import { InternalServerErrorException } from '@nestjs/common';
 import { StocksMetaDto } from './dto/stocks-meta-dto';
-import { Tyre } from 'src/tyre/entities/tyre.entity';
-import { Pattern } from 'src/pattern/entities/pattern.entity';
 import { Transport } from 'src/transport/entities/transport.entity';
 import { Vendor } from 'src/vendor/entities/vendor.entity';
 import { Location } from 'src/location/entities/location.entity';
+import { TyreDetail } from 'src/tyre-detail/entities/tyre-detail.entity';
 
 @EntityRepository(Stock)
 export class StocksRepository extends Repository<Stock> {
@@ -39,9 +38,10 @@ export class StocksRepository extends Repository<Stock> {
     const skip = (page - 1) * take;
     try {
       const [stocks, total] = await query
-        .leftJoinAndSelect('stock.pattern', 'pattern')
-        .leftJoinAndSelect('stock.tyre_size', 'tyre_size')
+        .leftJoinAndSelect('stock.tyreDetail', 'tyreDetail')
+        .leftJoinAndSelect('tyreDetail.pattern', 'pattern')
         .leftJoinAndSelect('pattern.brand', 'brand')
+        .leftJoinAndSelect('tyreDetail.tyreSize', 'tyreSize')
         .leftJoinAndSelect('stock.vendor', 'vendor')
         .leftJoinAndSelect('stock.location', 'location')
         .leftJoinAndSelect('stock.transport', 'transport')
@@ -70,19 +70,17 @@ export class StocksRepository extends Repository<Stock> {
   async createStock(
     createStockDto: CreateStockDto,
     user: User,
-    pattern: Pattern,
-    tyre_size: Tyre,
     transport: Transport,
     vendor: Vendor,
     location: Location,
+    tyreDetail: TyreDetail,
   ) {
     const { product_line, dom, purchase_date, quantity, cost } = createStockDto;
     const stock = this.create({
       product_line,
-      pattern,
-      tyre_size,
       dom,
       purchase_date,
+      tyreDetail,
       transport,
       vendor,
       location,
