@@ -21,7 +21,7 @@ export class BrandService {
   }
 
   findAll() {
-    return `This action returns all brand`;
+    return this.brandRepo.find();
   }
 
   findOne(id: string): Promise<Brand> {

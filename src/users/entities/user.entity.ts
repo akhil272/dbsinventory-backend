@@ -14,15 +14,26 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ unique: true })
-  username: string;
-
-  @Column({ unique: true })
-  email: string;
+  @Column()
+  first_name: string;
 
   @Column()
+  last_name: string;
+
+  @Column({ nullable: true })
+  email: string;
+
+  @Column({ unique: true })
+  phone_number: string;
+
+  @Column({ default: false })
+  is_verified: boolean;
+
+  @Column({
+    nullable: true,
+  })
   @Exclude()
-  password: string;
+  public current_hashed_refresh_token?: string;
 
   @Column({
     type: 'enum',

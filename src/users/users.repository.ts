@@ -1,58 +1,43 @@
-import {
-  ConflictException,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { HttpException, HttpStatus } from '@nestjs/common';
 import { EntityRepository, Repository } from 'typeorm';
-import { AuthCredentialsDto } from '../auth/dto/auth-credentials.dto';
 import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
-import { CreateUserDto } from './dto/create-user-dto';
-import { Role } from './entities/role.enum';
 import { GetUsersFilterDto } from './dto/get-users-filter.dto';
+import { SignUpCredentialsDto } from 'src/auth/dto/sign-up-credentials.dto';
+import PostgresErrorCode from 'src/database/postgresErrorCodes.enum';
 
 @EntityRepository(User)
 export class UsersRepository extends Repository<User> {
-  async createUser(authCredentialsDto: AuthCredentialsDto): Promise<void> {
-    const { username, email, password } = authCredentialsDto;
-
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    const user = this.create({
-      username,
-      email,
-      password: hashedPassword,
-    });
+  async createUser(signUpCredentialsDto: SignUpCredentialsDto): Promise<User> {
     try {
+      const user = await this.create({
+        ...signUpCredentialsDto,
+      });
       await this.save(user);
+      return user;
     } catch (error) {
-      if (error.code === '23505') {
-        throw new ConflictException('Username already exists');
-      } else {
-        throw new InternalServerErrorException();
+      if (error?.code === PostgresErrorCode.UniqueViolation) {
+        throw new HttpException(
+          'User with that phone number already exists',
+          HttpStatus.BAD_REQUEST,
+        );
       }
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
-  async createAdmin(createUserDto: CreateUserDto): Promise<void> {
-    const { username, email, password } = createUserDto;
 
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(password, salt);
-    const user = this.create({
-      username,
-      email,
-      password: hashedPassword,
-      roles: Role.ADMIN,
-    });
-    try {
-      await this.save(user);
-    } catch (error) {
-      if (error.code === '23505') {
-        throw new ConflictException('Username already exists');
-      } else {
-        throw new InternalServerErrorException();
-      }
+  async getUserByPhoneNumber(phone_number: string): Promise<User> {
+    const user = await this.findOne({ phone_number });
+    if (user) {
+      return user;
     }
+    throw new HttpException(
+      'User with this phone number does not exist',
+      HttpStatus.NOT_FOUND,
+    );
   }
 
   async getUsers(filterDto: GetUsersFilterDto): Promise<User[]> {

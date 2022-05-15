@@ -1,5 +1,4 @@
 import { Pattern } from 'src/pattern/entities/pattern.entity';
-import { Stock } from 'src/stocks/stock.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()

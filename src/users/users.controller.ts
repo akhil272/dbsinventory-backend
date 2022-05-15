@@ -18,21 +18,18 @@ import { Roles } from './roles.decorator';
 import { Role } from './entities/role.enum';
 import { User } from './entities/user.entity';
 import { GetUsersFilterDto } from './dto/get-users-filter.dto';
-import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from './roles.gaurd';
 
 @Controller('users')
 @UseInterceptors(ClassSerializerInterceptor)
-@UseGuards(AuthGuard(), RolesGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post('/admin')
   @Roles(Role.USER)
-  createAdmin(@Body() createUserDto: CreateUserDto): Promise<void> {
-    return this.usersService.createAdmin(createUserDto);
-  }
-
+  // createAdmin(@Body() createUserDto: CreateUserDto): Promise<void> {
+  //   return this.usersService.createAdmin(createUserDto);
+  // }
   @Get()
   @Roles(Role.ADMIN)
   getUsers(@Query() filterDto: GetUsersFilterDto): Promise<User[]> {

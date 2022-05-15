@@ -6,12 +6,15 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
+import JwtAuthenticationGuard from 'src/auth/jwt-authentication.guard';
 import { BrandService } from './brand.service';
 import { CreateBrandDto } from './dto/create-brand.dto';
 import { UpdateBrandDto } from './dto/update-brand.dto';
 
 @Controller('brand')
+@UseGuards(JwtAuthenticationGuard)
 export class BrandController {
   constructor(private readonly brandService: BrandService) {}
 

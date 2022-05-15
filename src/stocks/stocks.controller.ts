@@ -15,7 +15,6 @@ import { StocksService } from './stocks.service';
 import { CreateStockDto } from './dto/create-stock.dto';
 import { GetStocksFilterDto } from './dto/get-stocks-filter.dto';
 import { Stock } from './stock.entity';
-import { AuthGuard } from '@nestjs/passport';
 import { UpdateStockDto } from './dto/update-stock.dto';
 import { GetUser } from 'src/auth/get-user.decorator';
 import { User } from 'src/users/entities/user.entity';
@@ -25,7 +24,6 @@ import { Role } from 'src/users/entities/role.enum';
 import { StocksMetaDto } from './dto/stocks-meta-dto';
 
 @Controller('stocks')
-@UseGuards(AuthGuard(), RolesGuard)
 @UseInterceptors(ClassSerializerInterceptor)
 export class StocksController {
   constructor(private stocksService: StocksService) {}

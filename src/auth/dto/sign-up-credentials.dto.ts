@@ -6,19 +6,21 @@ import {
   Matches,
 } from 'class-validator';
 
-export class CreateUserDto {
+export class SignUpCredentialsDto {
   @IsString()
+  @IsNotEmpty()
   first_name: string;
 
   @IsString()
+  @IsNotEmpty()
   last_name: string;
 
-  @IsEmail()
   @IsOptional()
+  @IsEmail()
   email: string;
 
   @IsString()
   @IsNotEmpty()
   @Matches(/^\+[1-9]\d{1,14}$/)
-  phoneNumber: string;
+  phone_number: string;
 }

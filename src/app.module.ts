@@ -15,6 +15,7 @@ import { LocationModule } from './location/location.module';
 import { VendorModule } from './vendor/vendor.module';
 import { TyreSizeModule } from './tyre-size/tyre-size.module';
 import { TyreDetailModule } from './tyre-detail/tyre-detail.module';
+import { SmsModule } from './sms/sms.module';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { TyreDetailModule } from './tyre-detail/tyre-detail.module';
     VendorModule,
     TyreSizeModule,
     TyreDetailModule,
+    SmsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
