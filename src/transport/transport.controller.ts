@@ -6,12 +6,19 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { TransportService } from './transport.service';
 import { CreateTransportDto } from './dto/create-transport.dto';
 import { UpdateTransportDto } from './dto/update-transport.dto';
+import JwtAuthenticationGuard from 'src/auth/jwt-authentication.guard';
+import { Role } from 'src/users/entities/role.enum';
+import { Roles } from 'src/users/roles.decorator';
+import { RolesGuard } from 'src/users/roles.gaurd';
 
 @Controller('transport')
+@UseGuards(JwtAuthenticationGuard, RolesGuard)
+@Roles(Role.ADMIN, Role.MANAGER)
 export class TransportController {
   constructor(private readonly transportService: TransportService) {}
 

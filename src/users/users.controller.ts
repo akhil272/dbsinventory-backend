@@ -19,31 +19,31 @@ import { Role } from './entities/role.enum';
 import { User } from './entities/user.entity';
 import { GetUsersFilterDto } from './dto/get-users-filter.dto';
 import { RolesGuard } from './roles.gaurd';
+import JwtAuthenticationGuard from 'src/auth/jwt-authentication.guard';
 
 @Controller('users')
+@UseGuards(JwtAuthenticationGuard, RolesGuard)
+@Roles(Role.ADMIN)
 @UseInterceptors(ClassSerializerInterceptor)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post('/admin')
-  @Roles(Role.USER)
-  // createAdmin(@Body() createUserDto: CreateUserDto): Promise<void> {
-  //   return this.usersService.createAdmin(createUserDto);
-  // }
+  @Post('/create')
+  createAdmin(@Body() createUserDto: CreateUserDto): Promise<User> {
+    return this.usersService.createUser(createUserDto);
+  }
+
   @Get()
-  @Roles(Role.ADMIN)
   getUsers(@Query() filterDto: GetUsersFilterDto): Promise<User[]> {
     return this.usersService.getUsers(filterDto);
   }
 
   @Get('/:id')
-  @Roles(Role.ADMIN)
   getUserById(@Param('id') id: string): Promise<User> {
     return this.usersService.getUserById(id);
   }
 
   @Patch('/:id')
-  @Roles(Role.ADMIN)
   updateUserRoleById(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
@@ -52,8 +52,7 @@ export class UsersController {
   }
 
   @Delete(':id')
-  @Roles(Role.ADMIN)
-  deleteUser(@Param('id') id: string): Promise<void> {
+  deleteUser(@Param('id') id: string): Promise<{ success: boolean }> {
     return this.usersService.deleteUser(id);
   }
 }

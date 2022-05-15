@@ -6,12 +6,19 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { VendorService } from './vendor.service';
 import { CreateVendorDto } from './dto/create-vendor.dto';
 import { UpdateVendorDto } from './dto/update-vendor.dto';
+import JwtAuthenticationGuard from 'src/auth/jwt-authentication.guard';
+import { Role } from 'src/users/entities/role.enum';
+import { Roles } from 'src/users/roles.decorator';
+import { RolesGuard } from 'src/users/roles.gaurd';
 
 @Controller('vendor')
+@UseGuards(JwtAuthenticationGuard, RolesGuard)
+@Roles(Role.ADMIN, Role.MANAGER)
 export class VendorController {
   constructor(private readonly vendorService: VendorService) {}
 

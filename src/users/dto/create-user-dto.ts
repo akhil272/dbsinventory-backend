@@ -1,24 +1,9 @@
-import {
-  IsEmail,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  Matches,
-} from 'class-validator';
+import { IsEnum, IsOptional } from 'class-validator';
+import { RegisterUserDto } from 'src/auth/dto/register-user.dto';
+import { Role } from '../entities/role.enum';
 
-export class CreateUserDto {
-  @IsString()
-  first_name: string;
-
-  @IsString()
-  last_name: string;
-
-  @IsEmail()
+export class CreateUserDto extends RegisterUserDto {
+  @IsEnum(Role)
   @IsOptional()
-  email: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @Matches(/^\+[1-9]\d{1,14}$/)
-  phoneNumber: string;
+  roles: Role;
 }

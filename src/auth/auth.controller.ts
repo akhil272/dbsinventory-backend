@@ -10,7 +10,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { SignUpCredentialsDto } from './dto/sign-up-credentials.dto';
 import RequestWithUser from './request-with-user.interface';
 import SmsService from 'src/sms/sms.service';
 import { User } from 'src/users/entities/user.entity';
@@ -19,6 +18,7 @@ import { UsersService } from 'src/users/users.service';
 import JwtAuthenticationGuard from './jwt-authentication.guard';
 import { GenerateOtpDto } from './dto/generate-otp.dto';
 import ValidateOtpDto from './dto/validate-otp.dto';
+import { RegisterUserDto } from './dto/register-user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -31,9 +31,9 @@ export class AuthController {
   @Post('register')
   async register(
     @Req() request: RequestWithUser,
-    @Body() signUpCredentialsDto: SignUpCredentialsDto,
+    @Body() registerUserDto: RegisterUserDto,
   ): Promise<User> {
-    const user = await this.authService.register(signUpCredentialsDto);
+    const user = await this.authService.register(registerUserDto);
     const accessTokenCookie = this.authService.getCookieWithJwtAccessToken(
       user.id,
     );
@@ -42,25 +42,21 @@ export class AuthController {
   }
 
   @HttpCode(200)
-  @UseGuards(JwtAuthenticationGuard)
   @Post('otp/generate')
   generateOtp(@Body() generateOtp: GenerateOtpDto) {
     return this.authService.generateOtp(generateOtp);
   }
 
   @HttpCode(200)
-  @UseGuards(JwtAuthenticationGuard)
   @Post('otp/validate')
   async validateOtp(
     @Req() request: RequestWithUser,
     @Body() validateOtpDto: ValidateOtpDto,
   ) {
-    const { user } = request;
-    if (!user) {
-      throw new HttpException('User doesnt exists', HttpStatus.BAD_REQUEST);
-    }
+    const user = await this.usersService.getUserByPhoneNumber(
+      validateOtpDto.phone_number,
+    );
     const otpValidated = await this.authService.validateOtp(validateOtpDto);
-
     if (otpValidated) {
       const accessTokenCookie = this.authService.getCookieWithJwtAccessToken(
         user.id,
@@ -112,6 +108,7 @@ export class AuthController {
   async logOut(@Req() request: RequestWithUser) {
     await this.usersService.removeRefreshToken(request.user.id);
     request.res.setHeader('Set-Cookie', this.authService.getCookiesForLogOut());
+    return { success: true };
   }
 
   @UseGuards(JwtAuthenticationGuard)

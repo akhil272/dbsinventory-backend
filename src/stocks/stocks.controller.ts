@@ -22,20 +22,20 @@ import { RolesGuard } from 'src/users/roles.gaurd';
 import { Roles } from 'src/users/roles.decorator';
 import { Role } from 'src/users/entities/role.enum';
 import { StocksMetaDto } from './dto/stocks-meta-dto';
+import JwtAuthenticationGuard from 'src/auth/jwt-authentication.guard';
 
 @Controller('stocks')
+@UseGuards(JwtAuthenticationGuard, RolesGuard)
 @UseInterceptors(ClassSerializerInterceptor)
 export class StocksController {
   constructor(private stocksService: StocksService) {}
 
   @Get()
-  @Roles(Role.ADMIN, Role.MANAGER, Role.USER)
   getStocks(@Query() filterDto: GetStocksFilterDto): Promise<StocksMetaDto> {
     return this.stocksService.getStocks(filterDto);
   }
 
   @Get('/:id')
-  @Roles(Role.ADMIN, Role.MANAGER, Role.USER)
   getStockById(@Param('id') id: string): Promise<Stock> {
     return this.stocksService.getStockById(id);
   }

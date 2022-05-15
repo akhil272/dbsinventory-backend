@@ -6,12 +6,19 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { TyreDetailService } from './tyre-detail.service';
 import { CreateTyreDetailDto } from './dto/create-tyre-detail.dto';
 import { UpdateTyreDetailDto } from './dto/update-tyre-detail.dto';
+import JwtAuthenticationGuard from 'src/auth/jwt-authentication.guard';
+import { Role } from 'src/users/entities/role.enum';
+import { Roles } from 'src/users/roles.decorator';
+import { RolesGuard } from 'src/users/roles.gaurd';
 
 @Controller('tyre-detail')
+@UseGuards(JwtAuthenticationGuard, RolesGuard)
+@Roles(Role.ADMIN, Role.MANAGER)
 export class TyreDetailController {
   constructor(private readonly tyreDetailService: TyreDetailService) {}
 

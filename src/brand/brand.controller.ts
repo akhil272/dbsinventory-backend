@@ -9,12 +9,16 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import JwtAuthenticationGuard from 'src/auth/jwt-authentication.guard';
+import { Role } from 'src/users/entities/role.enum';
+import { Roles } from 'src/users/roles.decorator';
+import { RolesGuard } from 'src/users/roles.gaurd';
 import { BrandService } from './brand.service';
 import { CreateBrandDto } from './dto/create-brand.dto';
 import { UpdateBrandDto } from './dto/update-brand.dto';
 
 @Controller('brand')
-@UseGuards(JwtAuthenticationGuard)
+@UseGuards(JwtAuthenticationGuard, RolesGuard)
+@Roles(Role.ADMIN, Role.MANAGER)
 export class BrandController {
   constructor(private readonly brandService: BrandService) {}
 

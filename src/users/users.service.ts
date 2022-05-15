@@ -5,12 +5,33 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { UsersRepository } from './users.repository';
 import * as bcrypt from 'bcrypt';
+import { CreateUserDto } from './dto/create-user-dto';
+import PostgresErrorCode from 'src/database/postgresErrorCodes.enum';
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(UsersRepository)
     private usersRepository: UsersRepository,
   ) {}
+
+  async createUser(createUserDto: CreateUserDto): Promise<User> {
+    try {
+      const user = await this.usersRepository.create({ ...createUserDto });
+      await this.usersRepository.save(user);
+      return user;
+    } catch (error) {
+      if (error?.code === PostgresErrorCode.UniqueViolation) {
+        throw new HttpException(
+          'User with that phone number already exists',
+          HttpStatus.CONFLICT,
+        );
+      }
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 
   getUserByPhoneNumber(phone_number: string): Promise<User> {
     return this.usersRepository.getUserByPhoneNumber(phone_number);
@@ -66,7 +87,7 @@ export class UsersService {
     return user;
   }
 
-  async deleteUser(id: string): Promise<void> {
+  async deleteUser(id: string): Promise<{ success: boolean }> {
     return this.usersRepository.deleteUser(id);
   }
 

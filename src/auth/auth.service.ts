@@ -11,7 +11,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UsersRepository } from '../users/users.repository';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { SignUpCredentialsDto } from './dto/sign-up-credentials.dto';
 import { ConfigService } from '@nestjs/config';
 import { User } from 'src/users/entities/user.entity';
 import SmsService from 'src/sms/sms.service';
@@ -19,6 +18,7 @@ import { GenerateOtpDto } from './dto/generate-otp.dto';
 import { authenticator } from 'otplib';
 import ValidateOtpDto from './dto/validate-otp.dto';
 import { UsersService } from 'src/users/users.service';
+import { RegisterUserDto } from './dto/register-user.dto';
 const secret = 'helloworld';
 
 @Injectable()
@@ -33,13 +33,14 @@ export class AuthService {
     private readonly usersService: UsersService,
   ) {}
 
-  async register(signUpCredentialsDto: SignUpCredentialsDto): Promise<User> {
-    return this.usersRepository.createUser(signUpCredentialsDto);
+  async register(registerUserDto: RegisterUserDto): Promise<User> {
+    return this.usersRepository.createUser(registerUserDto);
   }
 
   async generateOtp(generateOtpDto: GenerateOtpDto) {
     const { phone_number } = generateOtpDto;
     const user = await this.usersRepository.getUserByPhoneNumber(phone_number);
+    console.log('phone', phone_number, user, 'user');
     if (!user.is_verified) {
       throw new ForbiddenException('User not verified');
     }
@@ -63,6 +64,7 @@ export class AuthService {
     const { phone_number, otp } = verifyOtpDto;
     const user = await this.usersRepository.getUserByPhoneNumber(phone_number);
     const isOtpValid = this.verifyOtp(otp, user);
+
     if (isOtpValid) {
       return true;
     }

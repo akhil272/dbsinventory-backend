@@ -1,17 +1,16 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { EntityRepository, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
-import * as bcrypt from 'bcrypt';
 import { GetUsersFilterDto } from './dto/get-users-filter.dto';
-import { SignUpCredentialsDto } from 'src/auth/dto/sign-up-credentials.dto';
 import PostgresErrorCode from 'src/database/postgresErrorCodes.enum';
+import { RegisterUserDto } from 'src/auth/dto/register-user.dto';
 
 @EntityRepository(User)
 export class UsersRepository extends Repository<User> {
-  async createUser(signUpCredentialsDto: SignUpCredentialsDto): Promise<User> {
+  async createUser(registerUserDto: RegisterUserDto): Promise<User> {
     try {
       const user = await this.create({
-        ...signUpCredentialsDto,
+        ...registerUserDto,
       });
       await this.save(user);
       return user;
@@ -44,17 +43,22 @@ export class UsersRepository extends Repository<User> {
     const query = this.createQueryBuilder('user');
     const users = await query
       .where('user.roles IN (:...roles)', {
-        roles: ['admin', 'manager', 'user'],
+        roles: ['admin', 'manager', 'user', 'employee'],
       })
       .getMany();
     return users;
   }
 
-  async deleteUser(id: string): Promise<void> {
+  async deleteUser(id: string): Promise<{ success: boolean }> {
     const query = this.createQueryBuilder('user');
-    const deleteUser = await query
-      .softDelete()
-      .where('id= :id', { id })
-      .execute();
+    try {
+      const deleteUser = await query
+        .softDelete()
+        .where('id= :id', { id })
+        .execute();
+      return { success: true };
+    } catch (error) {
+      return { success: false };
+    }
   }
 }
