@@ -7,11 +7,13 @@ import { UsersRepository } from './users.repository';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from './dto/create-user-dto';
 import PostgresErrorCode from 'src/database/postgresErrorCodes.enum';
+import LocalFilesService from 'src/local-files/local-files.service';
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(UsersRepository)
     private usersRepository: UsersRepository,
+    private localFilesService: LocalFilesService,
   ) {}
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
@@ -98,5 +100,11 @@ export class UsersService {
         is_verified: true,
       },
     );
+  }
+  async addAvatar(userId: string, fileData: LocalFileDto) {
+    const avatar = await this.localFilesService.saveLocalFileData(fileData);
+    await this.usersRepository.update(userId, {
+      avatarId: avatar.id,
+    });
   }
 }

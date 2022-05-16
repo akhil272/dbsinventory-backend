@@ -9,7 +9,6 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { UsersRepository } from '../users/users.repository';
-import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { User } from 'src/users/entities/user.entity';
@@ -40,7 +39,6 @@ export class AuthService {
   async generateOtp(generateOtpDto: GenerateOtpDto) {
     const { phone_number } = generateOtpDto;
     const user = await this.usersRepository.getUserByPhoneNumber(phone_number);
-    console.log('phone', phone_number, user, 'user');
     if (!user.is_verified) {
       throw new ForbiddenException('User not verified');
     }
@@ -64,8 +62,7 @@ export class AuthService {
     const { phone_number, otp } = verifyOtpDto;
     const user = await this.usersRepository.getUserByPhoneNumber(phone_number);
     const isOtpValid = this.verifyOtp(otp, user);
-
-    if (isOtpValid) {
+    if (!isOtpValid) {
       return true;
     }
     throw new HttpException('Failed to verify user', HttpStatus.BAD_REQUEST);

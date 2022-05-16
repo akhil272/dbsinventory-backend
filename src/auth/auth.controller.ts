@@ -19,6 +19,7 @@ import JwtAuthenticationGuard from './jwt-authentication.guard';
 import { GenerateOtpDto } from './dto/generate-otp.dto';
 import ValidateOtpDto from './dto/validate-otp.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
+import { request } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -56,7 +57,9 @@ export class AuthController {
     const user = await this.usersService.getUserByPhoneNumber(
       validateOtpDto.phone_number,
     );
+
     const otpValidated = await this.authService.validateOtp(validateOtpDto);
+
     if (otpValidated) {
       const accessTokenCookie = this.authService.getCookieWithJwtAccessToken(
         user.id,

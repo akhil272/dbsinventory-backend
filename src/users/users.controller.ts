@@ -10,6 +10,9 @@ import {
   UseGuards,
   UseInterceptors,
   ClassSerializerInterceptor,
+  Req,
+  UploadedFile,
+  BadRequestException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user-dto';
@@ -20,6 +23,8 @@ import { User } from './entities/user.entity';
 import { GetUsersFilterDto } from './dto/get-users-filter.dto';
 import { RolesGuard } from './roles.gaurd';
 import JwtAuthenticationGuard from 'src/auth/jwt-authentication.guard';
+import RequestWithUser from 'src/auth/request-with-user.interface';
+import LocalFilesInterceptor from 'src/local-files/local-files.interceptor';
 
 @Controller('users')
 @UseGuards(JwtAuthenticationGuard, RolesGuard)
@@ -54,5 +59,36 @@ export class UsersController {
   @Delete(':id')
   deleteUser(@Param('id') id: string): Promise<{ success: boolean }> {
     return this.usersService.deleteUser(id);
+  }
+
+  @Post('avatar')
+  @Roles(Role.ADMIN, Role.EMPLOYEE, Role.MANAGER, Role.USER)
+  @UseInterceptors(
+    LocalFilesInterceptor({
+      fieldName: 'file',
+      path: '/avatars',
+      fileFilter: (request, file, callback) => {
+        if (!file.mimetype.includes('image')) {
+          return callback(
+            new BadRequestException('Provide a valid image'),
+            false,
+          );
+        }
+        callback(null, true);
+      },
+      limits: {
+        fileSize: Math.pow(1024, 2), // 1MB
+      },
+    }),
+  )
+  async addAvatar(
+    @Req() request: RequestWithUser,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.usersService.addAvatar(request.user.id, {
+      path: file.path,
+      filename: file.originalname,
+      mimetype: file.mimetype,
+    });
   }
 }

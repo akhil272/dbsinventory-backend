@@ -1,10 +1,13 @@
 import { Exclude } from 'class-transformer';
+import LocalFile from 'src/local-files/local-file.entity';
 import { Stock } from 'src/stocks/stock.entity';
 import {
   Column,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Role } from './role.enum';
@@ -47,4 +50,13 @@ export class User {
 
   @DeleteDateColumn()
   deletedAt?: Date;
+
+  @JoinColumn({ name: 'avatarId' })
+  @OneToOne(() => LocalFile, {
+    nullable: true,
+  })
+  public avatar?: LocalFile;
+
+  @Column({ nullable: true })
+  public avatarId?: number;
 }
