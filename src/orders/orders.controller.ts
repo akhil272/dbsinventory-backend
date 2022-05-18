@@ -4,7 +4,7 @@ import JwtAuthenticationGuard from 'src/auth/jwt-authentication.guard';
 import { Role } from 'src/users/entities/role.enum';
 import { User } from 'src/users/entities/user.entity';
 import { Roles } from 'src/users/roles.decorator';
-import { RolesGuard } from 'src/users/roles.gaurd';
+import { RolesGuard } from 'src/users/roles.guard';
 import { CreateOrderDto } from './dto/create-order-dto';
 import { Order } from './entities/order.entity';
 import { OrdersService } from './orders.service';

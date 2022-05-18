@@ -14,7 +14,7 @@ import { UpdatePatternDto } from './dto/update-pattern.dto';
 import JwtAuthenticationGuard from 'src/auth/jwt-authentication.guard';
 import { Role } from 'src/users/entities/role.enum';
 import { Roles } from 'src/users/roles.decorator';
-import { RolesGuard } from 'src/users/roles.gaurd';
+import { RolesGuard } from 'src/users/roles.guard';
 
 @Controller('pattern')
 @UseGuards(JwtAuthenticationGuard, RolesGuard)
@@ -39,11 +39,11 @@ export class PatternController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updatePatternDto: UpdatePatternDto) {
-    return this.patternService.update(+id, updatePatternDto);
+    return this.patternService.update(id, updatePatternDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.patternService.remove(+id);
+    return this.patternService.remove(id);
   }
 }

@@ -1,5 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import PostgresErrorCode from 'src/database/postgresErrorCodes.enum';
 import { CreateVendorDto } from './dto/create-vendor.dto';
 import { UpdateVendorDto } from './dto/update-vendor.dto';
 import { VendorRepository } from './vendor.repository';
@@ -13,26 +19,73 @@ export class VendorService {
 
   async create(createVendorDto: CreateVendorDto) {
     const { name } = createVendorDto;
-    const vendor = this.vendorRepo.create({
-      name,
-    });
-    await this.vendorRepo.save(vendor);
-    return vendor;
+    try {
+      const vendor = this.vendorRepo.create({
+        name,
+      });
+      await this.vendorRepo.save(vendor);
+      return vendor;
+    } catch (error) {
+      if (error?.code === PostgresErrorCode.UniqueViolation) {
+        throw new HttpException(
+          'Vendor already exists in the system.',
+          HttpStatus.CONFLICT,
+        );
+      }
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
-  findAll() {
-    return `This action returns all vendor`;
+  async findAll() {
+    return await this.vendorRepo.find();
   }
 
-  findOne(id: string) {
-    return this.vendorRepo.findOne(id);
+  async findOne(id: string) {
+    try {
+      const vendor = await this.vendorRepo.findOne(id);
+      if (!vendor) {
+        throw new NotFoundException('Vendor not found in the system');
+      }
+      return vendor;
+    } catch (error) {
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
-  update(id: number, updateVendorDto: UpdateVendorDto) {
-    return `This action updates a #${id} vendor`;
+  async update(id: string, updateVendorDto: UpdateVendorDto) {
+    try {
+      const vendor = await this.findOne(id);
+      vendor.name = updateVendorDto.name;
+      await this.vendorRepo.save(vendor);
+      return vendor;
+    } catch (error) {
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} vendor`;
+  async remove(id: string) {
+    try {
+      return await this.vendorRepo.delete(id);
+    } catch (error) {
+      if (error?.code === PostgresErrorCode.ForeignKeyViolation) {
+        throw new HttpException(
+          'Vendor is linked to other records. Contact system admin.',
+          HttpStatus.CONFLICT,
+        );
+      }
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }

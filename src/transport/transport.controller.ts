@@ -14,7 +14,7 @@ import { UpdateTransportDto } from './dto/update-transport.dto';
 import JwtAuthenticationGuard from 'src/auth/jwt-authentication.guard';
 import { Role } from 'src/users/entities/role.enum';
 import { Roles } from 'src/users/roles.decorator';
-import { RolesGuard } from 'src/users/roles.gaurd';
+import { RolesGuard } from 'src/users/roles.guard';
 
 @Controller('transport')
 @UseGuards(JwtAuthenticationGuard, RolesGuard)
@@ -42,11 +42,11 @@ export class TransportController {
     @Param('id') id: string,
     @Body() updateTransportDto: UpdateTransportDto,
   ) {
-    return this.transportService.update(+id, updateTransportDto);
+    return this.transportService.update(id, updateTransportDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.transportService.remove(+id);
+    return this.transportService.remove(id);
   }
 }

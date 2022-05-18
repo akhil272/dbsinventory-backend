@@ -14,7 +14,7 @@ import { UpdateVendorDto } from './dto/update-vendor.dto';
 import JwtAuthenticationGuard from 'src/auth/jwt-authentication.guard';
 import { Role } from 'src/users/entities/role.enum';
 import { Roles } from 'src/users/roles.decorator';
-import { RolesGuard } from 'src/users/roles.gaurd';
+import { RolesGuard } from 'src/users/roles.guard';
 
 @Controller('vendor')
 @UseGuards(JwtAuthenticationGuard, RolesGuard)
@@ -39,11 +39,11 @@ export class VendorController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateVendorDto: UpdateVendorDto) {
-    return this.vendorService.update(+id, updateVendorDto);
+    return this.vendorService.update(id, updateVendorDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.vendorService.remove(+id);
+    return this.vendorService.remove(id);
   }
 }

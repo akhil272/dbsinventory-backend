@@ -14,7 +14,7 @@ import { UpdateTyreSizeDto } from './dto/update-tyre-size.dto';
 import JwtAuthenticationGuard from 'src/auth/jwt-authentication.guard';
 import { Role } from 'src/users/entities/role.enum';
 import { Roles } from 'src/users/roles.decorator';
-import { RolesGuard } from 'src/users/roles.gaurd';
+import { RolesGuard } from 'src/users/roles.guard';
 
 @Controller('tyre-size')
 @UseGuards(JwtAuthenticationGuard, RolesGuard)
@@ -42,11 +42,11 @@ export class TyreSizeController {
     @Param('id') id: string,
     @Body() updateTyreSizeDto: UpdateTyreSizeDto,
   ) {
-    return this.tyreSizeService.update(+id, updateTyreSizeDto);
+    return this.tyreSizeService.update(id, updateTyreSizeDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.tyreSizeService.remove(+id);
+    return this.tyreSizeService.remove(id);
   }
 }

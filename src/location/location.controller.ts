@@ -14,7 +14,7 @@ import { UpdateLocationDto } from './dto/update-location.dto';
 import JwtAuthenticationGuard from 'src/auth/jwt-authentication.guard';
 import { Role } from 'src/users/entities/role.enum';
 import { Roles } from 'src/users/roles.decorator';
-import { RolesGuard } from 'src/users/roles.gaurd';
+import { RolesGuard } from 'src/users/roles.guard';
 
 @Controller('location')
 @UseGuards(JwtAuthenticationGuard, RolesGuard)
@@ -42,11 +42,11 @@ export class LocationController {
     @Param('id') id: string,
     @Body() updateLocationDto: UpdateLocationDto,
   ) {
-    return this.locationService.update(+id, updateLocationDto);
+    return this.locationService.update(id, updateLocationDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.locationService.remove(+id);
+    return this.locationService.remove(id);
   }
 }

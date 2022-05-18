@@ -11,68 +11,65 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import RequestWithUser from './request-with-user.interface';
-import SmsService from 'src/sms/sms.service';
-import { User } from 'src/users/entities/user.entity';
-import JwtRefreshGuard from './jwt-refresh.guard';
 import { UsersService } from 'src/users/users.service';
 import JwtAuthenticationGuard from './jwt-authentication.guard';
 import { GenerateOtpDto } from './dto/generate-otp.dto';
 import ValidateOtpDto from './dto/validate-otp.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
-import { request } from 'express';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private authService: AuthService,
-    private readonly smsService: SmsService,
     private readonly usersService: UsersService,
   ) {}
 
   @Post('register')
-  async register(
-    @Req() request: RequestWithUser,
-    @Body() registerUserDto: RegisterUserDto,
-  ): Promise<User> {
+  async register(@Body() registerUserDto: RegisterUserDto): Promise<{
+    success: boolean;
+    data: {
+      accessToken: string;
+    };
+  } | void> {
     const user = await this.authService.register(registerUserDto);
-    const accessTokenCookie = this.authService.getCookieWithJwtAccessToken(
-      user.id,
-    );
-    request.res.setHeader('Set-Cookie', [accessTokenCookie]);
-    return user;
+    const accessToken = await this.authService.generateAccessToken(user);
+    return {
+      success: true,
+      data: { accessToken },
+    };
   }
 
   @HttpCode(200)
   @Post('otp/generate')
-  generateOtp(@Body() generateOtp: GenerateOtpDto) {
-    return this.authService.generateOtp(generateOtp);
+  generateOtp(
+    @Body() generateOtpDto: GenerateOtpDto,
+  ): Promise<{ success: boolean } | void> {
+    return this.authService.generateOtp(generateOtpDto);
   }
 
   @HttpCode(200)
   @Post('otp/validate')
   async validateOtp(
-    @Req() request: RequestWithUser,
     @Body() validateOtpDto: ValidateOtpDto,
-  ) {
+  ): Promise<{ success: boolean; data: { accessToken; refreshToken } | void }> {
     const user = await this.usersService.getUserByPhoneNumber(
       validateOtpDto.phone_number,
     );
-
     const otpValidated = await this.authService.validateOtp(validateOtpDto);
-
     if (otpValidated) {
-      const accessTokenCookie = this.authService.getCookieWithJwtAccessToken(
-        user.id,
+      const accessToken = await this.authService.generateAccessToken(user);
+      const refreshToken = await this.authService.generateRefreshToken(
+        user,
+        60 * 60 * 24 * 30,
       );
-      const { cookie: refreshTokenCookie, token: refreshToken } =
-        this.authService.getCookieWithJwtRefreshToken(user.id);
+
       await this.usersService.setCurrentRefreshToken(refreshToken, user.id);
 
-      request.res.setHeader('Set-Cookie', [
-        accessTokenCookie,
-        refreshTokenCookie,
-      ]);
-      return user;
+      return {
+        success: true,
+        data: { accessToken, refreshToken },
+      };
     }
     throw new HttpException('Failed to verify user', HttpStatus.BAD_REQUEST);
   }
@@ -95,14 +92,14 @@ export class AuthController {
     return user;
   }
 
-  @UseGuards(JwtRefreshGuard)
   @Get('refresh')
-  refresh(@Req() request: RequestWithUser) {
-    const accessTokenCookie = this.authService.getCookieWithJwtAccessToken(
-      request.user.id,
+  async refresh(
+    @Req() request: RequestWithUser,
+    @Body() refreshTokenDto: RefreshTokenDto,
+  ) {
+    return this.authService.createAccessTokenFromRefreshToken(
+      refreshTokenDto.refreshToken,
     );
-    request.res.setHeader('Set-Cookie', accessTokenCookie);
-    return request.user;
   }
 
   @UseGuards(JwtAuthenticationGuard)

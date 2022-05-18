@@ -51,6 +51,7 @@ export default class SmsService {
     }
 
     await this.usersService.markPhoneNumberAsConfirmed(userId);
+    return { success: true };
   }
 
   async sendMessage(receiverPhoneNumber: string, message: string) {

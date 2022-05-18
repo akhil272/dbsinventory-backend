@@ -76,19 +76,23 @@ export class StocksRepository extends Repository<Stock> {
     tyreDetail: TyreDetail,
   ) {
     const { product_line, dom, purchase_date, quantity, cost } = createStockDto;
-    const stock = this.create({
-      product_line,
-      dom,
-      purchase_date,
-      tyreDetail,
-      transport,
-      vendor,
-      location,
-      quantity,
-      cost,
-      user,
-    });
-    await this.save(stock);
-    return stock;
+    try {
+      const stock = this.create({
+        product_line,
+        dom,
+        purchase_date,
+        tyreDetail,
+        transport,
+        vendor,
+        location,
+        quantity,
+        cost,
+        user,
+      });
+      await this.save(stock);
+      return stock;
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to add stock to system.');
+    }
   }
 }

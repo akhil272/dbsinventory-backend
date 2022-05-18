@@ -49,7 +49,7 @@ export class UsersService {
       return user;
     }
     throw new HttpException(
-      'User with this id does not exist',
+      'User with this phone number does not exist',
       HttpStatus.NOT_FOUND,
     );
   }
@@ -61,8 +61,11 @@ export class UsersService {
     });
   }
 
-  async getUserIfRefreshTokenMatches(refreshToken: string, userId: string) {
-    const user = await this.getUserById(userId);
+  async getUserIfRefreshTokenMatches(
+    refreshToken: string,
+    phone_number: string,
+  ) {
+    const user = await this.getUserByPhoneNumber(phone_number);
     const isRefreshTokenMatching = await bcrypt.compare(
       refreshToken,
       user.current_hashed_refresh_token,
