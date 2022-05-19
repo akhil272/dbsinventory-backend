@@ -41,7 +41,7 @@ export class PatternService {
     return await this.patternRepository.find();
   }
 
-  async findOne(id: string) {
+  async findOne(id: number) {
     const pattern = await this.patternRepository.findOne(id);
     if (!pattern) {
       throw new NotFoundException(
@@ -51,7 +51,7 @@ export class PatternService {
     return pattern;
   }
 
-  async update(id: string, updatePatternDto: UpdatePatternDto) {
+  async update(id: number, updatePatternDto: UpdatePatternDto) {
     try {
       const pattern = await this.findOne(id);
       pattern.name = updatePatternDto.name;
@@ -68,7 +68,7 @@ export class PatternService {
     }
   }
 
-  async remove(id: string) {
+  async remove(id: number) {
     try {
       return await this.patternRepository.delete(id);
     } catch (error) {

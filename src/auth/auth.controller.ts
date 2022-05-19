@@ -79,10 +79,10 @@ export class AuthController {
   async logIn(@Req() request: RequestWithUser) {
     const { user } = request;
     const accessTokenCookie = this.authService.getCookieWithJwtAccessToken(
-      user.id,
+      String(user.id),
     );
     const { cookie: refreshTokenCookie, token: refreshToken } =
-      this.authService.getCookieWithJwtRefreshToken(user.id);
+      this.authService.getCookieWithJwtRefreshToken(user.phone_number);
     await this.usersService.setCurrentRefreshToken(refreshToken, user.id);
 
     request.res.setHeader('Set-Cookie', [

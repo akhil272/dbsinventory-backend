@@ -11,14 +11,14 @@ import {
 
 @Entity()
 export class TyreDetail {
-  @PrimaryGeneratedColumn('increment')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column()
-  tyreSizeId: string;
+  tyreSizeId: number;
 
   @Column()
-  patternId: string;
+  patternId: number;
 
   @OneToMany(() => Stock, (stock) => stock.tyreDetail)
   stocks: Stock[];

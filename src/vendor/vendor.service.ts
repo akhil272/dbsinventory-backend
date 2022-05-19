@@ -43,22 +43,15 @@ export class VendorService {
     return await this.vendorRepo.find();
   }
 
-  async findOne(id: string) {
-    try {
-      const vendor = await this.vendorRepo.findOne(id);
-      if (!vendor) {
-        throw new NotFoundException('Vendor not found in the system');
-      }
-      return vendor;
-    } catch (error) {
-      throw new HttpException(
-        'Something went wrong',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+  async findOne(id: number) {
+    const vendor = await this.vendorRepo.findOne(id);
+    if (!vendor) {
+      throw new NotFoundException('Vendor not found in the system');
     }
+    return vendor;
   }
 
-  async update(id: string, updateVendorDto: UpdateVendorDto) {
+  async update(id: number, updateVendorDto: UpdateVendorDto) {
     try {
       const vendor = await this.findOne(id);
       vendor.name = updateVendorDto.name;
@@ -72,7 +65,7 @@ export class VendorService {
     }
   }
 
-  async remove(id: string) {
+  async remove(id: number) {
     try {
       return await this.vendorRepo.delete(id);
     } catch (error) {

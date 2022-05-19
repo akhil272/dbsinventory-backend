@@ -1,9 +1,11 @@
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsNumber } from 'class-validator';
 
 export class CreateTyreDetailDto {
   @IsNotEmpty()
-  tyre_size_id: string;
+  @IsNumber()
+  tyre_size_id: number;
 
   @IsNotEmpty()
-  pattern_id: string;
+  @IsNumber()
+  pattern_id: number;
 }

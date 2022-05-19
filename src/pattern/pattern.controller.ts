@@ -34,16 +34,16 @@ export class PatternController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.patternService.findOne(id);
+    return this.patternService.findOne(+id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updatePatternDto: UpdatePatternDto) {
-    return this.patternService.update(id, updatePatternDto);
+    return this.patternService.update(+id, updatePatternDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.patternService.remove(id);
+    return this.patternService.remove(+id);
   }
 }

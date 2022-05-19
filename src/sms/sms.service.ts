@@ -34,7 +34,7 @@ export default class SmsService {
   }
 
   async confirmPhoneNumber(
-    userId: string,
+    userId: number,
     phoneNumber: string,
     verificationCode: string,
   ) {

@@ -4,7 +4,7 @@ import { Order } from './entities/order.entity';
 
 @EntityRepository(Order)
 export class OrdersRepository extends Repository<Order> {
-  async getOrders(id: string): Promise<Order[]> {
+  async getOrders(id: number): Promise<Order[]> {
     const query = this.createQueryBuilder('order');
     try {
       const orders = await query

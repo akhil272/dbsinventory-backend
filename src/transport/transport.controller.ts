@@ -34,7 +34,7 @@ export class TransportController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.transportService.findOne(id);
+    return this.transportService.findOne(+id);
   }
 
   @Patch(':id')
@@ -42,11 +42,11 @@ export class TransportController {
     @Param('id') id: string,
     @Body() updateTransportDto: UpdateTransportDto,
   ) {
-    return this.transportService.update(id, updateTransportDto);
+    return this.transportService.update(+id, updateTransportDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.transportService.remove(id);
+    return this.transportService.remove(+id);
   }
 }

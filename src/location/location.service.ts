@@ -44,12 +44,12 @@ export class LocationService {
     return await this.locationRepository.find();
   }
 
-  async findOne(id: string) {
+  async findOne(id: number) {
     return await this.locationRepository.findOne(id);
   }
 
-  async update(id: string, updateLocationDto: UpdateLocationDto) {
-    const location = await this.locationRepository.findOne(id);
+  async update(id: number, updateLocationDto: UpdateLocationDto) {
+    const location = await this.findOne(id);
     if (!location) {
       throw new NotFoundException('Location not in the system');
     }
@@ -62,7 +62,7 @@ export class LocationService {
     }
   }
 
-  async remove(id: string) {
+  async remove(id: number) {
     try {
       return await this.locationRepository.delete(id);
     } catch (error) {

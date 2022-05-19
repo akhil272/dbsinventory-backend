@@ -231,7 +231,7 @@ export class AuthService {
       throw new UnprocessableEntityException('Refresh token malformed');
     }
 
-    return this.usersService.getUserById(String(userId));
+    return this.usersService.getUserById(userId);
   }
 
   async getStoredTokenFromRefreshTokenPayload(

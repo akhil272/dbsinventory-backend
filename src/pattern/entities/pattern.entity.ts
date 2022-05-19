@@ -10,8 +10,8 @@ import {
 
 @Entity()
 export class Pattern {
-  @PrimaryGeneratedColumn('increment')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column()
   name: string;

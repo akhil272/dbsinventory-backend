@@ -27,6 +27,6 @@ export class OrdersController {
   @Roles(Role.ADMIN)
   @Get('/:id')
   getAllOrders(@Param('id') id: string): Promise<Order[]> {
-    return this.ordersService.getOrders(id);
+    return this.ordersService.getOrders(+id);
   }
 }

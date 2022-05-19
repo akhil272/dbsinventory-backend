@@ -44,19 +44,15 @@ export class TransportService {
     return await this.transportRepo.find();
   }
 
-  async findOne(id: string) {
-    try {
-      const transport = await this.transportRepo.findOne(id);
-      if (!transport) {
-        throw new NotFoundException('Transport mode not in the system');
-      }
-      return transport;
-    } catch (error) {
-      throw new InternalServerErrorException('Something went wrong.');
+  async findOne(id: number) {
+    const transport = await this.transportRepo.findOne(id);
+    if (!transport) {
+      throw new NotFoundException('Transport mode not in the system');
     }
+    return transport;
   }
 
-  async update(id: string, updateTransportDto: UpdateTransportDto) {
+  async update(id: number, updateTransportDto: UpdateTransportDto) {
     try {
       const transport = await this.findOne(id);
       transport.mode = updateTransportDto.mode;
@@ -67,7 +63,7 @@ export class TransportService {
     }
   }
 
-  async remove(id: string) {
+  async remove(id: number) {
     try {
       return await this.transportRepo.delete(id);
     } catch (error) {

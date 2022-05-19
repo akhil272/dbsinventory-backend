@@ -53,7 +53,7 @@ export class OrdersService {
     }
   }
 
-  getOrders(id: string): Promise<Order[]> {
+  getOrders(id: number): Promise<Order[]> {
     return this.ordersRepository.getOrders(id);
   }
 }

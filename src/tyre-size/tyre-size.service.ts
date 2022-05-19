@@ -7,8 +7,11 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import PostgresErrorCode from 'src/database/postgresErrorCodes.enum';
+import { ApiResponse } from 'src/utils/types/common';
 import { CreateTyreSizeDto } from './dto/create-tyre-size.dto';
+import { GetTyreSizeFilterDto } from './dto/get-tyre-size-filter.dto';
 import { UpdateTyreSizeDto } from './dto/update-tyre-size.dto';
+import { TyreSize } from './entities/tyre-size.entity';
 import { TyreSizeRepository } from './tyre-size.respository';
 
 @Injectable()
@@ -40,23 +43,25 @@ export class TyreSizeService {
     }
   }
 
-  async findAll() {
-    return await this.tyreSizeRepository.find();
+  async findAll(
+    filterDto: GetTyreSizeFilterDto,
+  ): Promise<ApiResponse<TyreSize[]>> {
+    const tyreSizes = await this.tyreSizeRepository.getTyreSizes(filterDto);
+    return {
+      success: true,
+      data: tyreSizes,
+    };
   }
 
-  async findOne(id: string) {
-    try {
-      const tyreSize = await this.tyreSizeRepository.findOne(id);
-      if (!tyreSize) {
-        throw new NotFoundException('Tyre size not in the system');
-      }
-      return tyreSize;
-    } catch (error) {
-      throw new InternalServerErrorException('Something went wrong');
+  async findOne(id: number) {
+    const tyreSize = await this.tyreSizeRepository.findOne(id);
+    if (!tyreSize) {
+      throw new NotFoundException('Tyre size not in the system');
     }
+    return tyreSize;
   }
 
-  async update(id: string, updateTyreSizeDto: UpdateTyreSizeDto) {
+  async update(id: number, updateTyreSizeDto: UpdateTyreSizeDto) {
     try {
       const tyreSize = await this.findOne(id);
       tyreSize.size = updateTyreSizeDto.size;
@@ -67,7 +72,7 @@ export class TyreSizeService {
     }
   }
 
-  async remove(id: string) {
+  async remove(id: number) {
     try {
       return await this.tyreSizeRepository.delete(id);
     } catch (error) {

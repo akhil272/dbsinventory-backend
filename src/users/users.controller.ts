@@ -46,7 +46,7 @@ export class UsersController {
   @Roles(Role.ADMIN, Role.EMPLOYEE, Role.MANAGER, Role.USER)
   @Get('/:id')
   getUserById(@Param('id') id: string): Promise<User> {
-    return this.usersService.getUserById(id);
+    return this.usersService.getUserById(+id);
   }
 
   @Patch('/:id')
@@ -54,12 +54,12 @@ export class UsersController {
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<User> {
-    return this.usersService.updateUserRoleById(id, updateUserDto);
+    return this.usersService.updateUserRoleById(+id, updateUserDto);
   }
 
   @Delete(':id')
   deleteUser(@Param('id') id: string): Promise<{ success: boolean }> {
-    return this.usersService.deleteUser(id);
+    return this.usersService.deleteUser(+id);
   }
 
   @Post('avatar')

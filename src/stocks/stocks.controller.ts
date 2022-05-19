@@ -40,7 +40,7 @@ export class StocksController {
   @Get('/:id')
   @Roles(Role.ADMIN, Role.MANAGER, Role.USER, Role.EMPLOYEE)
   getStockById(@Param('id') id: string): Promise<Stock> {
-    return this.stocksService.getStockById(id);
+    return this.stocksService.getStockById(+id);
   }
 
   @Post()
@@ -54,7 +54,7 @@ export class StocksController {
   @Delete('/:id')
   @Roles(Role.ADMIN)
   deleteStock(@Param('id') id: string): Promise<{ success: boolean }> {
-    return this.stocksService.deleteStock(id);
+    return this.stocksService.deleteStock(+id);
   }
 
   @Patch('/:id')
@@ -64,6 +64,6 @@ export class StocksController {
     @Body() updateStockDto: UpdateStockDto,
     @GetUser() user: User,
   ): Promise<Stock> {
-    return this.stocksService.updateStockById(id, updateStockDto, user);
+    return this.stocksService.updateStockById(+id, updateStockDto, user);
   }
 }

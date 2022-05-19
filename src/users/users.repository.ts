@@ -49,13 +49,10 @@ export class UsersRepository extends Repository<User> {
     return users;
   }
 
-  async deleteUser(id: string): Promise<{ success: boolean }> {
+  async deleteUser(id: number): Promise<{ success: boolean }> {
     const query = this.createQueryBuilder('user');
     try {
-      const deleteUser = await query
-        .softDelete()
-        .where('id= :id', { id })
-        .execute();
+      await query.softDelete().where('id= :id', { id }).execute();
       return { success: true };
     } catch (error) {
       return { success: false };

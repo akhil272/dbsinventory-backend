@@ -14,18 +14,21 @@ import { TyreDetail } from 'src/tyre-detail/entities/tyre-detail.entity';
 export class StocksRepository extends Repository<Stock> {
   async getStocks(filterDto: GetStocksFilterDto): Promise<StocksMetaDto> {
     const { brand, size, pattern, search, take = 25, page = 1 } = filterDto;
-
+    console.log(size);
     const query = this.createQueryBuilder('stock').where(
       'stock.sold_out= :sold_out',
       { sold_out: false },
     );
 
     if (size) {
-      query.andWhere('stock.tyre_size= :size', { size });
+      query
+        .leftJoinAndSelect('stock.tyreDetail', 'tyreDetail')
+        .leftJoinAndSelect('tyreDetail.tyreSize', 'tyreSize')
+        .andWhere('tyreSize.size= :size', { size });
     }
-    // if (pattern) {
-    //   query.andWhere('stock.pattern= :pattern', { pattern });
-    // }
+    if (pattern) {
+      query.andWhere('stock.pattern= :pattern', { pattern });
+    }
 
     if (search) {
       query.andWhere(

@@ -7,14 +7,18 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import JwtAuthenticationGuard from 'src/auth/jwt-authentication.guard';
 import { Role } from 'src/users/entities/role.enum';
 import { Roles } from 'src/users/roles.decorator';
 import { RolesGuard } from 'src/users/roles.guard';
+import { ApiResponse } from 'src/utils/types/common';
 import { BrandService } from './brand.service';
 import { CreateBrandDto } from './dto/create-brand.dto';
+import { GetBrandsFilterDto } from './dto/get-brand-filter.dto';
 import { UpdateBrandDto } from './dto/update-brand.dto';
+import { Brand } from './entities/brand.entity';
 
 @Controller('brand')
 @UseGuards(JwtAuthenticationGuard, RolesGuard)
@@ -28,13 +32,15 @@ export class BrandController {
   }
 
   @Get()
-  findAll() {
-    return this.brandService.findAll();
+  findAll(
+    @Query() filterDto: GetBrandsFilterDto,
+  ): Promise<ApiResponse<Brand[]>> {
+    return this.brandService.findAll(filterDto);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.brandService.findOne(id);
+    return this.brandService.findOne(+id);
   }
 
   @Patch(':id')

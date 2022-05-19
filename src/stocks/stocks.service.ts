@@ -29,7 +29,7 @@ export class StocksService {
     private readonly tyreDetailService: TyreDetailService,
   ) {}
 
-  async getStockById(id: string): Promise<Stock> {
+  async getStockById(id: number): Promise<Stock> {
     const found = await this.stocksRepository.findOne(id);
 
     if (!found) {
@@ -80,7 +80,7 @@ export class StocksService {
     );
   }
 
-  async deleteStock(id: string): Promise<{ success: boolean }> {
+  async deleteStock(id: number): Promise<{ success: boolean }> {
     try {
       const result = await this.stocksRepository.delete(id);
       if (result.affected === 0) {
@@ -102,7 +102,7 @@ export class StocksService {
   }
 
   async updateStockById(
-    id: string,
+    id: number,
     updateStockDto: UpdateStockDto,
     user: User,
   ): Promise<Stock> {

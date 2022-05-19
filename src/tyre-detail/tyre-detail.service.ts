@@ -9,8 +9,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import PostgresErrorCode from 'src/database/postgresErrorCodes.enum';
 import { PatternService } from 'src/pattern/pattern.service';
 import { TyreSizeService } from 'src/tyre-size/tyre-size.service';
+import { ApiResponse } from 'src/utils/types/common';
 import { CreateTyreDetailDto } from './dto/create-tyre-detail.dto';
+import { GetTyreDetailsFilterDto } from './dto/get-tyre-detail-filter.dto';
 import { UpdateTyreDetailDto } from './dto/update-tyre-detail.dto';
+import { TyreDetail } from './entities/tyre-detail.entity';
 import { TyreDetailRepository } from './tyre-detail.repository';
 
 @Injectable()
@@ -34,29 +37,31 @@ export class TyreDetailService {
       await this.tyreDetailRepository.save(tyreDetail);
       return tyreDetail;
     } catch (error) {
-      throw new InternalServerErrorException(
-        'Failed to add pattern to system.',
-      );
+      throw new InternalServerErrorException('Failed to add tyre to system.');
     }
   }
 
-  async findAll() {
-    return await this.tyreDetailRepository.find();
+  async findAll(
+    filterDto: GetTyreDetailsFilterDto,
+  ): Promise<ApiResponse<TyreDetail[]>> {
+    const tyreDetails = await this.tyreDetailRepository.getTyreDetails(
+      filterDto,
+    );
+    return {
+      success: true,
+      data: tyreDetails,
+    };
   }
 
-  async findOne(id: string) {
-    try {
-      const tyreDetail = await this.tyreDetailRepository.findOne(id);
-      if (!tyreDetail) {
-        throw new NotFoundException('Tyre not found in the system.');
-      }
-      return tyreDetail;
-    } catch (error) {
-      throw new InternalServerErrorException('Something went wrong');
+  async findOne(id: number) {
+    const tyreDetail = await this.tyreDetailRepository.findOne(id);
+    if (!tyreDetail) {
+      throw new NotFoundException('Tyre not found in the system.');
     }
+    return tyreDetail;
   }
 
-  async update(id: string, updateTyreDetailDto: UpdateTyreDetailDto) {
+  async update(id: number, updateTyreDetailDto: UpdateTyreDetailDto) {
     const { tyre_size_id, pattern_id } = updateTyreDetailDto;
     try {
       const tyreDetail = await this.findOne(id);
@@ -71,7 +76,7 @@ export class TyreDetailService {
     }
   }
 
-  async remove(id: string) {
+  async remove(id: number) {
     try {
       return await this.tyreDetailRepository.delete(id);
     } catch (error) {

@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { TyreSizeService } from './tyre-size.service';
 import { CreateTyreSizeDto } from './dto/create-tyre-size.dto';
@@ -15,6 +16,9 @@ import JwtAuthenticationGuard from 'src/auth/jwt-authentication.guard';
 import { Role } from 'src/users/entities/role.enum';
 import { Roles } from 'src/users/roles.decorator';
 import { RolesGuard } from 'src/users/roles.guard';
+import { GetTyreSizeFilterDto } from './dto/get-tyre-size-filter.dto';
+import { TyreSize } from './entities/tyre-size.entity';
+import { ApiResponse } from 'src/utils/types/common';
 
 @Controller('tyre-size')
 @UseGuards(JwtAuthenticationGuard, RolesGuard)
@@ -28,13 +32,15 @@ export class TyreSizeController {
   }
 
   @Get()
-  findAll() {
-    return this.tyreSizeService.findAll();
+  findAll(
+    @Query() filterDto: GetTyreSizeFilterDto,
+  ): Promise<ApiResponse<TyreSize[]>> {
+    return this.tyreSizeService.findAll(filterDto);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.tyreSizeService.findOne(id);
+    return this.tyreSizeService.findOne(+id);
   }
 
   @Patch(':id')
@@ -42,11 +48,11 @@ export class TyreSizeController {
     @Param('id') id: string,
     @Body() updateTyreSizeDto: UpdateTyreSizeDto,
   ) {
-    return this.tyreSizeService.update(id, updateTyreSizeDto);
+    return this.tyreSizeService.update(+id, updateTyreSizeDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.tyreSizeService.remove(id);
+    return this.tyreSizeService.remove(+id);
   }
 }

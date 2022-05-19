@@ -3,10 +3,10 @@ import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 @Entity()
 export class RefreshToken extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: string;
+  id: number;
 
   @Column()
-  userId: string;
+  userId: number;
 
   @Column()
   isRevoked: boolean;

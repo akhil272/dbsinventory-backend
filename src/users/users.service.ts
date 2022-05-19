@@ -43,8 +43,8 @@ export class UsersService {
     return this.usersRepository.getUsers(filterDto);
   }
 
-  async getUserById(id: string): Promise<User> {
-    const user = await this.usersRepository.findOne({ id });
+  async getUserById(id: number): Promise<User> {
+    const user = await this.usersRepository.findOne(id);
     if (user) {
       return user;
     }
@@ -54,7 +54,7 @@ export class UsersService {
     );
   }
 
-  async setCurrentRefreshToken(refreshToken: string, userId: string) {
+  async setCurrentRefreshToken(refreshToken: string, userId: number) {
     const currentHashedRefreshToken = await bcrypt.hash(refreshToken, 10);
     await this.usersRepository.update(userId, {
       current_hashed_refresh_token: currentHashedRefreshToken,
@@ -75,28 +75,28 @@ export class UsersService {
     }
   }
 
-  async removeRefreshToken(userId: string) {
+  async removeRefreshToken(userId: number) {
     return await this.usersRepository.update(userId, {
       current_hashed_refresh_token: null,
     });
   }
 
   async updateUserRoleById(
-    id: string,
+    id: number,
     updateUserDto: UpdateUserDto,
   ): Promise<User> {
     const { roles } = updateUserDto;
-    const user = await this.getUserById(id);
+    const user = await this.getUserById(+id);
     user.roles = roles;
     await this.usersRepository.save(user);
     return user;
   }
 
-  async deleteUser(id: string): Promise<{ success: boolean }> {
+  async deleteUser(id: number): Promise<{ success: boolean }> {
     return this.usersRepository.deleteUser(id);
   }
 
-  markPhoneNumberAsConfirmed(userId: string) {
+  markPhoneNumberAsConfirmed(userId: number) {
     return this.usersRepository.update(
       { id: userId },
       {
@@ -104,7 +104,7 @@ export class UsersService {
       },
     );
   }
-  async addAvatar(userId: string, fileData: LocalFileDto) {
+  async addAvatar(userId: number, fileData: LocalFileDto) {
     const avatar = await this.localFilesService.saveLocalFileData(fileData);
     await this.usersRepository.update(userId, {
       avatarId: avatar.id,
