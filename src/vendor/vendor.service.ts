@@ -6,8 +6,11 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import PostgresErrorCode from 'src/database/postgresErrorCodes.enum';
+import { ApiResponse } from 'src/utils/types/common';
 import { CreateVendorDto } from './dto/create-vendor.dto';
+import { GetVendorsFilterDto } from './dto/get-vendors-filter.dto';
 import { UpdateVendorDto } from './dto/update-vendor.dto';
+import { Vendor } from './entities/vendor.entity';
 import { VendorRepository } from './vendor.repository';
 
 @Injectable()
@@ -39,8 +42,14 @@ export class VendorService {
     }
   }
 
-  async findAll() {
-    return await this.vendorRepo.find();
+  async findAll(
+    filterDto: GetVendorsFilterDto,
+  ): Promise<ApiResponse<Vendor[]>> {
+    const vendors = await this.vendorRepo.getVendors(filterDto);
+    return {
+      success: true,
+      data: vendors,
+    };
   }
 
   async findOne(id: number) {

@@ -7,8 +7,11 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import PostgresErrorCode from 'src/database/postgresErrorCodes.enum';
+import { ApiResponse } from 'src/utils/types/common';
 import { CreateTransportDto } from './dto/create-transport.dto';
+import { GetTransportsFilterDto } from './dto/get-transports-filter.dto';
 import { UpdateTransportDto } from './dto/update-transport.dto';
+import { Transport } from './entities/transport.entity';
 import { TransportRepository } from './transport.repository';
 
 @Injectable()
@@ -40,8 +43,14 @@ export class TransportService {
     }
   }
 
-  async findAll() {
-    return await this.transportRepo.find();
+  async findAll(
+    filterDto: GetTransportsFilterDto,
+  ): Promise<ApiResponse<Transport[]>> {
+    const brands = await this.transportRepo.getTransports(filterDto);
+    return {
+      success: true,
+      data: brands,
+    };
   }
 
   async findOne(id: number) {

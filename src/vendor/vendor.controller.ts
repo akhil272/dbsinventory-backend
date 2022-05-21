@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { VendorService } from './vendor.service';
 import { CreateVendorDto } from './dto/create-vendor.dto';
@@ -15,6 +16,9 @@ import JwtAuthenticationGuard from 'src/auth/jwt-authentication.guard';
 import { Role } from 'src/users/entities/role.enum';
 import { Roles } from 'src/users/roles.decorator';
 import { RolesGuard } from 'src/users/roles.guard';
+import { GetVendorsFilterDto } from './dto/get-vendors-filter.dto';
+import { Vendor } from './entities/vendor.entity';
+import { ApiResponse } from 'src/utils/types/common';
 
 @Controller('vendor')
 @UseGuards(JwtAuthenticationGuard, RolesGuard)
@@ -28,8 +32,10 @@ export class VendorController {
   }
 
   @Get()
-  findAll() {
-    return this.vendorService.findAll();
+  findAll(
+    @Query() filterDto: GetVendorsFilterDto,
+  ): Promise<ApiResponse<Vendor[]>> {
+    return this.vendorService.findAll(filterDto);
   }
 
   @Get(':id')

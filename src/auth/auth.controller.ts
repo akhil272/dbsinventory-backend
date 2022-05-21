@@ -50,28 +50,22 @@ export class AuthController {
 
   @HttpCode(200)
   @Post('otp/validate')
-  async validateOtp(
-    @Body() validateOtpDto: ValidateOtpDto,
-  ): Promise<{ success: boolean; data: { accessToken; refreshToken } | void }> {
-    const user = await this.usersService.getUserByPhoneNumber(
-      validateOtpDto.phone_number,
-    );
-    const otpValidated = await this.authService.validateOtp(validateOtpDto);
-    if (otpValidated) {
-      const accessToken = await this.authService.generateAccessToken(user);
-      const refreshToken = await this.authService.generateRefreshToken(
-        user,
-        60 * 60 * 24 * 30,
-      );
-
-      await this.usersService.setCurrentRefreshToken(refreshToken, user.id);
-
-      return {
-        success: true,
-        data: { accessToken, refreshToken },
+  async validateOtp(@Body() validateOtpDto: ValidateOtpDto): Promise<{
+    success: boolean;
+    data: {
+      accessToken: string;
+      refreshToken: string;
+      user: {
+        id: number;
+        phone_number: string;
+        email: string;
+        first_name: string;
+        last_name: string | undefined;
+        roles: string;
       };
-    }
-    throw new HttpException('Failed to verify user', HttpStatus.BAD_REQUEST);
+    };
+  } | void> {
+    return this.authService.validateOtp(validateOtpDto);
   }
 
   @HttpCode(200)

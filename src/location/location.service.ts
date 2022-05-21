@@ -7,7 +7,9 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import PostgresErrorCode from 'src/database/postgresErrorCodes.enum';
+import { ApiResponse } from 'src/utils/types/common';
 import { CreateLocationDto } from './dto/create-location.dto';
+import { GetLocationFilterDto } from './dto/get-locations-filter.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
 import { Location } from './entities/location.entity';
 import { LocationRepository } from './location.repository';
@@ -40,8 +42,14 @@ export class LocationService {
     }
   }
 
-  async findAll(): Promise<Location[]> {
-    return await this.locationRepository.find();
+  async findAll(
+    filterDto: GetLocationFilterDto,
+  ): Promise<ApiResponse<Location[]>> {
+    const locations = await this.locationRepository.getLocations(filterDto);
+    return {
+      success: true,
+      data: locations,
+    };
   }
 
   async findOne(id: number) {

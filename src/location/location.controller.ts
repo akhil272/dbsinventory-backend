@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { LocationService } from './location.service';
 import { CreateLocationDto } from './dto/create-location.dto';
@@ -15,6 +16,9 @@ import JwtAuthenticationGuard from 'src/auth/jwt-authentication.guard';
 import { Role } from 'src/users/entities/role.enum';
 import { Roles } from 'src/users/roles.decorator';
 import { RolesGuard } from 'src/users/roles.guard';
+import { GetLocationFilterDto } from './dto/get-locations-filter.dto';
+import { Location } from './entities/location.entity';
+import { ApiResponse } from 'src/utils/types/common';
 
 @Controller('location')
 @UseGuards(JwtAuthenticationGuard, RolesGuard)
@@ -28,8 +32,10 @@ export class LocationController {
   }
 
   @Get()
-  findAll() {
-    return this.locationService.findAll();
+  findAll(
+    @Query() filterDto: GetLocationFilterDto,
+  ): Promise<ApiResponse<Location[]>> {
+    return this.locationService.findAll(filterDto);
   }
 
   @Get(':id')

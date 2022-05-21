@@ -3,7 +3,10 @@ import { Stock } from './stock.entity';
 import { CreateStockDto } from './dto/create-stock.dto';
 import { GetStocksFilterDto } from './dto/get-stocks-filter.dto';
 import { User } from 'src/users/entities/user.entity';
-import { InternalServerErrorException } from '@nestjs/common';
+import {
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { StocksMetaDto } from './dto/stocks-meta-dto';
 import { Transport } from 'src/transport/entities/transport.entity';
 import { Vendor } from 'src/vendor/entities/vendor.entity';
@@ -14,21 +17,11 @@ import { TyreDetail } from 'src/tyre-detail/entities/tyre-detail.entity';
 export class StocksRepository extends Repository<Stock> {
   async getStocks(filterDto: GetStocksFilterDto): Promise<StocksMetaDto> {
     const { brand, size, pattern, search, take = 25, page = 1 } = filterDto;
-    console.log(size);
+
     const query = this.createQueryBuilder('stock').where(
       'stock.sold_out= :sold_out',
       { sold_out: false },
     );
-
-    if (size) {
-      query
-        .leftJoinAndSelect('stock.tyreDetail', 'tyreDetail')
-        .leftJoinAndSelect('tyreDetail.tyreSize', 'tyreSize')
-        .andWhere('tyreSize.size= :size', { size });
-    }
-    if (pattern) {
-      query.andWhere('stock.pattern= :pattern', { pattern });
-    }
 
     if (search) {
       query.andWhere(
@@ -38,7 +31,12 @@ export class StocksRepository extends Repository<Stock> {
         },
       );
     }
+
     const skip = (page - 1) * take;
+    const count = await query.getCount();
+    if (count <= 0) {
+      throw new NotFoundException('No stocks available.');
+    }
     try {
       const [stocks, total] = await query
         .leftJoinAndSelect('stock.tyreDetail', 'tyreDetail')
@@ -52,6 +50,7 @@ export class StocksRepository extends Repository<Stock> {
         .skip(skip)
         .getManyAndCount();
       const last_page = Math.ceil(total / take);
+
       if (last_page < page) {
         throw new InternalServerErrorException();
       }

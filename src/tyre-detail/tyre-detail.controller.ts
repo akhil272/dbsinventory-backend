@@ -19,6 +19,7 @@ import { RolesGuard } from 'src/users/roles.guard';
 import { GetTyreDetailsFilterDto } from './dto/get-tyre-detail-filter.dto';
 import { TyreDetail } from './entities/tyre-detail.entity';
 import { ApiResponse } from 'src/utils/types/common';
+import { CreateTyreDetailFromPattern } from './dto/create-tyre-from-pattern-dto';
 
 @Controller('tyre-detail')
 @UseGuards(JwtAuthenticationGuard, RolesGuard)
@@ -29,6 +30,15 @@ export class TyreDetailController {
   @Post()
   create(@Body() createTyreDetailDto: CreateTyreDetailDto) {
     return this.tyreDetailService.create(createTyreDetailDto);
+  }
+
+  @Post('create')
+  createTyreSize(
+    @Body() createTyreDetailFromPattern: CreateTyreDetailFromPattern,
+  ) {
+    return this.tyreDetailService.createTyreSizeWithPattern(
+      createTyreDetailFromPattern,
+    );
   }
 
   @Get()

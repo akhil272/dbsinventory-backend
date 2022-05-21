@@ -11,6 +11,7 @@ import { PatternService } from 'src/pattern/pattern.service';
 import { TyreSizeService } from 'src/tyre-size/tyre-size.service';
 import { ApiResponse } from 'src/utils/types/common';
 import { CreateTyreDetailDto } from './dto/create-tyre-detail.dto';
+import { CreateTyreDetailFromPattern } from './dto/create-tyre-from-pattern-dto';
 import { GetTyreDetailsFilterDto } from './dto/get-tyre-detail-filter.dto';
 import { UpdateTyreDetailDto } from './dto/update-tyre-detail.dto';
 import { TyreDetail } from './entities/tyre-detail.entity';
@@ -32,6 +33,37 @@ export class TyreDetailService {
     try {
       const tyreDetail = this.tyreDetailRepository.create({
         tyreSize,
+        pattern,
+      });
+      await this.tyreDetailRepository.save(tyreDetail);
+      return tyreDetail;
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to add tyre to system.');
+    }
+  }
+
+  async createTyreSizeWithPattern(
+    createTyreDetailFromPattern: CreateTyreDetailFromPattern,
+  ): Promise<TyreDetail> {
+    const { size, pattern_id } = createTyreDetailFromPattern;
+    const findTyreSize = await this.tyreSizeService.findWithSize(size);
+    const pattern = await this.patternService.findOne(pattern_id);
+    if (!findTyreSize) {
+      const tyreSize = await this.tyreSizeService.create({ size });
+      try {
+        const tyreDetail = this.tyreDetailRepository.create({
+          tyreSize,
+          pattern,
+        });
+        await this.tyreDetailRepository.save(tyreDetail);
+        return tyreDetail;
+      } catch (error) {
+        throw new InternalServerErrorException('Failed to add tyre to system.');
+      }
+    }
+    try {
+      const tyreDetail = this.tyreDetailRepository.create({
+        tyreSize: findTyreSize,
         pattern,
       });
       await this.tyreDetailRepository.save(tyreDetail);

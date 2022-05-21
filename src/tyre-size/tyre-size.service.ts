@@ -61,6 +61,11 @@ export class TyreSizeService {
     return tyreSize;
   }
 
+  async findWithSize(size: string): Promise<TyreSize> {
+    const tyreSize = await this.tyreSizeRepository.findOne({ size });
+    return tyreSize;
+  }
+
   async update(id: number, updateTyreSizeDto: UpdateTyreSizeDto) {
     try {
       const tyreSize = await this.findOne(id);

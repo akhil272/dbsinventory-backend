@@ -70,16 +70,50 @@ export class AuthService {
     }
   }
 
-  async validateOtp(verifyOtpDto: ValidateOtpDto) {
+  async validateOtp(verifyOtpDto: ValidateOtpDto): Promise<{
+    success: boolean;
+    data: {
+      accessToken: string;
+      refreshToken: string;
+      user: {
+        id: number;
+        phone_number: string;
+        email: string;
+        first_name: string;
+        last_name: string | undefined;
+        roles: string;
+      };
+    };
+  } | void> {
     const { phone_number, otp } = verifyOtpDto;
     const user = await this.usersRepository.getUserByPhoneNumber(phone_number);
 
     const isOtpValid = this.verifyOtp(otp, user);
 
     if (isOtpValid) {
-      return true;
+      const accessToken = await this.generateAccessToken(user);
+      const refreshToken = await this.generateRefreshToken(
+        user,
+        60 * 60 * 24 * 30,
+      );
+      return {
+        success: true,
+        data: {
+          accessToken,
+          refreshToken,
+          user: {
+            id: user.id,
+            phone_number: user.phone_number,
+            email: user.email,
+            roles: user.roles,
+            first_name: user.first_name,
+            last_name: user.last_name,
+          },
+        },
+      };
+    } else {
+      throw new HttpException('Failed to verify user', HttpStatus.BAD_REQUEST);
     }
-    throw new HttpException('Failed to verify user', HttpStatus.BAD_REQUEST);
   }
 
   verifyOtp(token: string, user: User): boolean {

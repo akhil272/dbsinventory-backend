@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { TransportService } from './transport.service';
 import { CreateTransportDto } from './dto/create-transport.dto';
@@ -15,6 +16,9 @@ import JwtAuthenticationGuard from 'src/auth/jwt-authentication.guard';
 import { Role } from 'src/users/entities/role.enum';
 import { Roles } from 'src/users/roles.decorator';
 import { RolesGuard } from 'src/users/roles.guard';
+import { GetTransportsFilterDto } from './dto/get-transports-filter.dto';
+import { ApiResponse } from 'src/utils/types/common';
+import { Transport } from './entities/transport.entity';
 
 @Controller('transport')
 @UseGuards(JwtAuthenticationGuard, RolesGuard)
@@ -28,8 +32,10 @@ export class TransportController {
   }
 
   @Get()
-  findAll() {
-    return this.transportService.findAll();
+  findAll(
+    @Query() filterDto: GetTransportsFilterDto,
+  ): Promise<ApiResponse<Transport[]>> {
+    return this.transportService.findAll(filterDto);
   }
 
   @Get(':id')
