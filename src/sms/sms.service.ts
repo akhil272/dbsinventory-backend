@@ -23,25 +23,26 @@ export default class SmsService {
 
     this.twilioClient = new Twilio(accountSid, authToken);
   }
-  verifyPhoneNumber(phone_number: string) {
+
+  async verifyPhoneNumber(phone_number: string): Promise<{ success: boolean }> {
     const serviceSid = this.configService.get(
       'TWILIO_VERIFICATION_SERVICE_SID',
     );
-
-    return this.twilioClient.verify
+    await this.twilioClient.verify
       .services(serviceSid)
       .verifications.create({ to: phone_number, channel: 'sms' });
+    return { success: true };
   }
 
-  async confirmPhoneNumber(
-    userId: number,
-    phoneNumber: string,
-    verificationCode: string,
-  ) {
+  async confirmPhoneNumber(phoneNumber: string, verificationCode: string) {
+    const user = await this.usersService.getUserByPhoneNumber(phoneNumber);
+    if (!user) {
+      throw new BadRequestException('User not registered');
+    }
+
     const serviceSid = this.configService.get(
       'TWILIO_VERIFICATION_SERVICE_SID',
     );
-
     const result = await this.twilioClient.verify
       .services(serviceSid)
       .verificationChecks.create({ to: phoneNumber, code: verificationCode });
@@ -50,7 +51,7 @@ export default class SmsService {
       throw new BadRequestException('Wrong code provided');
     }
 
-    await this.usersService.markPhoneNumberAsConfirmed(userId);
+    await this.usersService.markPhoneNumberAsConfirmed(user.id);
     return { success: true };
   }
 
