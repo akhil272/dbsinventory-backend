@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { NotFoundError } from 'rxjs';
 import { Stock } from 'src/stocks/stock.entity';
 import { User } from 'src/users/entities/user.entity';
+import { ApiResponse } from 'src/utils/types/common';
 import { Repository } from 'typeorm';
 import { CreateOrderDto } from './dto/create-order-dto';
 import { Order } from './entities/order.entity';
@@ -21,8 +22,7 @@ export class OrdersService {
   ) {}
 
   async addOrder(createOrderDto: CreateOrderDto, user: User): Promise<Order> {
-    const { id, sold_price, quantity, sold_by_user, customer_name } =
-      createOrderDto;
+    const { id, sold_price, quantity, customer_name } = createOrderDto;
     const result = await this.stockRepository.findOne(id);
     if (!result) {
       throw NotFoundError;
@@ -33,7 +33,7 @@ export class OrdersService {
     try {
       const order = this.ordersRepository.create({
         quantity,
-        sold_by_user,
+        employee_name: user.first_name,
         sold_price,
         sale_date: new Date(),
         customer_name,
@@ -53,7 +53,11 @@ export class OrdersService {
     }
   }
 
-  getOrders(id: number): Promise<Order[]> {
-    return this.ordersRepository.getOrders(id);
+  async getOrders(id: number): Promise<ApiResponse<Order[]>> {
+    const orders = await this.ordersRepository.getOrders(id);
+    return {
+      success: true,
+      data: orders,
+    };
   }
 }

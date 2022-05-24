@@ -18,7 +18,7 @@ export class Order {
   quantity: number;
 
   @Column()
-  sold_by_user: string;
+  employee_name: string;
 
   @Column()
   customer_name: string;

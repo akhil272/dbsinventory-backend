@@ -62,11 +62,10 @@ export class TyreDetailService {
       }
     }
     try {
-      const tyreDetail = this.tyreDetailRepository.create({
-        tyreSize: findTyreSize,
-        pattern,
+      const tyreDetail = await this.create({
+        tyre_size_id: findTyreSize.id,
+        pattern_id: pattern.id,
       });
-      await this.tyreDetailRepository.save(tyreDetail);
       return tyreDetail;
     } catch (error) {
       throw new InternalServerErrorException('Failed to add tyre to system.');

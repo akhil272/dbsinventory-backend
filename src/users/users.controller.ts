@@ -25,6 +25,8 @@ import { RolesGuard } from './roles.guard';
 import JwtAuthenticationGuard from 'src/auth/jwt-authentication.guard';
 import RequestWithUser from 'src/auth/request-with-user.interface';
 import LocalFilesInterceptor from 'src/local-files/local-files.interceptor';
+import { GetUser } from 'src/auth/get-user.decorator';
+import { ApiResponse } from 'src/utils/types/common';
 
 @Controller('users')
 @UseGuards(JwtAuthenticationGuard, RolesGuard)
@@ -39,7 +41,9 @@ export class UsersController {
   }
 
   @Get()
-  getUsers(@Query() filterDto: GetUsersFilterDto): Promise<User[]> {
+  getUsers(
+    @Query() filterDto: GetUsersFilterDto,
+  ): Promise<ApiResponse<User[]>> {
     return this.usersService.getUsers(filterDto);
   }
 
@@ -91,5 +95,25 @@ export class UsersController {
       filename: file.originalname,
       mimetype: file.mimetype,
     });
+  }
+
+  @Get('user/info')
+  @Roles(Role.ADMIN, Role.EMPLOYEE, Role.MANAGER, Role.USER)
+  getMe(@GetUser() user: User): {
+    id: number;
+    first_name: string;
+    last_name: string | undefined;
+    phone_number: string;
+    email: string;
+    roles: string;
+  } {
+    return {
+      id: user.id,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      phone_number: user.phone_number,
+      email: user.email,
+      roles: user.roles,
+    };
   }
 }

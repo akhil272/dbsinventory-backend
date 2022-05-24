@@ -32,6 +32,7 @@ export class BrandController {
   }
 
   @Get()
+  @Roles(Role.ADMIN, Role.EMPLOYEE, Role.MANAGER, Role.USER)
   findAll(
     @Query() filterDto: GetBrandsFilterDto,
   ): Promise<ApiResponse<Brand[]>> {

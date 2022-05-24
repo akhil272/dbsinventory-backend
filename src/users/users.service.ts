@@ -8,6 +8,7 @@ import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from './dto/create-user-dto';
 import PostgresErrorCode from 'src/database/postgresErrorCodes.enum';
 import LocalFilesService from 'src/local-files/local-files.service';
+import { ApiResponse } from 'src/utils/types/common';
 @Injectable()
 export class UsersService {
   constructor(
@@ -39,8 +40,12 @@ export class UsersService {
     return this.usersRepository.getUserByPhoneNumber(phone_number);
   }
 
-  getUsers(filterDto: GetUsersFilterDto): Promise<User[]> {
-    return this.usersRepository.getUsers(filterDto);
+  async getUsers(filterDto: GetUsersFilterDto): Promise<ApiResponse<User[]>> {
+    const users = await this.usersRepository.getUsers(filterDto);
+    return {
+      success: true,
+      data: users,
+    };
   }
 
   async getUserById(id: number): Promise<User> {

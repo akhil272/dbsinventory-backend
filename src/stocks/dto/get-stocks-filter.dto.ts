@@ -5,6 +5,15 @@ export class GetStocksFilterDto {
   brand?: string;
 
   @IsOptional()
+  vendor?: string;
+
+  @IsOptional()
+  location?: string;
+
+  @IsOptional()
+  transport?: string;
+
+  @IsOptional()
   size?: string;
 
   @IsOptional()

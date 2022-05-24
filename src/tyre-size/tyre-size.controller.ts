@@ -32,6 +32,7 @@ export class TyreSizeController {
   }
 
   @Get()
+  @Roles(Role.ADMIN, Role.EMPLOYEE, Role.MANAGER, Role.USER)
   findAll(
     @Query() filterDto: GetTyreSizeFilterDto,
   ): Promise<ApiResponse<TyreSize[]>> {
