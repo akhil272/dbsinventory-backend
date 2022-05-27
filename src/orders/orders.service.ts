@@ -30,6 +30,8 @@ export class OrdersService {
     if (quantity > result.quantity) {
       throw new ConflictException('Not enough stock quantity');
     }
+    const profit = (sold_price - result.cost) * quantity;
+
     try {
       const order = this.ordersRepository.create({
         quantity,
@@ -37,6 +39,7 @@ export class OrdersService {
         sold_price,
         sale_date: new Date(),
         customer_name,
+        profit,
       });
 
       result.quantity -= quantity;

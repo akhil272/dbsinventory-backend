@@ -23,6 +23,9 @@ export class Order {
   @Column()
   customer_name: string;
 
+  @Column()
+  profit: number;
+
   @ManyToOne((_type) => Stock, (stock) => stock.orders)
   stock: Stock;
 }

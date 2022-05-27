@@ -53,7 +53,7 @@ export class StocksController {
 
   @Delete('/:id')
   @Roles(Role.ADMIN)
-  deleteStock(@Param('id') id: string): Promise<{ success: boolean }> {
+  Delete(@Param('id') id: string): Promise<{ success: boolean }> {
     return this.stocksService.deleteStock(+id);
   }
 
