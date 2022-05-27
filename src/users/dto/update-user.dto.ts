@@ -1,7 +1,3 @@
-import { IsEnum, IsString } from 'class-validator';
-import { Role } from '../entities/role.enum';
+import { CreateUserDto } from './create-user-dto';
 
-export class UpdateUserDto {
-  @IsEnum(Role)
-  roles: Role;
-}
+export class UpdateUserDto extends CreateUserDto {}

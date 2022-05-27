@@ -1,17 +1,12 @@
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsNumber } from 'class-validator';
 
 export class CreateStockDto {
   @IsNotEmpty()
   product_line: string;
 
   @IsNotEmpty()
-  brand: string;
-
-  @IsNotEmpty()
-  tyre_size: string;
-
-  @IsNotEmpty()
-  pattern_name: string;
+  @IsNumber()
+  tyre_detail_id: number;
 
   @IsNotEmpty()
   dom: string;
@@ -20,13 +15,16 @@ export class CreateStockDto {
   purchase_date: Date;
 
   @IsNotEmpty()
-  transport_mode: string;
+  @IsNumber()
+  transport_id: number;
 
   @IsNotEmpty()
-  vendor: string;
+  @IsNumber()
+  vendor_id: number;
 
   @IsNotEmpty()
-  location: string;
+  @IsNumber()
+  location_id: number;
 
   @IsNotEmpty()
   quantity: number;

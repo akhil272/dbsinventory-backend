@@ -1,22 +1,42 @@
 import { Exclude } from 'class-transformer';
+import LocalFile from 'src/local-files/local-file.entity';
 import { Stock } from 'src/stocks/stock.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  DeleteDateColumn,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Role } from './role.enum';
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
-  @Column({ unique: true })
-  username: string;
-
-  @Column({ unique: true })
-  email: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column()
+  first_name: string;
+
+  @Column()
+  last_name: string;
+
+  @Column({ nullable: true })
+  email: string;
+
+  @Column({ unique: true })
+  phone_number: string;
+
+  @Column({ default: false })
+  is_verified: boolean;
+
+  @Column({
+    nullable: true,
+  })
   @Exclude()
-  password: string;
+  public current_hashed_refresh_token?: string;
 
   @Column({
     type: 'enum',
@@ -27,4 +47,16 @@ export class User {
 
   @OneToMany((_type) => Stock, (stock) => stock.user, { eager: true })
   stocks: Stock[];
+
+  @DeleteDateColumn()
+  deletedAt?: Date;
+
+  @JoinColumn({ name: 'avatarId' })
+  @OneToOne(() => LocalFile, {
+    nullable: true,
+  })
+  public avatar?: LocalFile;
+
+  @Column({ nullable: true })
+  public avatarId?: number;
 }

@@ -4,8 +4,8 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Order {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Type(() => Date)
   @Column({ type: Date })
@@ -18,10 +18,13 @@ export class Order {
   quantity: number;
 
   @Column()
-  sold_by_user: string;
+  employee_name: string;
 
   @Column()
   customer_name: string;
+
+  @Column()
+  profit: number;
 
   @ManyToOne((_type) => Stock, (stock) => stock.orders)
   stock: Stock;
