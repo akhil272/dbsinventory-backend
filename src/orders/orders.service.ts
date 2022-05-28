@@ -4,12 +4,14 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Parser } from 'json2csv';
 import { NotFoundError } from 'rxjs';
 import { Stock } from 'src/stocks/stock.entity';
 import { User } from 'src/users/entities/user.entity';
 import { ApiResponse } from 'src/utils/types/common';
 import { Repository } from 'typeorm';
 import { CreateOrderDto } from './dto/create-order-dto';
+import { ExportFileDto } from './dto/export-file-dto';
 import { Order } from './entities/order.entity';
 import { OrdersRepository } from './orders.repository';
 
@@ -62,5 +64,36 @@ export class OrdersService {
       success: true,
       data: orders,
     };
+  }
+
+  async export(exportFileDto: ExportFileDto) {
+    const parser = new Parser({
+      fields: [
+        'ID',
+        'Sale_Date',
+        'Sold_Price',
+        'Quantity',
+        'Employee_Name',
+        'Customer_Name',
+        'Profit',
+        'Stock_ID',
+      ],
+    });
+    const orders = await this.ordersRepository.getExportData(exportFileDto);
+    const json = [];
+    orders.forEach((order) => {
+      json.push({
+        ID: order.id,
+        Sale_Date: order.sale_date,
+        Sold_Price: order.sold_price,
+        Quantity: order.quantity,
+        Employee_Name: order.employee_name,
+        Customer_Name: order.customer_name,
+        Profit: order.profit,
+        Stock_ID: order.stock,
+      });
+    });
+    const csv = parser.parse(json);
+    return csv;
   }
 }

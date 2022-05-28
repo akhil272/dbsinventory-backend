@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Param,
+  Post,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
+import { Response } from 'express';
 import { GetUser } from 'src/auth/get-user.decorator';
 import JwtAuthenticationGuard from 'src/auth/jwt-authentication.guard';
 import { Role } from 'src/users/entities/role.enum';
@@ -7,6 +17,7 @@ import { Roles } from 'src/users/roles.decorator';
 import { RolesGuard } from 'src/users/roles.guard';
 import { ApiResponse } from 'src/utils/types/common';
 import { CreateOrderDto } from './dto/create-order-dto';
+import { ExportFileDto } from './dto/export-file-dto';
 import { Order } from './entities/order.entity';
 import { OrdersService } from './orders.service';
 
@@ -29,5 +40,15 @@ export class OrdersController {
   @Get('/:id')
   getAllOrders(@Param('id') id: string): Promise<ApiResponse<Order[]>> {
     return this.ordersService.getOrders(+id);
+  }
+
+  @Roles(Role.ADMIN)
+  @Post('export')
+  @HttpCode(200)
+  async export(@Body() exportFileDto: ExportFileDto, @Res() res: Response) {
+    const csv = await this.ordersService.export(exportFileDto);
+    res.header('Content-Type', 'text/csv');
+    res.attachment('orders.csv');
+    return res.send(csv);
   }
 }
