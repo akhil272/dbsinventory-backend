@@ -1,5 +1,6 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   ManyToOne,
   OneToMany,
@@ -51,4 +52,7 @@ export class Stock {
 
   @OneToMany((_type) => Order, (order) => order.stock)
   orders: Order[];
+
+  @CreateDateColumn()
+  created_at: Date;
 }

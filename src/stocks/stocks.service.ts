@@ -5,6 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Parser } from 'json2csv';
 import PostgresErrorCode from 'src/database/postgresErrorCodes.enum';
 import { LocationService } from 'src/location/location.service';
 import { TransportService } from 'src/transport/transport.service';
@@ -13,6 +14,7 @@ import { User } from 'src/users/entities/user.entity';
 import { VendorService } from 'src/vendor/vendor.service';
 import { CreateStockDto } from './dto/create-stock.dto';
 import { GetStocksFilterDto } from './dto/get-stocks-filter.dto';
+import { StocksExportFileDto } from './dto/stocks-export-file-dto';
 import { StocksMetaDto } from './dto/stocks-meta-dto';
 import { UpdateStockDto } from './dto/update-stock.dto';
 import { Stock } from './stock.entity';
@@ -148,5 +150,50 @@ export class StocksService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  async export(stocksExportFileDto: StocksExportFileDto) {
+    const parser = new Parser({
+      fields: [
+        'ID',
+        'Product_Line',
+        'DOM',
+        'Purchase_Date',
+        'Quantity',
+        'Cost',
+        'Sold_Out',
+        'TyreDetail_Id',
+        'Transport_Id',
+        'Vendor_Id',
+        'Location_Id',
+        'User_Id',
+        'Orders_Id',
+        'Created_At',
+      ],
+    });
+    const stocks = await this.stocksRepository.getExportData(
+      stocksExportFileDto,
+    );
+    const json = [];
+    stocks.forEach((stock) => {
+      json.push({
+        ID: stock.id,
+        Product_Line: stock.product_line,
+        DOM: stock.dom,
+        Purchase_Date: stock.purchase_date,
+        Quantity: stock.quantity,
+        Cost: stock.cost,
+        Sold_Out: stock.sold_out,
+        TyreDetail_Id: stock.tyreDetail,
+        Transport_Id: stock.transport,
+        Vendor_Id: stock.vendor,
+        Location_Id: stock.location,
+        User_Id: stock.user,
+        Orders_Id: stock.orders,
+        Created_At: stock.created_at,
+      });
+    });
+    const csv = parser.parse(json);
+    return csv;
   }
 }

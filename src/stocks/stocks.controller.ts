@@ -4,10 +4,12 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   Param,
   Patch,
   Post,
   Query,
+  Res,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -23,6 +25,9 @@ import { Roles } from 'src/users/roles.decorator';
 import { Role } from 'src/users/entities/role.enum';
 import { StocksMetaDto } from './dto/stocks-meta-dto';
 import JwtAuthenticationGuard from 'src/auth/jwt-authentication.guard';
+import { StocksExportFileDto } from './dto/stocks-export-file-dto';
+import { Response } from 'express';
+import { ApiResponse } from 'src/utils/types/common';
 
 @Controller('stocks')
 @UseGuards(JwtAuthenticationGuard, RolesGuard)
@@ -65,5 +70,19 @@ export class StocksController {
     @GetUser() user: User,
   ): Promise<Stock> {
     return this.stocksService.updateStockById(+id, updateStockDto, user);
+  }
+
+  @Post('export')
+  @Roles(Role.ADMIN)
+  @HttpCode(200)
+  async export(
+    @Body() stocksExportFileDto: StocksExportFileDto,
+    @Res() res: Response,
+  ): Promise<{ success: boolean }> {
+    const csv = await this.stocksService.export(stocksExportFileDto);
+    res.header('Content-type', 'text/csv');
+    res.attachment('stocks.csv');
+    res.send(csv);
+    return { success: true };
   }
 }

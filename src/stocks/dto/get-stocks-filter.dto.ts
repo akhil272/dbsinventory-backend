@@ -20,6 +20,9 @@ export class GetStocksFilterDto {
   pattern?: string;
 
   @IsOptional()
+  tyreDetail_id?: number;
+
+  @IsOptional()
   search?: string;
 
   @IsOptional()

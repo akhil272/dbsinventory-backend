@@ -12,6 +12,7 @@ import { Transport } from 'src/transport/entities/transport.entity';
 import { Vendor } from 'src/vendor/entities/vendor.entity';
 import { Location } from 'src/location/entities/location.entity';
 import { TyreDetail } from 'src/tyre-detail/entities/tyre-detail.entity';
+import { StocksExportFileDto } from './dto/stocks-export-file-dto';
 
 @EntityRepository(Stock)
 export class StocksRepository extends Repository<Stock> {
@@ -24,6 +25,7 @@ export class StocksRepository extends Repository<Stock> {
       vendor,
       transport,
       location,
+      tyreDetail_id,
       take = 25,
       page = 1,
     } = filterDto;
@@ -45,6 +47,9 @@ export class StocksRepository extends Repository<Stock> {
       .leftJoinAndSelect('stock.vendor', 'vendor')
       .leftJoinAndSelect('stock.location', 'location')
       .leftJoinAndSelect('stock.transport', 'transport');
+    if (tyreDetail_id) {
+      query.where('stock.tyreDetail = :id', { id: tyreDetail_id });
+    }
     if (size) {
       query.where('(tyreSize.size ILIKE :size)', { size: `%${size}%` });
     }
@@ -122,6 +127,24 @@ export class StocksRepository extends Repository<Stock> {
       return stock;
     } catch (error) {
       throw new InternalServerErrorException('Failed to add stock to system.');
+    }
+  }
+
+  async getExportData(stocksExportFileDto: StocksExportFileDto) {
+    const query = this.createQueryBuilder('stock');
+    const start = new Date(stocksExportFileDto.start_date);
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(stocksExportFileDto.end_date);
+    end.setHours(24, 0, 0, 0);
+    try {
+      const stocks = await query
+        .where('stock.created_at >= :start', { start })
+        .andWhere('stock.created_at <= :end', { end })
+        .loadAllRelationIds()
+        .getMany();
+      return stocks;
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to fetch stock data.');
     }
   }
 }

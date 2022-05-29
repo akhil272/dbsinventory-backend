@@ -21,7 +21,7 @@ export class Order {
   employee_name: string;
 
   @Column()
-  customer_name: string;
+  customer_phone_number: string;
 
   @Column()
   profit: number;
