@@ -26,7 +26,7 @@ import { JwtPayload } from './jwt-payload.interface';
 import SmsService from 'src/sms/sms.service';
 import otplib from 'src/config/otplib.config';
 import { RefreshTokenPayload } from './refresh-token-payload.interface';
-import { RefreshToken } from './refresh-token.entity';
+import { RefreshToken } from './entities/refresh-token.entity';
 
 @Injectable()
 export class AuthService {

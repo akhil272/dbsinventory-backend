@@ -17,7 +17,7 @@ import { GetStocksFilterDto } from './dto/get-stocks-filter.dto';
 import { StocksExportFileDto } from './dto/stocks-export-file-dto';
 import { StocksMetaDto } from './dto/stocks-meta-dto';
 import { UpdateStockDto } from './dto/update-stock.dto';
-import { Stock } from './stock.entity';
+import { Stock } from './entities/stock.entity';
 import { StocksRepository } from './stocks.repository';
 
 @Injectable()

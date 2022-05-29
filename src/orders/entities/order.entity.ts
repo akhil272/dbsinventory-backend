@@ -1,5 +1,5 @@
-import { Stock } from 'src/stocks/stock.entity';
 import { Type } from 'class-transformer';
+import { Stock } from 'src/stocks/entities/stock.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
@@ -19,6 +19,9 @@ export class Order {
 
   @Column()
   employee_name: string;
+
+  @Column()
+  customer_name: string;
 
   @Column()
   customer_phone_number: string;

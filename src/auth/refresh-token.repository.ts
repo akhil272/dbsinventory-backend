@@ -2,7 +2,7 @@ import { InternalServerErrorException, Logger } from '@nestjs/common';
 import { User } from 'src/users/entities/user.entity';
 import { EntityRepository, Repository } from 'typeorm';
 
-import { RefreshToken } from './refresh-token.entity';
+import { RefreshToken } from './entities/refresh-token.entity';
 
 @EntityRepository(RefreshToken)
 export class RefreshTokenRepository extends Repository<RefreshToken> {

@@ -16,4 +16,8 @@ export class CreateOrderDto {
   @IsNotEmpty()
   @IsString()
   customer_name: string;
+
+  @IsNotEmpty()
+  @IsString()
+  customer_phone_number: string;
 }

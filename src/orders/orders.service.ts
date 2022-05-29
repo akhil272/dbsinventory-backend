@@ -6,7 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Parser } from 'json2csv';
 import { NotFoundError } from 'rxjs';
-import { Stock } from 'src/stocks/stock.entity';
+import { Stock } from 'src/stocks/entities/stock.entity';
 import { User } from 'src/users/entities/user.entity';
 import { ApiResponse } from 'src/utils/types/common';
 import { Repository } from 'typeorm';
@@ -24,7 +24,8 @@ export class OrdersService {
   ) {}
 
   async addOrder(createOrderDto: CreateOrderDto, user: User): Promise<Order> {
-    const { id, sold_price, quantity, customer_name } = createOrderDto;
+    const { id, sold_price, quantity, customer_name, customer_phone_number } =
+      createOrderDto;
     const result = await this.stockRepository.findOne(id);
     if (!result) {
       throw NotFoundError;
@@ -41,6 +42,7 @@ export class OrdersService {
         sold_price,
         sale_date: new Date(),
         customer_name,
+        customer_phone_number,
         profit,
       });
 

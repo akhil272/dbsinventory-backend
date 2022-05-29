@@ -1,6 +1,6 @@
 import { Exclude } from 'class-transformer';
-import LocalFile from 'src/local-files/local-file.entity';
-import { Stock } from 'src/stocks/stock.entity';
+import LocalFile from 'src/local-files/entities/local-file.entity';
+import { Stock } from 'src/stocks/entities/stock.entity';
 import {
   Column,
   DeleteDateColumn,
@@ -36,7 +36,7 @@ export class User {
     nullable: true,
   })
   @Exclude()
-  public current_hashed_refresh_token?: string;
+  current_hashed_refresh_token?: string;
 
   @Column({
     type: 'enum',
@@ -55,8 +55,8 @@ export class User {
   @OneToOne(() => LocalFile, {
     nullable: true,
   })
-  public avatar?: LocalFile;
+  avatar?: LocalFile;
 
   @Column({ nullable: true })
-  public avatarId?: number;
+  avatarId?: number;
 }

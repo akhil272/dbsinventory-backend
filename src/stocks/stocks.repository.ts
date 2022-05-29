@@ -1,5 +1,5 @@
 import { EntityRepository, Repository } from 'typeorm';
-import { Stock } from './stock.entity';
+import { Stock } from './entities/stock.entity';
 import { CreateStockDto } from './dto/create-stock.dto';
 import { GetStocksFilterDto } from './dto/get-stocks-filter.dto';
 import { User } from 'src/users/entities/user.entity';

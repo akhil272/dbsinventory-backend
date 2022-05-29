@@ -1,5 +1,5 @@
 import { Pattern } from 'src/pattern/entities/pattern.entity';
-import { Stock } from 'src/stocks/stock.entity';
+import { Stock } from 'src/stocks/entities/stock.entity';
 import { TyreSize } from 'src/tyre-size/entities/tyre-size.entity';
 import {
   Column,
