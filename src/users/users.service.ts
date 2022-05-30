@@ -9,6 +9,7 @@ import { CreateUserDto } from './dto/create-user-dto';
 import PostgresErrorCode from 'src/database/postgresErrorCodes.enum';
 import LocalFilesService from 'src/local-files/local-files.service';
 import { ApiResponse } from 'src/utils/types/common';
+import { LocalFileDto } from 'src/local-files/dto/local-file.dto';
 @Injectable()
 export class UsersService {
   constructor(

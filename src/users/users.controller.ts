@@ -24,9 +24,9 @@ import { GetUsersFilterDto } from './dto/get-users-filter.dto';
 import { RolesGuard } from './roles.guard';
 import JwtAuthenticationGuard from 'src/auth/jwt-authentication.guard';
 import RequestWithUser from 'src/auth/request-with-user.interface';
-import LocalFilesInterceptor from 'src/local-files/local-files.interceptor';
 import { GetUser } from 'src/auth/get-user.decorator';
 import { ApiResponse } from 'src/utils/types/common';
+import LocalFilesInterceptor from 'src/local-files/local-files.interceptor';
 
 @Controller('users')
 @UseGuards(JwtAuthenticationGuard, RolesGuard)
@@ -90,7 +90,7 @@ export class UsersController {
     @Req() request: RequestWithUser,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    return await this.usersService.addAvatar(request.user.id, {
+    return this.usersService.addAvatar(request.user.id, {
       path: file.path,
       filename: file.originalname,
       mimetype: file.mimetype,

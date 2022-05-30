@@ -77,6 +77,7 @@ export class OrdersService {
         'Quantity',
         'Employee_Name',
         'Customer_Name',
+        'Customer_Phone_Number',
         'Profit',
         'Stock_ID',
       ],
@@ -91,6 +92,7 @@ export class OrdersService {
         Quantity: order.quantity,
         Employee_Name: order.employee_name,
         Customer_Name: order.customer_name,
+        Customer_Phone_Number: order.customer_phone_number,
         Profit: order.profit,
         Stock_ID: order.stock,
       });
