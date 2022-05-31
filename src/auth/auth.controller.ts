@@ -108,4 +108,11 @@ export class AuthController {
   authenticate(@Req() request: RequestWithUser) {
     return request.user;
   }
+
+  @UseGuards(JwtAuthenticationGuard)
+  @Post('mail-confirmation-link')
+  sendMailConfirmationLink(@Req() request: RequestWithUser) {
+    const { user } = request;
+    return this.authService.sendMailConfirmationLink(user);
+  }
 }

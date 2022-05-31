@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GetUsersFilterDto } from './dto/get-users-filter.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -115,5 +120,24 @@ export class UsersService {
     await this.usersRepository.update(userId, {
       avatarId: avatar.id,
     });
+  }
+
+  async getUserByMail(email: string) {
+    const user = await this.usersRepository.findOne({ email });
+    if (!user) {
+      throw new NotFoundException(
+        'Provided email not registered in the system.',
+      );
+    }
+    return user;
+  }
+
+  async markEmailAsConfirmed(email: string) {
+    return this.usersRepository.update(
+      { email },
+      {
+        is_email_verified: true,
+      },
+    );
   }
 }

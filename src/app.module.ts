@@ -17,6 +17,7 @@ import { TyreDetailModule } from './tyre-detail/tyre-detail.module';
 import { SmsModule } from './sms/sms.module';
 import { LocalFilesModule } from './local-files/local-files.module';
 import { DatabaseModule } from './database/database.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { DatabaseModule } from './database/database.module';
     TyreDetailModule,
     SmsModule,
     LocalFilesModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService],

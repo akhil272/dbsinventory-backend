@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   ForbiddenException,
   HttpException,
   HttpStatus,
@@ -27,6 +28,7 @@ import SmsService from 'src/sms/sms.service';
 import otplib from 'src/config/otplib.config';
 import { RefreshTokenPayload } from './refresh-token-payload.interface';
 import { RefreshToken } from './entities/refresh-token.entity';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class AuthService {
@@ -40,6 +42,7 @@ export class AuthService {
     private readonly configService: ConfigService,
     private readonly usersService: UsersService,
     private readonly smsService: SmsService,
+    private readonly mailService: MailService,
   ) {}
 
   async register(registerUserDto: RegisterUserDto): Promise<User> {
@@ -277,5 +280,13 @@ export class AuthService {
     }
 
     return this.refreshTokenRepository.findTokenById(tokenId);
+  }
+
+  async sendMailConfirmationLink(user) {
+    const findUser = await this.usersService.getUserByMail(user.email);
+    if (findUser.is_email_verified) {
+      throw new ConflictException('Email already verified.');
+    }
+    return await this.mailService.sendUserConfirmation(user);
   }
 }
