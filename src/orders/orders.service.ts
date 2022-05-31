@@ -71,7 +71,7 @@ export class OrdersService {
   async export(exportFileDto: ExportFileDto) {
     const parser = new Parser({
       fields: [
-        'ID',
+        'Order_Id',
         'Sale_Date',
         'Sold_Price',
         'Quantity',
@@ -86,7 +86,7 @@ export class OrdersService {
     const json = [];
     orders.forEach((order) => {
       json.push({
-        ID: order.id,
+        Order_Id: order.id,
         Sale_Date: order.sale_date,
         Sold_Price: order.sold_price,
         Quantity: order.quantity,

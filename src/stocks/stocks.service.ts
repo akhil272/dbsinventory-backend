@@ -155,7 +155,7 @@ export class StocksService {
   async export(stocksExportFileDto: StocksExportFileDto) {
     const parser = new Parser({
       fields: [
-        'ID',
+        'Stock_Id',
         'Product_Line',
         'DOM',
         'Purchase_Date',
@@ -177,7 +177,7 @@ export class StocksService {
     const json = [];
     stocks.forEach((stock) => {
       json.push({
-        ID: stock.id,
+        Stock_Id: stock.id,
         Product_Line: stock.product_line,
         DOM: stock.dom,
         Purchase_Date: stock.purchase_date,

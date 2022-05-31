@@ -30,6 +30,9 @@ export class User {
   phone_number: string;
 
   @Column({ default: false })
+  is_email_verified: boolean;
+
+  @Column({ default: false })
   is_verified: boolean;
 
   @Column({

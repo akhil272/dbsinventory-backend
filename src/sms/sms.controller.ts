@@ -62,8 +62,6 @@ export default class SmsController {
   async retryVerification(
     @Body() retryVerificationDto: RetryVerificationDto,
   ): Promise<{ success: boolean }> {
-    console.log(retryVerificationDto);
-
     const userVerificationCompleted = await this.smsService.confirmPhoneNumber(
       retryVerificationDto.phone_number,
       retryVerificationDto.otp,

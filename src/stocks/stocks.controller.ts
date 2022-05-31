@@ -27,7 +27,6 @@ import { StocksMetaDto } from './dto/stocks-meta-dto';
 import JwtAuthenticationGuard from 'src/auth/jwt-authentication.guard';
 import { StocksExportFileDto } from './dto/stocks-export-file-dto';
 import { Response } from 'express';
-import { ApiResponse } from 'src/utils/types/common';
 
 @Controller('stocks')
 @UseGuards(JwtAuthenticationGuard, RolesGuard)
