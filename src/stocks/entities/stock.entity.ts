@@ -32,6 +32,12 @@ export class Stock {
   @Column()
   cost: number;
 
+  @Column({ nullable: true })
+  speed_rating: string;
+
+  @Column({ nullable: true })
+  load_index: number;
+
   @Column('boolean', { default: false })
   sold_out: boolean;
 

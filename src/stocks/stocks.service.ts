@@ -196,4 +196,23 @@ export class StocksService {
     const csv = parser.parse(json);
     return csv;
   }
+
+  findManyByBrandAndTyreSize(brand: string, tyre_size: string) {
+    return this.stocksRepository.findManyByBrandAndTyreSize(brand, tyre_size);
+  }
+  findOneByBrandPatternTyreSizeSpeedRatingLoadIndex(
+    brand: string,
+    pattern: string,
+    tyre_size: string,
+    speed_rating: string,
+    load_index: number,
+  ) {
+    return this.stocksRepository.findOneByBrandPatternTyreSizeSpeedRatingLoadIndex(
+      brand,
+      pattern,
+      tyre_size,
+      speed_rating,
+      load_index,
+    );
+  }
 }

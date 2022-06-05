@@ -109,7 +109,15 @@ export class StocksRepository extends Repository<Stock> {
     location: Location,
     tyreDetail: TyreDetail,
   ) {
-    const { product_line, dom, purchase_date, quantity, cost } = createStockDto;
+    const {
+      product_line,
+      dom,
+      purchase_date,
+      quantity,
+      cost,
+      speed_rating,
+      load_index,
+    } = createStockDto;
     try {
       const stock = this.create({
         product_line,
@@ -122,6 +130,8 @@ export class StocksRepository extends Repository<Stock> {
         quantity,
         cost,
         user,
+        speed_rating,
+        load_index,
       });
       await this.save(stock);
       return stock;
@@ -146,5 +156,76 @@ export class StocksRepository extends Repository<Stock> {
     } catch (error) {
       throw new InternalServerErrorException('Failed to fetch stock data.');
     }
+  }
+
+  async findManyByBrandAndTyreSize(brand: string, tyreSize: string) {
+    return await this.createQueryBuilder('stock')
+      .leftJoinAndSelect('stock.tyreDetail', 'tyreDetail')
+      .leftJoinAndSelect('tyreDetail.pattern', 'pattern')
+      .leftJoinAndSelect('pattern.brand', 'brand')
+      .leftJoinAndSelect('tyreDetail.tyreSize', 'tyreSize')
+      .where('(brand.name = :brand)', { brand })
+      .andWhere('(tyreSize.size = :tyreSize)', { tyreSize })
+      .getMany();
+  }
+
+  async findOneByBrandPatternTyreSizeSpeedRatingLoadIndex(
+    brand: string,
+    pattern: string,
+    tyre_size: string,
+    speed_rating: string,
+    load_index: number,
+  ) {
+    if (!speed_rating && !load_index) {
+      const stock = await this.createQueryBuilder('stock')
+        .leftJoinAndSelect('stock.tyreDetail', 'tyreDetail')
+        .leftJoinAndSelect('tyreDetail.pattern', 'pattern')
+        .leftJoinAndSelect('pattern.brand', 'brand')
+        .leftJoinAndSelect('tyreDetail.tyreSize', 'tyreSize')
+        .where('(brand.name = :brand)', { brand })
+        .andWhere('(pattern.name = :pattern)', { pattern })
+        .andWhere('(tyreSize.size = :tyre_size)', { tyre_size })
+        .getOne();
+      return stock;
+    }
+    if (!load_index) {
+      const stock = await this.createQueryBuilder('stock')
+        .leftJoinAndSelect('stock.tyreDetail', 'tyreDetail')
+        .leftJoinAndSelect('tyreDetail.pattern', 'pattern')
+        .leftJoinAndSelect('pattern.brand', 'brand')
+        .leftJoinAndSelect('tyreDetail.tyreSize', 'tyreSize')
+        .where('(brand.name = :brand)', { brand })
+        .andWhere('(pattern.name = :pattern)', { pattern })
+        .andWhere('(tyreSize.size = :tyre_size)', { tyre_size })
+        .andWhere('(stock.speed_rating = :speed_rating)', { speed_rating })
+        .getOne();
+      return stock;
+    }
+    if (!speed_rating) {
+      const stock = await this.createQueryBuilder('stock')
+        .leftJoinAndSelect('stock.tyreDetail', 'tyreDetail')
+        .leftJoinAndSelect('tyreDetail.pattern', 'pattern')
+        .leftJoinAndSelect('pattern.brand', 'brand')
+        .leftJoinAndSelect('tyreDetail.tyreSize', 'tyreSize')
+        .where('(brand.name = :brand)', { brand })
+        .andWhere('(pattern.name = :pattern)', { pattern })
+        .andWhere('(tyreSize.size = :tyre_size)', { tyre_size })
+        .andWhere('(stock.load_index = :load_index)', { load_index })
+        .getOne();
+      return stock;
+    }
+
+    const stock = await this.createQueryBuilder('stock')
+      .leftJoinAndSelect('stock.tyreDetail', 'tyreDetail')
+      .leftJoinAndSelect('tyreDetail.pattern', 'pattern')
+      .leftJoinAndSelect('pattern.brand', 'brand')
+      .leftJoinAndSelect('tyreDetail.tyreSize', 'tyreSize')
+      .where('(brand.name = :brand)', { brand })
+      .andWhere('(pattern.name = :pattern)', { pattern })
+      .andWhere('(tyreSize.size = :tyre_size)', { tyre_size })
+      .andWhere('(stock.speed_rating = :speed_rating)', { speed_rating })
+      .andWhere('(stock.load_index = :load_index)', { load_index })
+      .getOne();
+    return stock;
   }
 }

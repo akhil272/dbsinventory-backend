@@ -1,6 +1,8 @@
 import { Exclude } from 'class-transformer';
 import LocalFile from 'src/local-files/entities/local-file.entity';
+import { Quotation } from 'src/quotations/entities/quotation.entity';
 import { Stock } from 'src/stocks/entities/stock.entity';
+import { UserQuote } from 'src/user-quote/entities/user-quote.entity';
 import {
   Column,
   DeleteDateColumn,
@@ -48,7 +50,7 @@ export class User {
   })
   roles: Role;
 
-  @OneToMany((_type) => Stock, (stock) => stock.user, { eager: true })
+  @OneToMany(() => Stock, (stock) => stock.user, { eager: true })
   stocks: Stock[];
 
   @DeleteDateColumn()
@@ -62,4 +64,7 @@ export class User {
 
   @Column({ nullable: true })
   avatarId?: number;
+
+  @OneToMany(() => Quotation, (quotation) => quotation.user)
+  quotations: Quotation[];
 }

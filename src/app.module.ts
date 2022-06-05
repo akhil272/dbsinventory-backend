@@ -18,6 +18,8 @@ import { SmsModule } from './sms/sms.module';
 import { LocalFilesModule } from './local-files/local-files.module';
 import { DatabaseModule } from './database/database.module';
 import { MailModule } from './mail/mail.module';
+import { QuotationsModule } from './quotations/quotations.module';
+import { UserQuoteModule } from './user-quote/user-quote.module';
 
 @Module({
   imports: [
@@ -40,6 +42,8 @@ import { MailModule } from './mail/mail.module';
     SmsModule,
     LocalFilesModule,
     MailModule,
+    QuotationsModule,
+    UserQuoteModule,
   ],
   controllers: [AppController],
   providers: [AppService],

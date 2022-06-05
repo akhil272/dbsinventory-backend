@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateStockDto {
   @IsNotEmpty()
@@ -31,4 +31,12 @@ export class CreateStockDto {
 
   @IsNotEmpty()
   cost: number;
+
+  @IsString()
+  @IsOptional()
+  speed_rating: string;
+
+  @IsNumber()
+  @IsOptional()
+  load_index: number;
 }
