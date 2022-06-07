@@ -3,5 +3,4 @@ export enum Status {
   WAITING = 'WAITING',
   ACCEPTED = 'ACCEPTED',
   FOLLOWUP = 'FOLLOWUP',
-  COMPLETED = 'COMPLETED',
 }

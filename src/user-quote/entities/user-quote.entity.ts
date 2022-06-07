@@ -32,4 +32,7 @@ export class UserQuote {
 
   @Column({ nullable: true })
   notes: string;
+
+  @Column({ nullable: true })
+  admin_comments: string;
 }

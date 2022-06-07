@@ -3,6 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserQuoteService } from 'src/user-quote/user-quote.service';
 import { User } from 'src/users/entities/user.entity';
 import { CreateQuotationDto } from './dto/create-quotation.dto';
+import { GetQuotationsFilterDto } from './dto/get-quotations-filter.dto';
+import { QuotationsResponseDto } from './dto/quotation-response.dto';
 import { UpdateQuotationDto } from './dto/update-quotation.dto';
 import { QuotationsRepository } from './quotations.repository';
 
@@ -14,25 +16,28 @@ export class QuotationsService {
     private readonly userQuoteService: UserQuoteService,
   ) {}
   async create(createQuotationDto: CreateQuotationDto, user: User) {
-    const { userQuote } = createQuotationDto;
-
+    const { userQuotes } = createQuotationDto;
+    const count = userQuotes.length;
     const quotation = this.quotationsRepository.create({
       user,
+      count,
     });
     await this.quotationsRepository.save(quotation);
 
-    userQuote.map(async (quote) => {
+    userQuotes.map(async (quote) => {
       await this.userQuoteService.createQuoteWithQuotation(quote, quotation);
     });
     return quotation;
   }
 
-  findAll() {
-    return this.quotationsRepository.find({ relations: ['userQuotes'] });
+  async findAll(
+    filterDto: GetQuotationsFilterDto,
+  ): Promise<QuotationsResponseDto> {
+    return this.quotationsRepository.getQuotations(filterDto);
   }
 
   findOne(id: number) {
-    return this.quotationsRepository.findOne(id, { relations: ['userQuotes'] });
+    return this.quotationsRepository.findQuoteById(id);
   }
 
   update(id: number, updateQuotationDto: UpdateQuotationDto) {

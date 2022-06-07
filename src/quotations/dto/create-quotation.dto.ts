@@ -6,5 +6,5 @@ export class CreateQuotationDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateUserQuoteDto)
-  userQuote: CreateUserQuoteDto[];
+  userQuotes: CreateUserQuoteDto[];
 }

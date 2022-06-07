@@ -31,9 +31,15 @@ export class Quotation {
   @Column({ nullable: true })
   notes: string;
 
+  @Column({ nullable: true })
+  validity: number;
+
   @ManyToOne(() => User, (user) => user.quotations)
   user: User;
 
   @CreateDateColumn()
   created_at: Date;
+
+  @Column()
+  count: number;
 }

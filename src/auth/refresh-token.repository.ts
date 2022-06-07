@@ -23,6 +23,7 @@ export class RefreshTokenRepository extends Repository<RefreshToken> {
 
     try {
       await token.save();
+      this.logger.debug(`Created refresh token for user ${user?.phone_number}`);
     } catch (error) {
       this.logger.error(
         `Failed to create refresh token for user ${user?.phone_number}`,

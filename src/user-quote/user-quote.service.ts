@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Quotation } from 'src/quotations/entities/quotation.entity';
 import { StocksService } from 'src/stocks/stocks.service';
@@ -29,12 +29,37 @@ export class UserQuoteService {
     return this.userQuotesRepository.find();
   }
 
-  findOne(id: number) {
-    return this.userQuotesRepository.findOne(id);
+  async findOne(id: number) {
+    const userQuote = await this.userQuotesRepository.findOne(id);
+    if (!userQuote) {
+      throw new InternalServerErrorException('User Quote not found');
+    }
+    const { brand, pattern, tyre_size, speed_rating, load_index } = userQuote;
+    const exactStock =
+      await this.stocksService.findOneByBrandPatternTyreSizeSpeedRatingLoadIndex(
+        brand,
+        pattern,
+        tyre_size,
+        speed_rating,
+        load_index,
+      );
+
+    const stocks = await this.stocksService.findManyByBrandAndTyreSize(
+      brand,
+      tyre_size,
+    );
+    return { userQuote, stocks, exactStock };
   }
 
-  update(id: number, updateUserQuoteDto: UpdateUserQuoteDto) {
-    return `This action updates a #${id} userQuote`;
+  async update(id: number, updateUserQuoteDto: UpdateUserQuoteDto) {
+    const userQuote = await this.userQuotesRepository.findOne(id);
+    if (!userQuote) {
+      throw new InternalServerErrorException('User Quote not found');
+    }
+    userQuote.price = updateUserQuoteDto.price;
+    userQuote.admin_comments = updateUserQuoteDto.admin_comments;
+    await this.userQuotesRepository.save(userQuote);
+    return userQuote;
   }
 
   remove(id: number) {

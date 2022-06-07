@@ -27,6 +27,9 @@ export class Stock {
   purchase_date: Date;
 
   @Column()
+  purchased_quantity: number;
+
+  @Column()
   quantity: number;
 
   @Column()

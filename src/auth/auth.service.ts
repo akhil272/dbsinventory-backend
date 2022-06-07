@@ -94,6 +94,7 @@ export class AuthService {
     const isOtpValid = this.verifyOtp(otp, user);
 
     if (isOtpValid) {
+      this.logger.debug(`OTP for user ${user?.phone_number} is valid`);
       const accessToken = await this.generateAccessToken(user);
       const refreshToken = await this.generateRefreshToken(
         user,
@@ -169,7 +170,9 @@ export class AuthService {
       user,
       expiresIn,
     );
-
+    this.logger.debug(
+      `Generated refresh token for user ${phone_number}, token: ${token}`,
+    );
     const optionss: JwtSignOptions = {
       ...BASE_OPTIONS,
       expiresIn,

@@ -8,12 +8,15 @@ import {
   Delete,
   UseGuards,
   Req,
+  Query,
 } from '@nestjs/common';
 import { QuotationsService } from './quotations.service';
 import { CreateQuotationDto } from './dto/create-quotation.dto';
 import { UpdateQuotationDto } from './dto/update-quotation.dto';
 import JwtAuthenticationGuard from 'src/auth/jwt-authentication.guard';
 import RequestWithUser from 'src/auth/request-with-user.interface';
+import { QuotationsResponseDto } from './dto/quotation-response.dto';
+import { GetQuotationsFilterDto } from './dto/get-quotations-filter.dto';
 
 @Controller('quotations')
 @UseGuards(JwtAuthenticationGuard)
@@ -30,8 +33,10 @@ export class QuotationsController {
   }
 
   @Get()
-  findAll() {
-    return this.quotationsService.findAll();
+  getQuotations(
+    @Query() filterDto: GetQuotationsFilterDto,
+  ): Promise<QuotationsResponseDto> {
+    return this.quotationsService.findAll(filterDto);
   }
 
   @Get(':id')

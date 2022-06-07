@@ -127,6 +127,7 @@ export class StocksRepository extends Repository<Stock> {
         transport,
         vendor,
         location,
+        purchased_quantity: quantity,
         quantity,
         cost,
         user,
@@ -134,6 +135,7 @@ export class StocksRepository extends Repository<Stock> {
         load_index,
       });
       await this.save(stock);
+      console.log(stock);
       return stock;
     } catch (error) {
       throw new InternalServerErrorException('Failed to add stock to system.');
@@ -163,6 +165,9 @@ export class StocksRepository extends Repository<Stock> {
       .leftJoinAndSelect('stock.tyreDetail', 'tyreDetail')
       .leftJoinAndSelect('tyreDetail.pattern', 'pattern')
       .leftJoinAndSelect('pattern.brand', 'brand')
+      .leftJoinAndSelect('stock.vendor', 'vendor')
+      .leftJoinAndSelect('stock.location', 'location')
+      .leftJoinAndSelect('stock.transport', 'transport')
       .leftJoinAndSelect('tyreDetail.tyreSize', 'tyreSize')
       .where('(brand.name = :brand)', { brand })
       .andWhere('(tyreSize.size = :tyreSize)', { tyreSize })
@@ -182,6 +187,9 @@ export class StocksRepository extends Repository<Stock> {
         .leftJoinAndSelect('tyreDetail.pattern', 'pattern')
         .leftJoinAndSelect('pattern.brand', 'brand')
         .leftJoinAndSelect('tyreDetail.tyreSize', 'tyreSize')
+        .leftJoinAndSelect('stock.vendor', 'vendor')
+        .leftJoinAndSelect('stock.location', 'location')
+        .leftJoinAndSelect('stock.transport', 'transport')
         .where('(brand.name = :brand)', { brand })
         .andWhere('(pattern.name = :pattern)', { pattern })
         .andWhere('(tyreSize.size = :tyre_size)', { tyre_size })
@@ -194,6 +202,9 @@ export class StocksRepository extends Repository<Stock> {
         .leftJoinAndSelect('tyreDetail.pattern', 'pattern')
         .leftJoinAndSelect('pattern.brand', 'brand')
         .leftJoinAndSelect('tyreDetail.tyreSize', 'tyreSize')
+        .leftJoinAndSelect('stock.vendor', 'vendor')
+        .leftJoinAndSelect('stock.location', 'location')
+        .leftJoinAndSelect('stock.transport', 'transport')
         .where('(brand.name = :brand)', { brand })
         .andWhere('(pattern.name = :pattern)', { pattern })
         .andWhere('(tyreSize.size = :tyre_size)', { tyre_size })
@@ -207,6 +218,9 @@ export class StocksRepository extends Repository<Stock> {
         .leftJoinAndSelect('tyreDetail.pattern', 'pattern')
         .leftJoinAndSelect('pattern.brand', 'brand')
         .leftJoinAndSelect('tyreDetail.tyreSize', 'tyreSize')
+        .leftJoinAndSelect('stock.vendor', 'vendor')
+        .leftJoinAndSelect('stock.location', 'location')
+        .leftJoinAndSelect('stock.transport', 'transport')
         .where('(brand.name = :brand)', { brand })
         .andWhere('(pattern.name = :pattern)', { pattern })
         .andWhere('(tyreSize.size = :tyre_size)', { tyre_size })
@@ -220,6 +234,9 @@ export class StocksRepository extends Repository<Stock> {
       .leftJoinAndSelect('tyreDetail.pattern', 'pattern')
       .leftJoinAndSelect('pattern.brand', 'brand')
       .leftJoinAndSelect('tyreDetail.tyreSize', 'tyreSize')
+      .leftJoinAndSelect('stock.vendor', 'vendor')
+      .leftJoinAndSelect('stock.location', 'location')
+      .leftJoinAndSelect('stock.transport', 'transport')
       .where('(brand.name = :brand)', { brand })
       .andWhere('(pattern.name = :pattern)', { pattern })
       .andWhere('(tyreSize.size = :tyre_size)', { tyre_size })
