@@ -9,5 +9,6 @@ import { UserQuoteModule } from 'src/user-quote/user-quote.module';
   imports: [TypeOrmModule.forFeature([QuotationsRepository]), UserQuoteModule],
   controllers: [QuotationsController],
   providers: [QuotationsService],
+  exports: [QuotationsService],
 })
 export class QuotationsModule {}

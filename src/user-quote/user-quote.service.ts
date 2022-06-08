@@ -52,14 +52,13 @@ export class UserQuoteService {
   }
 
   async update(id: number, updateUserQuoteDto: UpdateUserQuoteDto) {
-    const userQuote = await this.userQuotesRepository.findOne(id);
-    if (!userQuote) {
-      throw new InternalServerErrorException('User Quote not found');
-    }
-    userQuote.price = updateUserQuoteDto.price;
-    userQuote.admin_comments = updateUserQuoteDto.admin_comments;
-    await this.userQuotesRepository.save(userQuote);
-    return userQuote;
+    const userQuoteWithPrice =
+      await this.userQuotesRepository.updateQuoteAndQuotationPrice(
+        id,
+        updateUserQuoteDto,
+      );
+
+    return userQuoteWithPrice;
   }
 
   remove(id: number) {

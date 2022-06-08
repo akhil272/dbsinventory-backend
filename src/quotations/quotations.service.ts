@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserQuoteService } from 'src/user-quote/user-quote.service';
 import { User } from 'src/users/entities/user.entity';
@@ -46,5 +46,15 @@ export class QuotationsService {
 
   remove(id: number) {
     return `This action removes a #${id} quotation`;
+  }
+
+  async updateTotalPrice(totalPrice: number, id: number) {
+    const quotation = await this.quotationsRepository.findOne(id);
+    if (!quotation) {
+      throw new InternalServerErrorException('Quotation not found');
+    }
+    quotation.price = totalPrice;
+    await this.quotationsRepository.save(quotation);
+    return quotation;
   }
 }

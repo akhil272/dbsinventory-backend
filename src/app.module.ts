@@ -20,6 +20,7 @@ import { DatabaseModule } from './database/database.module';
 import { MailModule } from './mail/mail.module';
 import { QuotationsModule } from './quotations/quotations.module';
 import { UserQuoteModule } from './user-quote/user-quote.module';
+import { ManageQuotationsModule } from './manage-quotations/manage-quotations.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { UserQuoteModule } from './user-quote/user-quote.module';
     MailModule,
     QuotationsModule,
     UserQuoteModule,
+    ManageQuotationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
