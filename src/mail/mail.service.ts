@@ -64,4 +64,20 @@ export class MailService {
       throw new BadRequestException('Bad confirmation token');
     }
   }
+
+  async sendQuotationToUserByMail(user: User, quotation) {
+    const url = `${this.configService.get(
+      'BASE_URL',
+    )}/manage-quotations/download/pdf/${quotation.id}`;
+    await this.mailerService.sendMail({
+      to: user.email,
+      // from: '"Support Team" <support@example.com>', // override default from
+      subject: 'Your Quotation is ready | DBS Tyres',
+      template: 'sendQuotation', // `.hbs` extension is appended automatically
+      context: {
+        name: user.first_name,
+        url,
+      },
+    });
+  }
 }

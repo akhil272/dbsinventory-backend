@@ -1,8 +1,22 @@
-import { Body, Controller, Param, Patch } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Param,
+  Patch,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { UpdateUserQuoteDto } from 'src/user-quote/dto/update-user-quote.dto';
+import { SendQuotationDto } from './dto/send-quotation.dto';
 import { ManageQuotationsService } from './manage-quotations.service';
+import { Response } from 'express';
+import RequestWithUser from 'src/auth/request-with-user.interface';
+import JwtAuthenticationGuard from 'src/auth/jwt-authentication.guard';
 
 @Controller('manage-quotations')
+@UseGuards(JwtAuthenticationGuard)
 export class ManageQuotationsController {
   constructor(
     private readonly manageQuotationsService: ManageQuotationsService,
@@ -17,5 +31,25 @@ export class ManageQuotationsController {
       +id,
       updateUserQuoteDto,
     );
+  }
+
+  @Post('download/pdf/:id')
+  async sendPDFQuotation(
+    @Param('id') id: string,
+    @Req() request: RequestWithUser,
+    @Res() res: Response,
+  ) {
+    const buffer = await this.manageQuotationsService.getPDF(+id, request);
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': `attachment; filename=DBS_Quotation_#${id}.pdf`,
+      'Content-Length': buffer.length,
+    });
+
+    res.end(buffer);
+  }
+  @Post('send')
+  sendQuotation(@Body() sendQuotationDto: SendQuotationDto) {
+    return this.manageQuotationsService.sendQuotation(sendQuotationDto);
   }
 }

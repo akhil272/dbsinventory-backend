@@ -5,9 +5,7 @@ import { User } from 'src/users/entities/user.entity';
 import { CreateQuotationDto } from './dto/create-quotation.dto';
 import { GetQuotationsFilterDto } from './dto/get-quotations-filter.dto';
 import { QuotationsResponseDto } from './dto/quotation-response.dto';
-import { SendQuotationDto } from './dto/send-quotation.dto';
 import { UpdateQuotationDto } from './dto/update-quotation.dto';
-import { Status } from './entities/status.enum';
 import { QuotationsRepository } from './quotations.repository';
 
 @Injectable()
@@ -60,19 +58,6 @@ export class QuotationsService {
       throw new InternalServerErrorException('Quotation not found');
     }
     quotation.price = totalPrice;
-    await this.quotationsRepository.save(quotation);
-    return quotation;
-  }
-
-  async sendQuotation(sendQuotationDto: SendQuotationDto) {
-    const { quotationId, validity, notes } = sendQuotationDto;
-    const quotation = await this.quotationsRepository.findOne(quotationId);
-    if (!quotation) {
-      throw new InternalServerErrorException('Quotation not found');
-    }
-    quotation.validity = validity;
-    quotation.notes = notes;
-    quotation.status = Status.WAITING;
     await this.quotationsRepository.save(quotation);
     return quotation;
   }

@@ -50,7 +50,7 @@ export class User {
   })
   roles: Role;
 
-  @OneToMany(() => Stock, (stock) => stock.user, { eager: true })
+  @OneToMany(() => Stock, (stock) => stock.user)
   stocks: Stock[];
 
   @DeleteDateColumn()

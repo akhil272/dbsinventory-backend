@@ -26,7 +26,6 @@ import JwtAuthenticationGuard from 'src/auth/jwt-authentication.guard';
 import RequestWithUser from 'src/auth/request-with-user.interface';
 import { GetUser } from 'src/auth/get-user.decorator';
 import { ApiResponse } from 'src/utils/types/common';
-import LocalFilesInterceptor from 'src/local-files/local-files.interceptor';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';

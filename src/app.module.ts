@@ -21,6 +21,7 @@ import { MailModule } from './mail/mail.module';
 import { QuotationsModule } from './quotations/quotations.module';
 import { UserQuoteModule } from './user-quote/user-quote.module';
 import { ManageQuotationsModule } from './manage-quotations/manage-quotations.module';
+import { PDFModule } from './pdf/pdf.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { ManageQuotationsModule } from './manage-quotations/manage-quotations.mo
     QuotationsModule,
     UserQuoteModule,
     ManageQuotationsModule,
+    PDFModule,
   ],
   controllers: [AppController],
   providers: [AppService],

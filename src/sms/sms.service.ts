@@ -99,4 +99,16 @@ export default class SmsService {
         });
     });
   }
+
+  async sendQuotationMessage(receiverPhoneNumber: string, message: string) {
+    const senderPhoneNumber = this.configService.get(
+      'TWILIO_SENDER_PHONE_NUMBER',
+    );
+
+    return this.twilioClient.messages.create({
+      body: message,
+      from: senderPhoneNumber,
+      to: receiverPhoneNumber,
+    });
+  }
 }
