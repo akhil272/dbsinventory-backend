@@ -17,6 +17,7 @@ import JwtAuthenticationGuard from 'src/auth/jwt-authentication.guard';
 import RequestWithUser from 'src/auth/request-with-user.interface';
 import { QuotationsResponseDto } from './dto/quotation-response.dto';
 import { GetQuotationsFilterDto } from './dto/get-quotations-filter.dto';
+import { SendQuotationDto } from './dto/send-quotation.dto';
 
 @Controller('quotations')
 @UseGuards(JwtAuthenticationGuard)
@@ -55,5 +56,10 @@ export class QuotationsController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.quotationsService.remove(+id);
+  }
+
+  @Post('send-quotation')
+  sendQuotation(@Body() sendQuotationDto: SendQuotationDto) {
+    return this.quotationsService.sendQuotation(sendQuotationDto);
   }
 }

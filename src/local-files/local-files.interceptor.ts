@@ -7,8 +7,6 @@ import { diskStorage } from 'multer';
 interface LocalFilesInterceptorOptions {
   fieldName: string;
   path?: string;
-  fileFilter?: MulterOptions['fileFilter'];
-  limits?: MulterOptions['limits'];
 }
 
 function LocalFilesInterceptor(
@@ -26,8 +24,6 @@ function LocalFilesInterceptor(
         storage: diskStorage({
           destination,
         }),
-        fileFilter: options.fileFilter,
-        limits: options.limits,
       };
 
       this.fileInterceptor = new (FileInterceptor(
