@@ -1,6 +1,7 @@
 import {
   ForbiddenException,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import RequestWithUser from 'src/auth/request-with-user.interface';
@@ -16,6 +17,7 @@ import { SendQuotationDto } from './dto/send-quotation.dto';
 
 @Injectable()
 export class ManageQuotationsService {
+  private readonly logger = new Logger(this.constructor.name);
   constructor(
     private readonly userQuoteService: UserQuoteService,
     private readonly quotationsService: QuotationsService,
@@ -72,21 +74,22 @@ export class ManageQuotationsService {
     }
 
     if (sms) {
-      console.log('Sending SMS');
+      this.logger.log(`Sending SMS to ${user.phone_number}`);
       const message = `Hi ${user.first_name}, your quotation is ready. Please check your email for more details.`;
       await this.smsService.sendQuotationMessage(user.phone_number, message);
     }
     if (whatsApp) {
-      console.log('Sending WhatsApp');
+      this.logger.log(`Sending WhatsApp to ${user.phone_number}`);
     }
     if (email) {
-      console.log('mailing');
+      this.logger.log(`Sending Email to ${user.email}`);
       await this.mailService.sendQuotationToUserByMail(user, quotation);
     }
     if (callback) {
-      console.log('Sending Callback');
+      this.logger.log(`Sending Callback to ${user.phone_number}`);
     }
     quotation.status = Status.WAITING;
+    await this.quotationsService.updateQuotationStatus(quotation);
     return quotation;
   }
 }

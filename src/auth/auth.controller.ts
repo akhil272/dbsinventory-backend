@@ -84,7 +84,7 @@ export class AuthController {
     return user;
   }
 
-  @Get('refresh')
+  @Get('/refresh')
   async refresh(
     @Req() request: RequestWithUser,
     @Body() refreshTokenDto: RefreshTokenDto,

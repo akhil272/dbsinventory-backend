@@ -6,6 +6,7 @@ import { CreateQuotationDto } from './dto/create-quotation.dto';
 import { GetQuotationsFilterDto } from './dto/get-quotations-filter.dto';
 import { QuotationsResponseDto } from './dto/quotation-response.dto';
 import { UpdateQuotationDto } from './dto/update-quotation.dto';
+import { Quotation } from './entities/quotation.entity';
 import { QuotationsRepository } from './quotations.repository';
 
 @Injectable()
@@ -60,5 +61,9 @@ export class QuotationsService {
     quotation.price = totalPrice;
     await this.quotationsRepository.save(quotation);
     return quotation;
+  }
+
+  async updateQuotationStatus(quotation: Quotation): Promise<Quotation> {
+    return await this.quotationsRepository.save(quotation);
   }
 }
