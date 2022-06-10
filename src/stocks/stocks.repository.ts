@@ -80,6 +80,7 @@ export class StocksRepository extends Repository<Stock> {
         { search: `%${search}%` },
       );
     }
+    query.orderBy('stock.purchase_date', 'ASC');
     const [stocks, total] = await query.take(take).skip(skip).getManyAndCount();
     const last_page = Math.ceil(total / take);
     if (last_page < page) {
@@ -135,7 +136,6 @@ export class StocksRepository extends Repository<Stock> {
         load_index,
       });
       await this.save(stock);
-      console.log(stock);
       return stock;
     } catch (error) {
       throw new InternalServerErrorException('Failed to add stock to system.');

@@ -1,4 +1,5 @@
-import { IsOptional } from 'class-validator';
+import { IsEnum, IsOptional } from 'class-validator';
+import { Status } from '../entities/status.enum';
 
 export class GetQuotationsFilterDto {
   @IsOptional()
@@ -9,4 +10,11 @@ export class GetQuotationsFilterDto {
 
   @IsOptional()
   page?: number;
+
+  @IsOptional()
+  sortBy?: string;
+
+  @IsOptional()
+  @IsEnum(Status)
+  status: Status;
 }

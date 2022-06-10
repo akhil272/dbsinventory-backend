@@ -12,7 +12,7 @@ export class QuotationsRepository extends Repository<Quotation> {
   async getQuotations(
     filterDto: GetQuotationsFilterDto,
   ): Promise<QuotationsResponseDto> {
-    const { take = 25, page = 1 } = filterDto;
+    const { take = 25, page = 1, status, sortBy, search } = filterDto;
     const query = this.createQueryBuilder('quotation');
     const skip = (page - 1) * take;
     const count = await query.getCount();
@@ -31,6 +31,23 @@ export class QuotationsRepository extends Repository<Quotation> {
         'user.last_name',
       ])
       .leftJoin('quotation.user', 'user');
+    if (status) {
+      query.andWhere('quotation.status = :status', { status });
+    }
+    if (sortBy) {
+      if (sortBy === 'ASC') {
+        query.orderBy('quotation.created_at', 'ASC');
+      }
+      if (sortBy === 'DESC') {
+        query.orderBy('quotation.created_at', 'DESC');
+      }
+    }
+    if (search) {
+      query.andWhere(
+        '(LOWER(user.first_name) LIKE LOWER(:search) or LOWER(user.last_name) LIKE LOWER(:search) )',
+        { search: `%${search}%` },
+      );
+    }
     const [quotations, total] = await query
       .take(take)
       .skip(skip)
