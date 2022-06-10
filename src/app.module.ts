@@ -22,6 +22,8 @@ import { QuotationsModule } from './quotations/quotations.module';
 import { UserQuoteModule } from './user-quote/user-quote.module';
 import { ManageQuotationsModule } from './manage-quotations/manage-quotations.module';
 import { PDFModule } from './pdf/pdf.module';
+import { SpeedRatingModule } from './speed-rating/speed-rating.module';
+import { LoadIndexModule } from './load-index/load-index.module';
 
 @Module({
   imports: [
@@ -48,6 +50,8 @@ import { PDFModule } from './pdf/pdf.module';
     UserQuoteModule,
     ManageQuotationsModule,
     PDFModule,
+    SpeedRatingModule,
+    LoadIndexModule,
   ],
   controllers: [AppController],
   providers: [AppService],

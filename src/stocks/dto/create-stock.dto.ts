@@ -32,11 +32,11 @@ export class CreateStockDto {
   @IsNotEmpty()
   cost: number;
 
-  @IsString()
+  @IsNumber()
   @IsOptional()
-  speed_rating: string;
+  speed_rating_id: number;
 
   @IsNumber()
   @IsOptional()
-  load_index: number;
+  load_index_id: number;
 }

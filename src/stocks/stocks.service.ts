@@ -7,7 +7,9 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Parser } from 'json2csv';
 import PostgresErrorCode from 'src/database/postgresErrorCodes.enum';
+import { LoadIndexService } from 'src/load-index/load-index.service';
 import { LocationService } from 'src/location/location.service';
+import { SpeedRatingService } from 'src/speed-rating/speed-rating.service';
 import { TransportService } from 'src/transport/transport.service';
 import { TyreDetailService } from 'src/tyre-detail/tyre-detail.service';
 import { User } from 'src/users/entities/user.entity';
@@ -29,6 +31,8 @@ export class StocksService {
     private readonly vendorService: VendorService,
     private readonly locationService: LocationService,
     private readonly tyreDetailService: TyreDetailService,
+    private readonly loadIndexService: LoadIndexService,
+    private readonly speedRatingService: SpeedRatingService,
   ) {}
 
   async getStockById(id: number): Promise<Stock> {
@@ -50,8 +54,14 @@ export class StocksService {
     createStockDto: CreateStockDto,
     user: User,
   ): Promise<Stock> {
-    const { transport_id, tyre_detail_id, vendor_id, location_id } =
-      createStockDto;
+    const {
+      transport_id,
+      tyre_detail_id,
+      vendor_id,
+      location_id,
+      speed_rating_id,
+      load_index_id,
+    } = createStockDto;
     const transport = await this.transportService.findOne(transport_id);
     if (!transport) {
       throw new NotFoundException(
@@ -72,6 +82,10 @@ export class StocksService {
     if (!tyreDetail) {
       throw new NotFoundException(`Tyre with ID "${tyre_detail_id}" not found`);
     }
+
+    const speed_rating = await this.speedRatingService.findOne(speed_rating_id);
+    const load_index = await this.loadIndexService.findOne(load_index_id);
+
     return this.stocksRepository.createStock(
       createStockDto,
       user,
@@ -79,6 +93,8 @@ export class StocksService {
       vendor,
       location,
       tyreDetail,
+      speed_rating,
+      load_index,
     );
   }
 

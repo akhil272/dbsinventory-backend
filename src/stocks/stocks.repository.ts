@@ -13,6 +13,8 @@ import { Vendor } from 'src/vendor/entities/vendor.entity';
 import { Location } from 'src/location/entities/location.entity';
 import { TyreDetail } from 'src/tyre-detail/entities/tyre-detail.entity';
 import { StocksExportFileDto } from './dto/stocks-export-file-dto';
+import { LoadIndex } from 'src/load-index/entities/load-index.entity';
+import { SpeedRating } from 'src/speed-rating/entities/speed-rating.entity';
 
 @EntityRepository(Stock)
 export class StocksRepository extends Repository<Stock> {
@@ -46,7 +48,9 @@ export class StocksRepository extends Repository<Stock> {
       .leftJoinAndSelect('tyreDetail.tyreSize', 'tyreSize')
       .leftJoinAndSelect('stock.vendor', 'vendor')
       .leftJoinAndSelect('stock.location', 'location')
-      .leftJoinAndSelect('stock.transport', 'transport');
+      .leftJoinAndSelect('stock.transport', 'transport')
+      .leftJoinAndSelect('stock.load_index', 'load_indx')
+      .leftJoinAndSelect('stock.speed_rating', 'speed_rating');
     if (tyreDetail_id) {
       query.where('stock.tyreDetail = :id', { id: tyreDetail_id });
     }
@@ -109,16 +113,10 @@ export class StocksRepository extends Repository<Stock> {
     vendor: Vendor,
     location: Location,
     tyreDetail: TyreDetail,
+    speed_rating: SpeedRating,
+    load_index: LoadIndex,
   ) {
-    const {
-      product_line,
-      dom,
-      purchase_date,
-      quantity,
-      cost,
-      speed_rating,
-      load_index,
-    } = createStockDto;
+    const { product_line, dom, purchase_date, quantity, cost } = createStockDto;
     try {
       const stock = this.create({
         product_line,

@@ -12,6 +12,8 @@ import { Transport } from 'src/transport/entities/transport.entity';
 import { Vendor } from 'src/vendor/entities/vendor.entity';
 import { Location } from 'src/location/entities/location.entity';
 import { TyreDetail } from 'src/tyre-detail/entities/tyre-detail.entity';
+import { LoadIndex } from 'src/load-index/entities/load-index.entity';
+import { SpeedRating } from 'src/speed-rating/entities/speed-rating.entity';
 @Entity()
 export class Stock {
   @PrimaryGeneratedColumn()
@@ -35,11 +37,11 @@ export class Stock {
   @Column()
   cost: number;
 
-  @Column({ nullable: true })
-  speed_rating: string;
+  @ManyToOne(() => SpeedRating, (speedRating) => speedRating.stocks)
+  speed_rating: SpeedRating;
 
-  @Column({ nullable: true })
-  load_index: number;
+  @ManyToOne(() => LoadIndex, (loadIndex) => loadIndex.stocks)
+  load_index: LoadIndex;
 
   @Column('boolean', { default: false })
   sold_out: boolean;
