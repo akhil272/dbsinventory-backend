@@ -34,19 +34,25 @@ export class UserQuoteService {
     if (!userQuote) {
       throw new InternalServerErrorException('User Quote not found');
     }
-    const { brand, pattern, tyre_size, speed_rating, load_index } = userQuote;
+    const {
+      brandName,
+      patternName,
+      tyreSizeValue,
+      tyreSpeedRating,
+      tyreLoadIndex,
+    } = userQuote;
     const exactStock =
       await this.stocksService.findOneByBrandPatternTyreSizeSpeedRatingLoadIndex(
-        brand,
-        pattern,
-        tyre_size,
-        speed_rating,
-        load_index,
+        brandName,
+        patternName,
+        tyreSizeValue,
+        tyreSpeedRating,
+        tyreLoadIndex,
       );
 
     const stocks = await this.stocksService.findManyByBrandAndTyreSize(
-      brand,
-      tyre_size,
+      brandName,
+      tyreSizeValue,
     );
     return { userQuote, stocks, exactStock };
   }

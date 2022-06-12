@@ -5,9 +5,9 @@ import { CreateUserQuoteDto } from './create-user-quote.dto';
 export class UpdateUserQuoteDto extends PartialType(CreateUserQuoteDto) {
   @IsOptional()
   @IsNumber()
-  price: number;
+  quotePrice: number;
 
   @IsOptional()
   @IsString()
-  admin_comments: string;
+  adminComments: string;
 }

@@ -24,6 +24,7 @@ import { ManageQuotationsModule } from './manage-quotations/manage-quotations.mo
 import { PDFModule } from './pdf/pdf.module';
 import { SpeedRatingModule } from './speed-rating/speed-rating.module';
 import { LoadIndexModule } from './load-index/load-index.module';
+import { ProductLineModule } from './product-line/product-line.module';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { LoadIndexModule } from './load-index/load-index.module';
     PDFModule,
     SpeedRatingModule,
     LoadIndexModule,
+    ProductLineModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -19,14 +19,14 @@ export class OrdersRepository extends Repository<Order> {
 
   async getExportData(exportFileDto: ExportFileDto) {
     const query = this.createQueryBuilder('order');
-    const start = new Date(exportFileDto.start_date);
+    const start = new Date(exportFileDto.startDate);
     start.setHours(0, 0, 0, 0);
-    const end = new Date(exportFileDto.end_date);
+    const end = new Date(exportFileDto.endDate);
     end.setHours(24, 0, 0, 0);
     try {
       const orders = await query
-        .where('order.sale_date >= :start', { start })
-        .andWhere('order.sale_date <= :end', { end })
+        .where('order.saleDate >= :start', { start })
+        .andWhere('order.saleDate <= :end', { end })
         .loadAllRelationIds()
         .getMany();
       return orders;

@@ -74,19 +74,19 @@ export class UsersController {
   @Roles(Role.ADMIN, Role.EMPLOYEE, Role.MANAGER, Role.USER)
   getMe(@GetUser() user: User): {
     id: number;
-    first_name: string;
-    last_name: string | undefined;
-    phone_number: string;
+    firstName: string;
+    lastName: string | undefined;
+    phoneNumber: string;
     email: string;
-    roles: string;
+    role: string;
   } {
     return {
       id: user.id,
-      first_name: user.first_name,
-      last_name: user.last_name,
-      phone_number: user.phone_number,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      phoneNumber: user.phoneNumber,
       email: user.email,
-      roles: user.roles,
+      role: user.role,
     };
   }
 

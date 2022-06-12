@@ -5,5 +5,5 @@ import { Role } from '../entities/role.enum';
 export class CreateUserDto extends RegisterUserDto {
   @IsEnum(Role)
   @IsOptional()
-  roles: Role;
+  role: Role;
 }

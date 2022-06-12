@@ -49,52 +49,74 @@ export class AuthService {
     return this.usersRepository.createUser(registerUserDto);
   }
 
-  async generateOtp(generateOtpDto: GenerateOtpDto) {
-    const { phone_number } = generateOtpDto;
-    const user = await this.usersRepository.getUserByPhoneNumber(phone_number);
-    if (!user.is_verified) {
-      throw new ForbiddenException('User not verified');
-    }
+  async generateOtpForNewUser(user: User) {
     try {
       const token = otplib.authenticator.generate(
-        `${user.phone_number}${this.configService.get('SMS_SECRET')}`,
+        `${user.phoneNumber}${this.configService.get('SMS_SECRET')}`,
       );
       this.smsService.sendSms({
-        phoneNumbers: [user.phone_number],
-        body: `${token} is your DBS Stock App secret OTP to login`,
+        phoneNumbers: [user.phoneNumber],
+        body: `${token} is your DBS Tyres App secret OTP to login.`,
       });
       return {
         success: true,
       };
     } catch (error) {
-      const errorMessage = `Failed to generate OTP for user ${user.first_name}`;
+      const errorMessage = `Failed to generate OTP for user ${user.firstName} ${user.phoneNumber}`;
       this.logger.error(errorMessage, error.stack);
       throw new InternalServerErrorException(errorMessage);
     }
   }
 
-  async validateOtp(verifyOtpDto: ValidateOtpDto): Promise<{
+  async generateOtp(generateOtpDto: GenerateOtpDto) {
+    const { phoneNumber } = generateOtpDto;
+    const user = await this.usersRepository.getUserByPhoneNumber(phoneNumber);
+    if (!user.isPhoneNumberVerified) {
+      throw new ForbiddenException('User not verified');
+    }
+    try {
+      const token = otplib.authenticator.generate(
+        `${user.phoneNumber}${this.configService.get('SMS_SECRET')}`,
+      );
+      this.smsService.sendSms({
+        phoneNumbers: [user.phoneNumber],
+        body: `${token} is your DBS Tyres App secret OTP to login`,
+      });
+      return {
+        success: true,
+      };
+    } catch (error) {
+      const errorMessage = `Failed to generate OTP for user ${user.firstName}`;
+      this.logger.error(errorMessage, error.stack);
+      throw new InternalServerErrorException(errorMessage);
+    }
+  }
+
+  async validateOtpAndVerifyPhoneNumber(verifyOtpDto: ValidateOtpDto): Promise<{
     success: boolean;
     data: {
       accessToken: string;
       refreshToken: string;
       user: {
         id: number;
-        phone_number: string;
+        phoneNumber: string;
         email: string;
-        first_name: string;
-        last_name: string | undefined;
-        roles: string;
+        firstName: string;
+        lastName: string | undefined;
+        role: string;
       };
     };
   } | void> {
-    const { phone_number, otp } = verifyOtpDto;
-    const user = await this.usersRepository.getUserByPhoneNumber(phone_number);
+    const { phoneNumber, otp } = verifyOtpDto;
+    const user = await this.usersRepository.getUserByPhoneNumber(phoneNumber);
 
     const isOtpValid = this.verifyOtp(otp, user);
 
     if (isOtpValid) {
-      this.logger.log(`OTP for user ${user?.phone_number} is valid`);
+      this.logger.log(`OTP for user ${user?.phoneNumber} is valid`);
+      user.isPhoneNumberVerified = true;
+      await this.usersRepository.save(user);
+      this.logger.log(`User phone number ${user?.phoneNumber} is verified`);
       const accessToken = await this.generateAccessToken(user);
       const refreshToken = await this.generateRefreshToken(
         user,
@@ -107,11 +129,11 @@ export class AuthService {
           refreshToken,
           user: {
             id: user.id,
-            phone_number: user.phone_number,
+            phoneNumber: user.phoneNumber,
             email: user.email,
-            roles: user.roles,
-            first_name: user.first_name,
-            last_name: user.last_name,
+            role: user.role,
+            firstName: user.firstName,
+            lastName: user.lastName,
           },
         },
       };
@@ -120,25 +142,68 @@ export class AuthService {
     }
   }
 
+  async loginWithOtp(verifyOtpDto: ValidateOtpDto): Promise<{
+    success: boolean;
+    data: {
+      accessToken: string;
+      refreshToken: string;
+      user: {
+        id: number;
+        phoneNumber: string;
+        email: string;
+        firstName: string;
+        lastName: string | undefined;
+        role: string;
+      };
+    };
+  } | void> {
+    const { phoneNumber, otp } = verifyOtpDto;
+    const user = await this.usersRepository.getUserByPhoneNumber(phoneNumber);
+    const isOtpValid = this.verifyOtp(otp, user);
+    if (isOtpValid) {
+      this.logger.log(`OTP for user ${user?.phoneNumber} is valid`);
+      const accessToken = await this.generateAccessToken(user);
+      const refreshToken = await this.generateRefreshToken(
+        user,
+        60 * 60 * 24 * 30,
+      );
+      return {
+        success: true,
+        data: {
+          accessToken,
+          refreshToken,
+          user: {
+            id: user.id,
+            phoneNumber: user.phoneNumber,
+            email: user.email,
+            role: user.role,
+            firstName: user.firstName,
+            lastName: user.lastName,
+          },
+        },
+      };
+    } else {
+      throw new HttpException('Failed to login user', HttpStatus.BAD_REQUEST);
+    }
+  }
+
   verifyOtp(token: string, user: User): boolean {
     try {
       const verified = otplib.authenticator.verify({
         token,
-        secret: `${user.phone_number}${this.configService.get('SMS_SECRET')}`,
+        secret: `${user.phoneNumber}${this.configService.get('SMS_SECRET')}`,
       });
       return verified;
     } catch (error) {
-      const errorMessage = `Failed to generate OTP for user ${user.first_name}`;
+      const errorMessage = `Failed to generate OTP for user ${user.firstName}`;
       this.logger.error(errorMessage, error.stack);
       throw new InternalServerErrorException(errorMessage);
     }
   }
 
-  async getAuthenticatedUser(phone_number: string): Promise<User> {
+  async getAuthenticatedUser(phoneNumber: string): Promise<User> {
     try {
-      const user = await this.usersRepository.getUserByPhoneNumber(
-        phone_number,
-      );
+      const user = await this.usersRepository.getUserByPhoneNumber(phoneNumber);
       // await this.smsService.verifyPhoneNumber(phone_number);
       return user;
     } catch (error) {
@@ -150,12 +215,12 @@ export class AuthService {
   }
 
   async generateAccessToken(user: User): Promise<string> {
-    const { id, phone_number } = user;
+    const { id, phoneNumber } = user;
     const options: JwtSignOptions = {
       ...BASE_OPTIONS,
       subject: `${id}`,
     };
-    const payload: JwtPayload = { phone_number };
+    const payload: JwtPayload = { phoneNumber };
     const accessToken = this.jwtService.sign(payload, options);
     this.logger.debug(
       `Generated JWT Token with payload ${JSON.stringify(payload)}`,
@@ -165,7 +230,7 @@ export class AuthService {
   }
 
   async generateRefreshToken(user: User, expiresIn: number): Promise<string> {
-    const { id, phone_number } = user;
+    const { id, phoneNumber } = user;
     const token = await this.refreshTokenRepository.createRefreshToken(
       user,
       expiresIn,
@@ -178,7 +243,7 @@ export class AuthService {
       jwtid: `${token.id}`,
     };
 
-    const payload: JwtPayload = { phone_number };
+    const payload: JwtPayload = { phoneNumber };
     return this.jwtService.sign(payload, optionss);
   }
 
@@ -226,40 +291,6 @@ export class AuthService {
     }
   }
 
-  getCookieWithJwtAccessToken(phone_number: string) {
-    const payload: TokenPayload = { phone_number };
-    const token = this.jwtService.sign(payload, {
-      secret: this.configService.get('JWT_ACCESS_TOKEN_SECRET'),
-      expiresIn: `${this.configService.get(
-        'JWT_ACCESS_TOKEN_EXPIRATION_TIME',
-      )}s`,
-    });
-    return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${this.configService.get(
-      'JWT_ACCESS_TOKEN_EXPIRATION_TIME',
-    )}`;
-  }
-
-  getCookieWithJwtRefreshToken(phone_number: string) {
-    const payload: TokenPayload = { phone_number };
-    const token = this.jwtService.sign(payload, {
-      secret: this.configService.get('JWT_REFRESH_TOKEN_SECRET'),
-      expiresIn: `${this.configService.get(
-        'JWT_REFRESH_TOKEN_EXPIRATION_TIME',
-      )}s`,
-    });
-    const cookie = `Refresh=${token}; HttpOnly; Path=/; Max-Age=${this.configService.get(
-      'JWT_REFRESH_TOKEN_EXPIRATION_TIME',
-    )}`;
-    return { cookie, token };
-  }
-
-  getCookiesForLogOut() {
-    return [
-      'Authentication=; HttpOnly; Path=/; Max-Age=0',
-      'Refresh=; HttpOnly; Path=/; Max-Age=0',
-    ];
-  }
-
   async getUserFromRefreshTokenPayload(
     payload: RefreshTokenPayload,
   ): Promise<User> {
@@ -285,7 +316,7 @@ export class AuthService {
 
   async sendMailConfirmationLink(user) {
     const findUser = await this.usersService.getUserByMail(user.email);
-    if (findUser.is_email_verified) {
+    if (findUser.isEmailVerified) {
       throw new ConflictException('Email already verified.');
     }
     return await this.mailService.sendUserConfirmation(user);

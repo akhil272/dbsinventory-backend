@@ -1,5 +1,5 @@
 interface VerificationTokenPayload {
-  phone_number: string;
+  phoneNumber: string;
 }
 
 export default VerificationTokenPayload;

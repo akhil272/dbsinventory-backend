@@ -7,8 +7,8 @@ export class LoadIndex {
   id: number;
 
   @Column()
-  load_index: number;
+  value: number;
 
-  @OneToMany(() => Stock, (stock) => stock.load_index)
+  @OneToMany(() => Stock, (stock) => stock.loadIndex)
   stocks: Stock[];
 }

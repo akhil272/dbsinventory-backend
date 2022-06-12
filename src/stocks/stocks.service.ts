@@ -9,6 +9,7 @@ import { Parser } from 'json2csv';
 import PostgresErrorCode from 'src/database/postgresErrorCodes.enum';
 import { LoadIndexService } from 'src/load-index/load-index.service';
 import { LocationService } from 'src/location/location.service';
+import { ProductLineService } from 'src/product-line/product-line.service';
 import { SpeedRatingService } from 'src/speed-rating/speed-rating.service';
 import { TransportService } from 'src/transport/transport.service';
 import { TyreDetailService } from 'src/tyre-detail/tyre-detail.service';
@@ -17,7 +18,7 @@ import { VendorService } from 'src/vendor/vendor.service';
 import { CreateStockDto } from './dto/create-stock.dto';
 import { GetStocksFilterDto } from './dto/get-stocks-filter.dto';
 import { StocksExportFileDto } from './dto/stocks-export-file-dto';
-import { StocksMetaDto } from './dto/stocks-meta-dto';
+import { StocksWithMetaDto } from './dto/stocks-with-meta-dto';
 import { UpdateStockDto } from './dto/update-stock.dto';
 import { Stock } from './entities/stock.entity';
 import { StocksRepository } from './stocks.repository';
@@ -33,6 +34,7 @@ export class StocksService {
     private readonly tyreDetailService: TyreDetailService,
     private readonly loadIndexService: LoadIndexService,
     private readonly speedRatingService: SpeedRatingService,
+    private readonly productLineService: ProductLineService,
   ) {}
 
   async getStockById(id: number): Promise<Stock> {
@@ -46,7 +48,7 @@ export class StocksService {
     return found;
   }
 
-  getStocks(filterDto: GetStocksFilterDto): Promise<StocksMetaDto> {
+  getStocks(filterDto: GetStocksFilterDto): Promise<StocksWithMetaDto> {
     return this.stocksRepository.getStocks(filterDto);
   }
 
@@ -55,36 +57,39 @@ export class StocksService {
     user: User,
   ): Promise<Stock> {
     const {
-      transport_id,
-      tyre_detail_id,
-      vendor_id,
-      location_id,
-      speed_rating_id,
-      load_index_id,
+      transportId,
+      tyreDetailId,
+      vendorId,
+      locationId,
+      speedRatingId,
+      loadIndexId,
+      productLineId,
     } = createStockDto;
-    const transport = await this.transportService.findOne(transport_id);
+    const transport = await this.transportService.findOne(transportId);
     if (!transport) {
       throw new NotFoundException(
-        `Transport with ID "${transport_id}" not found`,
+        `Transport with ID "${transportId}" not found`,
       );
     }
-    const vendor = await this.vendorService.findOne(vendor_id);
+    const vendor = await this.vendorService.findOne(vendorId);
     if (!vendor) {
-      throw new NotFoundException(`Vendor with ID "${vendor_id}" not found`);
+      throw new NotFoundException(`Vendor with ID "${vendorId}" not found`);
     }
-    const location = await this.locationService.findOne(location_id);
+    const location = await this.locationService.findOne(locationId);
     if (!location) {
-      throw new NotFoundException(
-        `Location with ID "${location_id}" not found`,
-      );
+      throw new NotFoundException(`Location with ID "${locationId}" not found`);
     }
-    const tyreDetail = await this.tyreDetailService.findOne(tyre_detail_id);
+    const tyreDetail = await this.tyreDetailService.findOne(tyreDetailId);
     if (!tyreDetail) {
-      throw new NotFoundException(`Tyre with ID "${tyre_detail_id}" not found`);
+      throw new NotFoundException(`Tyre with ID "${tyreDetailId}" not found`);
+    }
+    const productLine = await this.productLineService.findOne(productLineId);
+    if (!productLine) {
+      throw new NotFoundException(`Tyre with ID "${tyreDetailId}" not found`);
     }
 
-    const speed_rating = await this.speedRatingService.findOne(speed_rating_id);
-    const load_index = await this.loadIndexService.findOne(load_index_id);
+    const speedRating = await this.speedRatingService.findOne(speedRatingId);
+    const loadIndex = await this.loadIndexService.findOne(loadIndexId);
 
     return this.stocksRepository.createStock(
       createStockDto,
@@ -93,8 +98,9 @@ export class StocksService {
       vendor,
       location,
       tyreDetail,
-      speed_rating,
-      load_index,
+      speedRating,
+      loadIndex,
+      productLine,
     );
   }
 
@@ -122,40 +128,44 @@ export class StocksService {
   async updateStockById(
     id: number,
     updateStockDto: UpdateStockDto,
-    user: User,
   ): Promise<Stock> {
     const {
       quantity,
       cost,
       dom,
-      location_id,
-      product_line,
-      purchase_date,
-      transport_id,
-      tyre_detail_id,
-      vendor_id,
+      locationId,
+      productLineId,
+      purchaseDate,
+      transportId,
+      tyreDetailId,
+      vendorId,
     } = updateStockDto;
     const stock = await this.getStockById(id);
     try {
       stock.quantity = quantity;
       stock.cost = cost;
       stock.dom = dom;
-      (stock.product_line = product_line),
-        (stock.purchase_date = purchase_date);
-      if (location_id) {
-        const location = await this.locationService.findOne(location_id);
+      stock.purchaseDate = purchaseDate;
+      if (productLineId) {
+        const productLine = await this.productLineService.findOne(
+          productLineId,
+        );
+        stock.productLine = productLine;
+      }
+      if (locationId) {
+        const location = await this.locationService.findOne(locationId);
         stock.location = location;
       }
-      if (transport_id) {
-        const transport = await this.transportService.findOne(transport_id);
+      if (transportId) {
+        const transport = await this.transportService.findOne(transportId);
         stock.transport = transport;
       }
-      if (tyre_detail_id) {
-        const tyreDetail = await this.tyreDetailService.findOne(tyre_detail_id);
+      if (tyreDetailId) {
+        const tyreDetail = await this.tyreDetailService.findOne(tyreDetailId);
         stock.tyreDetail = tyreDetail;
       }
-      if (vendor_id) {
-        const vendor = await this.vendorService.findOne(vendor_id);
+      if (vendorId) {
+        const vendor = await this.vendorService.findOne(vendorId);
         stock.vendor = vendor;
       }
       await this.stocksRepository.save(stock);
@@ -197,44 +207,44 @@ export class StocksService {
     stocks.forEach((stock) => {
       json.push({
         Stock_Id: stock.id,
-        Product_Line: stock.product_line,
+        Product_Line: stock.productLine,
         DOM: stock.dom,
-        Purchase_Date: stock.purchase_date,
-        Purchased_Quantity: stock.purchased_quantity,
-        Speed_rating: stock.speed_rating,
-        Load_Index: stock.load_index,
+        Purchase_Date: stock.purchaseDate,
+        Purchased_Quantity: stock.purchasedQuantity,
+        Speed_rating: stock.speedRating,
+        Load_Index: stock.loadIndex,
         Quantity: stock.quantity,
         Cost: stock.cost,
-        Sold_Out: stock.sold_out,
+        Sold_Out: stock.soldOut,
         TyreDetail_Id: stock.tyreDetail,
         Transport_Id: stock.transport,
         Vendor_Id: stock.vendor,
         Location_Id: stock.location,
         User_Id: stock.user,
         Orders_Id: stock.orders,
-        Created_At: stock.created_at,
+        Created_At: stock.createdAt,
       });
     });
     const csv = parser.parse(json);
     return csv;
   }
 
-  findManyByBrandAndTyreSize(brand: string, tyre_size: string) {
-    return this.stocksRepository.findManyByBrandAndTyreSize(brand, tyre_size);
+  findManyByBrandAndTyreSize(brand: string, tyreSize: string) {
+    return this.stocksRepository.findManyByBrandAndTyreSize(brand, tyreSize);
   }
   findOneByBrandPatternTyreSizeSpeedRatingLoadIndex(
     brand: string,
     pattern: string,
-    tyre_size: string,
-    speed_rating: string,
-    load_index: number,
+    tyreSize: string,
+    speedRating: string,
+    loadIndex: number,
   ) {
     return this.stocksRepository.findOneByBrandPatternTyreSizeSpeedRatingLoadIndex(
       brand,
       pattern,
-      tyre_size,
-      speed_rating,
-      load_index,
+      tyreSize,
+      speedRating,
+      loadIndex,
     );
   }
 }

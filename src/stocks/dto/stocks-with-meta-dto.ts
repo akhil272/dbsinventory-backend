@@ -1,10 +1,10 @@
 import { Stock } from '../entities/stock.entity';
 
-export class StocksMetaDto {
+export class StocksWithMetaDto {
   stocks: Stock[];
   meta: {
     total: number;
     page: number;
-    last_page: number;
+    lastPage: number;
   };
 }

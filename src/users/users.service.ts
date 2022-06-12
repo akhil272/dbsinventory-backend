@@ -41,8 +41,8 @@ export class UsersService {
     }
   }
 
-  getUserByPhoneNumber(phone_number: string): Promise<User> {
-    return this.usersRepository.getUserByPhoneNumber(phone_number);
+  getUserByPhoneNumber(phoneNumber: string): Promise<User> {
+    return this.usersRepository.getUserByPhoneNumber(phoneNumber);
   }
 
   async getUsers(filterDto: GetUsersFilterDto): Promise<ApiResponse<User[]>> {
@@ -67,18 +67,18 @@ export class UsersService {
   async setCurrentRefreshToken(refreshToken: string, userId: number) {
     const currentHashedRefreshToken = await bcrypt.hash(refreshToken, 10);
     await this.usersRepository.update(userId, {
-      current_hashed_refresh_token: currentHashedRefreshToken,
+      currentHashedRefreshToken,
     });
   }
 
   async getUserIfRefreshTokenMatches(
     refreshToken: string,
-    phone_number: string,
+    phoneNumber: string,
   ) {
-    const user = await this.getUserByPhoneNumber(phone_number);
+    const user = await this.getUserByPhoneNumber(phoneNumber);
     const isRefreshTokenMatching = await bcrypt.compare(
       refreshToken,
-      user.current_hashed_refresh_token,
+      user.currentHashedRefreshToken,
     );
     if (isRefreshTokenMatching) {
       return user;
@@ -87,7 +87,7 @@ export class UsersService {
 
   async removeRefreshToken(userId: number) {
     return await this.usersRepository.update(userId, {
-      current_hashed_refresh_token: null,
+      currentHashedRefreshToken: null,
     });
   }
 
@@ -95,9 +95,9 @@ export class UsersService {
     id: number,
     updateUserDto: UpdateUserDto,
   ): Promise<User> {
-    const { roles } = updateUserDto;
+    const { role } = updateUserDto;
     const user = await this.getUserById(+id);
-    user.roles = roles;
+    user.role = role;
     await this.usersRepository.save(user);
     return user;
   }
@@ -110,7 +110,7 @@ export class UsersService {
     return this.usersRepository.update(
       { id: userId },
       {
-        is_verified: true,
+        isPhoneNumberVerified: true,
       },
     );
   }
@@ -135,7 +135,7 @@ export class UsersService {
     return this.usersRepository.update(
       { email },
       {
-        is_email_verified: true,
+        isEmailVerified: true,
       },
     );
   }

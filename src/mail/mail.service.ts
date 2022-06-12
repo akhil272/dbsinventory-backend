@@ -33,7 +33,7 @@ export class MailService {
       subject: 'Welcome to DBS Tyres! Confirm your Email',
       template: 'confirmation', // `.hbs` extension is appended automatically
       context: {
-        name: user.first_name,
+        name: user.firstName,
         url,
       },
     });
@@ -41,7 +41,7 @@ export class MailService {
 
   async confirmEmail(email: string) {
     const user = await this.usersService.getUserByMail(email);
-    if (user.is_email_verified) {
+    if (user.isEmailVerified) {
       throw new BadRequestException('Email already confirmed');
     }
     await this.usersService.markEmailAsConfirmed(email);
@@ -75,7 +75,7 @@ export class MailService {
       subject: 'Your Quotation is ready | DBS Tyres',
       template: 'sendQuotation', // `.hbs` extension is appended automatically
       context: {
-        name: user.first_name,
+        name: user.firstName,
         url,
       },
     });

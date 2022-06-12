@@ -1,3 +1,6 @@
+import { IsOptional } from 'class-validator';
+
 export class GetUsersFilterDto {
-  search?: string;
+  @IsOptional()
+  search: string;
 }

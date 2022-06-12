@@ -5,6 +5,6 @@ export class QuotationsResponseDto {
   meta: {
     total: number;
     page: number;
-    last_page: number;
+    lastPage: number;
   };
 }

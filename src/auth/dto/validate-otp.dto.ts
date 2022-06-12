@@ -1,7 +1,7 @@
 import { IsNotEmpty } from 'class-validator';
 export default class ValidateOtpDto {
   @IsNotEmpty()
-  phone_number: string;
+  phoneNumber: string;
 
   @IsNotEmpty()
   otp: string;

@@ -2,8 +2,8 @@ import { IsString } from 'class-validator';
 
 export class StocksExportFileDto {
   @IsString()
-  start_date: Date;
+  startDate: Date;
 
   @IsString()
-  end_date: Date;
+  endDate: Date;
 }

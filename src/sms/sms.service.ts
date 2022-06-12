@@ -24,13 +24,13 @@ export default class SmsService {
     this.twilioClient = new Twilio(accountSid, authToken);
   }
 
-  async verifyPhoneNumber(phone_number: string): Promise<{ success: boolean }> {
+  async verifyPhoneNumber(phoneNumber: string): Promise<{ success: boolean }> {
     const serviceSid = this.configService.get(
       'TWILIO_VERIFICATION_SERVICE_SID',
     );
     await this.twilioClient.verify
       .services(serviceSid)
-      .verifications.create({ to: phone_number, channel: 'sms' });
+      .verifications.create({ to: phoneNumber, channel: 'sms' });
     return { success: true };
   }
 

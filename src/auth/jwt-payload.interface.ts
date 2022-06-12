@@ -1,3 +1,3 @@
 export interface JwtPayload {
-  phone_number: string;
+  phoneNumber: string;
 }

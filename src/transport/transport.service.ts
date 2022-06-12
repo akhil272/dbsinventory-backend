@@ -18,17 +18,17 @@ import { TransportRepository } from './transport.repository';
 export class TransportService {
   constructor(
     @InjectRepository(TransportRepository)
-    private readonly transportRepo: TransportRepository,
+    private readonly transportRepository: TransportRepository,
   ) {}
 
   async create(createTransportDto: CreateTransportDto) {
     const { mode } = createTransportDto;
     try {
-      const transport_mode = this.transportRepo.create({
+      const transport = this.transportRepository.create({
         mode,
       });
-      await this.transportRepo.save(transport_mode);
-      return transport_mode;
+      await this.transportRepository.save(transport);
+      return transport;
     } catch (error) {
       if (error?.code === PostgresErrorCode.UniqueViolation) {
         throw new HttpException(
@@ -46,15 +46,15 @@ export class TransportService {
   async findAll(
     filterDto: GetTransportsFilterDto,
   ): Promise<ApiResponse<Transport[]>> {
-    const brands = await this.transportRepo.getTransports(filterDto);
+    const transports = await this.transportRepository.getTransports(filterDto);
     return {
       success: true,
-      data: brands,
+      data: transports,
     };
   }
 
   async findOne(id: number) {
-    const transport = await this.transportRepo.findOne(id);
+    const transport = await this.transportRepository.findOne(id);
     if (!transport) {
       throw new NotFoundException('Transport mode not in the system');
     }
@@ -65,7 +65,7 @@ export class TransportService {
     try {
       const transport = await this.findOne(id);
       transport.mode = updateTransportDto.mode;
-      await this.transportRepo.save(transport);
+      await this.transportRepository.save(transport);
       return transport;
     } catch (error) {
       throw new InternalServerErrorException('Something went wrong');
@@ -74,7 +74,7 @@ export class TransportService {
 
   async remove(id: number) {
     try {
-      return await this.transportRepo.delete(id);
+      return await this.transportRepository.delete(id);
     } catch (error) {
       if (error?.code === PostgresErrorCode.ForeignKeyViolation) {
         throw new HttpException(

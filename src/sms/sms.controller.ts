@@ -25,11 +25,11 @@ export default class SmsController {
   async initiatePhoneNumberVerification(
     @Req() request: RequestWithUser,
   ): Promise<{ success: boolean }> {
-    if (request.user.is_verified) {
+    if (request.user.isPhoneNumberVerified) {
       throw new BadRequestException('Phone number already confirmed');
     }
 
-    await this.smsService.verifyPhoneNumber(request.user.phone_number);
+    await this.smsService.verifyPhoneNumber(request.user.phoneNumber);
     return { success: true };
   }
 
@@ -39,10 +39,10 @@ export default class SmsController {
     @Req() request: RequestWithUser,
     @Body() verificationData: CheckVerificationCodeDto,
   ): Promise<{ success: boolean }> {
-    const { verification_code } = verificationData;
+    const { verificationCode } = verificationData;
     const userVerificationCompleted = await this.smsService.confirmPhoneNumber(
-      request.user.phone_number,
-      verification_code,
+      request.user.phoneNumber,
+      verificationCode,
     );
     if (!userVerificationCompleted) {
       return { success: false };
@@ -54,7 +54,7 @@ export default class SmsController {
   async retryInitiateVerification(
     @Body() retryInitiateDto: RetryInitiateDto,
   ): Promise<{ success: boolean }> {
-    await this.smsService.verifyPhoneNumber(retryInitiateDto.phone_number);
+    await this.smsService.verifyPhoneNumber(retryInitiateDto.phoneNumber);
     return { success: true };
   }
 
@@ -63,7 +63,7 @@ export default class SmsController {
     @Body() retryVerificationDto: RetryVerificationDto,
   ): Promise<{ success: boolean }> {
     const userVerificationCompleted = await this.smsService.confirmPhoneNumber(
-      retryVerificationDto.phone_number,
+      retryVerificationDto.phoneNumber,
       retryVerificationDto.otp,
     );
     if (!userVerificationCompleted) {

@@ -23,7 +23,7 @@ import { User } from 'src/users/entities/user.entity';
 import { RolesGuard } from 'src/users/roles.guard';
 import { Roles } from 'src/users/roles.decorator';
 import { Role } from 'src/users/entities/role.enum';
-import { StocksMetaDto } from './dto/stocks-meta-dto';
+import { StocksWithMetaDto } from './dto/stocks-with-meta-dto';
 import JwtAuthenticationGuard from 'src/auth/jwt-authentication.guard';
 import { StocksExportFileDto } from './dto/stocks-export-file-dto';
 import { Response } from 'express';
@@ -37,7 +37,9 @@ export class StocksController {
 
   @Get()
   @Roles(Role.ADMIN, Role.MANAGER, Role.USER, Role.EMPLOYEE)
-  getStocks(@Query() filterDto: GetStocksFilterDto): Promise<StocksMetaDto> {
+  getStocks(
+    @Query() filterDto: GetStocksFilterDto,
+  ): Promise<StocksWithMetaDto> {
     return this.stocksService.getStocks(filterDto);
   }
 
@@ -66,9 +68,8 @@ export class StocksController {
   updateStockQuantity(
     @Param('id') id: string,
     @Body() updateStockDto: UpdateStockDto,
-    @GetUser() user: User,
   ): Promise<Stock> {
-    return this.stocksService.updateStockById(+id, updateStockDto, user);
+    return this.stocksService.updateStockById(+id, updateStockDto);
   }
 
   @Post('export')

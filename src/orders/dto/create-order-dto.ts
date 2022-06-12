@@ -7,7 +7,7 @@ export class CreateOrderDto {
 
   @IsNotEmpty()
   @IsNumber()
-  sold_price: number;
+  salePrice: number;
 
   @IsNotEmpty()
   @IsNumber()
@@ -15,9 +15,9 @@ export class CreateOrderDto {
 
   @IsNotEmpty()
   @IsString()
-  customer_name: string;
+  customerName: string;
 
   @IsNotEmpty()
   @IsString()
-  customer_phone_number: string;
+  customerPhoneNumber: string;
 }

@@ -14,11 +14,11 @@ export class SpeedRatingService {
     private readonly speedRatingRepository: SpeedRatingRepository,
   ) {}
   async create(createSpeedRatingDto: CreateSpeedRatingDto) {
-    const speed_rating = this.speedRatingRepository.create({
+    const speedRating = this.speedRatingRepository.create({
       ...createSpeedRatingDto,
     });
-    await this.speedRatingRepository.save(speed_rating);
-    return speed_rating;
+    await this.speedRatingRepository.save(speedRating);
+    return speedRating;
   }
 
   async findAll(
@@ -38,10 +38,10 @@ export class SpeedRatingService {
   }
 
   update(id: number, updateSpeedRatingDto: UpdateSpeedRatingDto) {
-    return `This action updates a #${id} speedRating`;
+    return this.speedRatingRepository.update(id, updateSpeedRatingDto);
   }
 
   remove(id: number) {
-    return `This action removes a #${id} speedRating`;
+    return this.speedRatingRepository.delete(id);
   }
 }

@@ -11,13 +11,13 @@ export class LoadIndexRepository extends Repository<LoadIndex> {
     const { search } = filterDto;
     const query = this.createQueryBuilder('load-index');
     if (search) {
-      query.where('(load_index.load_index ILIKE :search)', {
+      query.where('(load_index.value ILIKE :search)', {
         search: `%${search}%`,
       });
     }
     try {
-      const load_indexes = await query.getMany();
-      return load_indexes;
+      const loadIndexes = await query.getMany();
+      return loadIndexes;
     } catch (error) {
       throw new InternalServerErrorException();
     }

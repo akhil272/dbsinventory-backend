@@ -2,22 +2,22 @@ import { IsString, IsOptional, IsNumber } from 'class-validator';
 
 export class CreateUserQuoteDto {
   @IsString()
-  brand: string;
+  brandName: string;
 
   @IsString()
   @IsOptional()
-  pattern: string;
+  patternName: string;
 
   @IsString()
-  tyre_size: string;
+  tyreSizeValue: string;
 
   @IsString()
   @IsOptional()
-  speed_rating: string;
+  speedRating: string;
 
   @IsNumber()
   @IsOptional()
-  load_index: number;
+  loadIndex: number;
 
   @IsString()
   @IsOptional()

@@ -27,9 +27,9 @@ export class TyreDetailService {
   ) {}
 
   async create(createTyreDetailDto: CreateTyreDetailDto) {
-    const { tyre_size_id, pattern_id } = createTyreDetailDto;
-    const tyreSize = await this.tyreSizeService.findOne(tyre_size_id);
-    const pattern = await this.patternService.findOne(pattern_id);
+    const { tyreSizeId, patternId } = createTyreDetailDto;
+    const tyreSize = await this.tyreSizeService.findOne(tyreSizeId);
+    const pattern = await this.patternService.findOne(patternId);
     try {
       const tyreDetail = this.tyreDetailRepository.create({
         tyreSize,
@@ -45,11 +45,11 @@ export class TyreDetailService {
   async createTyreSizeWithPattern(
     createTyreDetailFromPattern: CreateTyreDetailFromPattern,
   ): Promise<TyreDetail> {
-    const { size, pattern_id } = createTyreDetailFromPattern;
-    const findTyreSize = await this.tyreSizeService.findWithSize(size);
-    const pattern = await this.patternService.findOne(pattern_id);
+    const { tyreSizeValue, patternId } = createTyreDetailFromPattern;
+    const findTyreSize = await this.tyreSizeService.findWithSize(tyreSizeValue);
+    const pattern = await this.patternService.findOne(patternId);
     if (!findTyreSize) {
-      const tyreSize = await this.tyreSizeService.create({ size });
+      const tyreSize = await this.tyreSizeService.create({ tyreSizeValue });
       try {
         const tyreDetail = this.tyreDetailRepository.create({
           tyreSize,
@@ -63,8 +63,8 @@ export class TyreDetailService {
     }
     try {
       const tyreDetail = await this.create({
-        tyre_size_id: findTyreSize.id,
-        pattern_id: pattern.id,
+        tyreSizeId: findTyreSize.id,
+        patternId: pattern.id,
       });
       return tyreDetail;
     } catch (error) {
@@ -93,12 +93,12 @@ export class TyreDetailService {
   }
 
   async update(id: number, updateTyreDetailDto: UpdateTyreDetailDto) {
-    const { tyre_size_id, pattern_id } = updateTyreDetailDto;
+    const { tyreSizeId, patternId } = updateTyreDetailDto;
     try {
       const tyreDetail = await this.findOne(id);
-      const tyreSize = await this.tyreSizeService.findOne(tyre_size_id);
+      const tyreSize = await this.tyreSizeService.findOne(tyreSizeId);
       tyreDetail.tyreSize = tyreSize;
-      const pattern = await this.patternService.findOne(pattern_id);
+      const pattern = await this.patternService.findOne(patternId);
       tyreDetail.pattern = pattern;
       await this.tyreDetailRepository.save(tyreDetail);
       return tyreDetail;

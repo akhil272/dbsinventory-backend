@@ -14,22 +14,23 @@ import { Location } from 'src/location/entities/location.entity';
 import { TyreDetail } from 'src/tyre-detail/entities/tyre-detail.entity';
 import { LoadIndex } from 'src/load-index/entities/load-index.entity';
 import { SpeedRating } from 'src/speed-rating/entities/speed-rating.entity';
+import { ProductLine } from 'src/product-line/entities/product-line.entity';
 @Entity()
 export class Stock {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  product_line: string;
+  @ManyToOne(() => ProductLine, (product_line) => product_line.stocks)
+  productLine: ProductLine;
 
   @Column()
   dom: string;
 
   @Column()
-  purchase_date: Date;
+  purchaseDate: Date;
 
   @Column()
-  purchased_quantity: number;
+  purchasedQuantity: number;
 
   @Column()
   quantity: number;
@@ -38,13 +39,13 @@ export class Stock {
   cost: number;
 
   @ManyToOne(() => SpeedRating, (speedRating) => speedRating.stocks)
-  speed_rating: SpeedRating;
+  speedRating: SpeedRating;
 
   @ManyToOne(() => LoadIndex, (loadIndex) => loadIndex.stocks)
-  load_index: LoadIndex;
+  loadIndex: LoadIndex;
 
   @Column('boolean', { default: false })
-  sold_out: boolean;
+  soldOut: boolean;
 
   @ManyToOne(() => TyreDetail, (tyreDetail) => tyreDetail.stocks)
   tyreDetail: TyreDetail;
@@ -65,5 +66,5 @@ export class Stock {
   orders: Order[];
 
   @CreateDateColumn()
-  created_at: Date;
+  createdAt: Date;
 }

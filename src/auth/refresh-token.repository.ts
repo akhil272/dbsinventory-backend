@@ -21,10 +21,10 @@ export class RefreshTokenRepository extends Repository<RefreshToken> {
     token.expires = expiration;
     try {
       await this.save(token);
-      this.logger.log(`Created refresh token for user ${user?.phone_number}`);
+      this.logger.log(`Created refresh token for user ${user?.phoneNumber}`);
     } catch (error) {
       this.logger.error(
-        `Failed to create refresh token for user ${user?.phone_number}`,
+        `Failed to create refresh token for user ${user?.phoneNumber}`,
         error.stack,
       );
       throw new InternalServerErrorException();

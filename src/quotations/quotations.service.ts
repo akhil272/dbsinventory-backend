@@ -50,7 +50,7 @@ export class QuotationsService {
   }
 
   remove(id: number) {
-    return `This action removes a #${id} quotation`;
+    return this.quotationsRepository.delete(id);
   }
 
   async updateTotalPrice(totalPrice: number, id: number) {

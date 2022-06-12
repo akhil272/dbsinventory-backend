@@ -29,8 +29,8 @@ export class UserQuotesRepository extends Repository<UserQuote> {
     if (!userQuote) {
       throw new InternalServerErrorException('User Quote not found');
     }
-    userQuote.price = updateUserQuoteDto.price;
-    userQuote.admin_comments = updateUserQuoteDto.admin_comments;
+    userQuote.quotePrice = updateUserQuoteDto.quotePrice;
+    userQuote.adminComments = updateUserQuoteDto.adminComments;
     await this.save(userQuote);
     const quotationId = userQuote.quotation.id;
     const userQuotes = await query
@@ -39,7 +39,7 @@ export class UserQuotesRepository extends Repository<UserQuote> {
       })
       .getMany();
     const totalPrice = userQuotes
-      .map((userQuote) => userQuote.price)
+      .map((userQuote) => userQuote.quotePrice)
       .reduce((a, b) => a + b, 0);
     return { userQuote, price: totalPrice };
   }

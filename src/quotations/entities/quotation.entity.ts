@@ -38,7 +38,7 @@ export class Quotation {
   user: User;
 
   @CreateDateColumn()
-  created_at: Date;
+  createdAt: Date;
 
   @Column()
   count: number;

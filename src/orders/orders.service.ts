@@ -24,7 +24,7 @@ export class OrdersService {
   ) {}
 
   async addOrder(createOrderDto: CreateOrderDto, user: User): Promise<Order> {
-    const { id, sold_price, quantity, customer_name, customer_phone_number } =
+    const { id, salePrice, quantity, customerName, customerPhoneNumber } =
       createOrderDto;
     const result = await this.stockRepository.findOne(id);
     if (!result) {
@@ -33,23 +33,23 @@ export class OrdersService {
     if (quantity > result.quantity) {
       throw new ConflictException('Not enough stock quantity');
     }
-    const profit = (sold_price - result.cost) * quantity;
+    const profit = (salePrice - result.cost) * quantity;
 
     try {
       const order = this.ordersRepository.create({
         quantity,
-        employee_name: user.first_name,
-        sold_price,
-        sale_date: new Date(),
-        customer_name,
-        customer_phone_number,
+        employeeName: user.firstName,
+        salePrice,
+        saleDate: new Date(),
+        customerName,
+        customerPhoneNumber,
         profit,
       });
 
       result.quantity -= quantity;
       order.stock = result;
       if (result.quantity === 0) {
-        result.sold_out = true;
+        result.soldOut = true;
       }
 
       await this.ordersRepository.save(order);
@@ -87,12 +87,12 @@ export class OrdersService {
     orders.forEach((order) => {
       json.push({
         Order_Id: order.id,
-        Sale_Date: order.sale_date,
-        Sold_Price: order.sold_price,
+        Sale_Date: order.saleDate,
+        Sold_Price: order.salePrice,
         Quantity: order.quantity,
-        Employee_Name: order.employee_name,
-        Customer_Name: order.customer_name,
-        Customer_Phone_Number: order.customer_phone_number,
+        Employee_Name: order.employeeName,
+        Customer_Name: order.customerName,
+        Customer_Phone_Number: order.customerPhoneNumber,
         Profit: order.profit,
         Stock_ID: order.stock,
       });

@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class CreateTyreSizeDto {
+export class CreateProductLineDto {
   @IsNotEmpty()
   @IsString()
-  tyreSizeValue: string;
+  name: string;
 }

@@ -78,9 +78,9 @@ export class PDFService {
       .text(`Rs. ${quotation.price}`, 150, customerInformationTop + 30)
 
       .font('Helvetica-Bold')
-      .text(`${user.first_name} ${user.last_name}`, 300, customerInformationTop)
+      .text(`${user.firstName} ${user.lastName}`, 300, customerInformationTop)
       .font('Helvetica')
-      .text(user.phone_number, 300, customerInformationTop + 15)
+      .text(user.phoneNumber, 300, customerInformationTop + 15)
       .text(user?.email, 300, customerInformationTop + 30)
       .moveDown();
 
@@ -134,10 +134,10 @@ export class PDFService {
         doc,
         position,
         i + 1,
-        `${item.brand} ${item.pattern} ${item.tyre_size}`,
-        (item.price / item.quantity).toFixed(2),
+        `${item.brandName} ${item.patternName} ${item.tyreSizeValue}`,
+        (item.quotePrice / item.quantity).toFixed(2),
         item.quantity,
-        item.price,
+        item.quotePrice,
       );
 
       this.generateHr(doc, position + 20);

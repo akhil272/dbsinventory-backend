@@ -9,7 +9,7 @@ import { RegisterUserDto } from 'src/auth/dto/register-user.dto';
 export class UsersRepository extends Repository<User> {
   async createUser(registerUserDto: RegisterUserDto): Promise<User> {
     try {
-      const user = await this.create({
+      const user = this.create({
         ...registerUserDto,
       });
       await this.save(user);
@@ -28,8 +28,8 @@ export class UsersRepository extends Repository<User> {
     }
   }
 
-  async getUserByPhoneNumber(phone_number: string): Promise<User> {
-    const user = await this.findOne({ phone_number });
+  async getUserByPhoneNumber(phoneNumber: string): Promise<User> {
+    const user = await this.findOne({ phoneNumber });
     if (user) {
       return user;
     }
@@ -42,7 +42,7 @@ export class UsersRepository extends Repository<User> {
   async getUsers(filterDto: GetUsersFilterDto): Promise<User[]> {
     const query = this.createQueryBuilder('user');
     const users = await query
-      .where('user.roles IN (:...roles)', {
+      .where('user.role IN (:...roles)', {
         roles: ['admin', 'manager', 'user', 'employee'],
       })
       .getMany();

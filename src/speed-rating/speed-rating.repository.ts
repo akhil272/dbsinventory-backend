@@ -11,13 +11,13 @@ export class SpeedRatingRepository extends Repository<SpeedRating> {
     const { search } = filterDto;
     const query = this.createQueryBuilder('speed-rating');
     if (search) {
-      query.where('(speed_rating.speed_rating ILIKE :search)', {
+      query.where('(speed_rating.value ILIKE :search)', {
         search: `%${search}%`,
       });
     }
     try {
-      const speed_rating = await query.getMany();
-      return speed_rating;
+      const speedRatings = await query.getMany();
+      return speedRatings;
     } catch (error) {
       throw new InternalServerErrorException();
     }

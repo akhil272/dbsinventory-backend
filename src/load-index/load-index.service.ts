@@ -14,11 +14,11 @@ export class LoadIndexService {
     private readonly loadIndexRepository: LoadIndexRepository,
   ) {}
   async create(createLoadIndexDto: CreateLoadIndexDto) {
-    const load_index = this.loadIndexRepository.create({
+    const loadIndex = this.loadIndexRepository.create({
       ...createLoadIndexDto,
     });
-    await this.loadIndexRepository.save(load_index);
-    return load_index;
+    await this.loadIndexRepository.save(loadIndex);
+    return loadIndex;
   }
 
   async findAll(
@@ -38,10 +38,10 @@ export class LoadIndexService {
   }
 
   update(id: number, updateLoadIndexDto: UpdateLoadIndexDto) {
-    return `This action updates a #${id} loadIndex`;
+    return this.loadIndexRepository.update(id, updateLoadIndexDto);
   }
 
   remove(id: number) {
-    return `This action removes a #${id} loadIndex`;
+    return this.loadIndexRepository.delete(id);
   }
 }

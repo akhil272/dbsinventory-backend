@@ -32,10 +32,33 @@ export class AuthController {
   } | void> {
     const user = await this.authService.register(registerUserDto);
     const accessToken = await this.authService.generateAccessToken(user);
+    await this.authService.generateOtpForNewUser(user);
     return {
       success: true,
       data: { accessToken },
     };
+  }
+
+  @HttpCode(200)
+  @Post('otp/validate')
+  async validateOtpAndVerifyPhoneNumber(
+    @Body() validateOtpDto: ValidateOtpDto,
+  ): Promise<{
+    success: boolean;
+    data: {
+      accessToken: string;
+      refreshToken: string;
+      user: {
+        id: number;
+        phoneNumber: string;
+        email: string;
+        firstName: string;
+        lastName: string | undefined;
+        role: string;
+      };
+    };
+  } | void> {
+    return this.authService.validateOtpAndVerifyPhoneNumber(validateOtpDto);
   }
 
   @HttpCode(200)
@@ -47,41 +70,23 @@ export class AuthController {
   }
 
   @HttpCode(200)
-  @Post('otp/validate')
-  async validateOtp(@Body() validateOtpDto: ValidateOtpDto): Promise<{
+  @Post('otp/login')
+  async loginWithOtp(@Body() validateOtpDto: ValidateOtpDto): Promise<{
     success: boolean;
     data: {
       accessToken: string;
       refreshToken: string;
       user: {
         id: number;
-        phone_number: string;
+        phoneNumber: string;
         email: string;
-        first_name: string;
-        last_name: string | undefined;
-        roles: string;
+        firstName: string;
+        lastName: string | undefined;
+        role: string;
       };
     };
   } | void> {
-    return this.authService.validateOtp(validateOtpDto);
-  }
-
-  @HttpCode(200)
-  @Post('log-in')
-  async logIn(@Req() request: RequestWithUser) {
-    const { user } = request;
-    const accessTokenCookie = this.authService.getCookieWithJwtAccessToken(
-      String(user.id),
-    );
-    const { cookie: refreshTokenCookie, token: refreshToken } =
-      this.authService.getCookieWithJwtRefreshToken(user.phone_number);
-    await this.usersService.setCurrentRefreshToken(refreshToken, user.id);
-
-    request.res.setHeader('Set-Cookie', [
-      accessTokenCookie,
-      refreshTokenCookie,
-    ]);
-    return user;
+    return this.authService.loginWithOtp(validateOtpDto);
   }
 
   @Get('/refresh')
@@ -99,7 +104,6 @@ export class AuthController {
   @HttpCode(200)
   async logOut(@Req() request: RequestWithUser) {
     await this.usersService.removeRefreshToken(request.user.id);
-    request.res.setHeader('Set-Cookie', this.authService.getCookiesForLogOut());
     return { success: true };
   }
 

@@ -22,8 +22,8 @@ export class PatternService {
 
   async create(createPatternDto: CreatePatternDto) {
     try {
-      const { name, brand_id } = createPatternDto;
-      const brand = await this.brandService.findOne(brand_id);
+      const { name, brandId } = createPatternDto;
+      const brand = await this.brandService.findOne(brandId);
       const pattern = this.patternRepository.create({
         name,
         brand,
@@ -55,10 +55,8 @@ export class PatternService {
     try {
       const pattern = await this.findOne(id);
       pattern.name = updatePatternDto.name;
-      if (updatePatternDto.brand_id) {
-        const brand = await this.brandService.findOne(
-          updatePatternDto.brand_id,
-        );
+      if (updatePatternDto.brandId) {
+        const brand = await this.brandService.findOne(updatePatternDto.brandId);
         pattern.brand = brand;
       }
       await this.patternRepository.save(pattern);

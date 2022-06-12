@@ -74,19 +74,19 @@ export class ManageQuotationsService {
     }
 
     if (sms) {
-      this.logger.log(`Sending SMS to ${user.phone_number}`);
-      const message = `Hi ${user.first_name}, your quotation is ready. Please check your email for more details.`;
-      await this.smsService.sendQuotationMessage(user.phone_number, message);
+      this.logger.log(`Sending SMS to ${user.phoneNumber}`);
+      const message = `Hi ${user.firstName}, your quotation is ready. Please check your email for more details.`;
+      await this.smsService.sendQuotationMessage(user.phoneNumber, message);
     }
     if (whatsApp) {
-      this.logger.log(`Sending WhatsApp to ${user.phone_number}`);
+      this.logger.log(`Sending WhatsApp to ${user.phoneNumber}`);
     }
     if (email) {
       this.logger.log(`Sending Email to ${user.email}`);
       await this.mailService.sendQuotationToUserByMail(user, quotation);
     }
     if (callback) {
-      this.logger.log(`Sending Callback to ${user.phone_number}`);
+      this.logger.log(`Sending Callback to ${user.phoneNumber}`);
     }
     quotation.status = Status.WAITING;
     await this.quotationsService.updateQuotationStatus(quotation);

@@ -10,29 +10,29 @@ export class UserQuote {
   quotation: Quotation;
 
   @Column()
-  brand: string;
+  brandName: string;
 
   @Column({ nullable: true })
-  pattern: string;
+  patternName: string;
 
   @Column()
-  tyre_size: string;
+  tyreSizeValue: string;
 
   @Column()
   quantity: number;
 
   @Column({ nullable: true })
-  speed_rating: string;
+  tyreSpeedRating: string;
 
   @Column({ nullable: true })
-  load_index: number;
+  tyreLoadIndex: number;
 
   @Column({ nullable: true })
-  price: number;
+  quotePrice: number;
 
   @Column({ nullable: true })
-  notes: string;
+  userNotes: string;
 
   @Column({ nullable: true })
-  admin_comments: string;
+  adminComments: string;
 }

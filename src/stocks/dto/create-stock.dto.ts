@@ -1,42 +1,53 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsPositive,
+  IsString,
+} from 'class-validator';
 
 export class CreateStockDto {
   @IsNotEmpty()
-  product_line: string;
+  @IsNumber()
+  productLineId: number;
 
   @IsNotEmpty()
   @IsNumber()
-  tyre_detail_id: number;
+  tyreDetailId: number;
 
   @IsNotEmpty()
   dom: string;
 
   @IsNotEmpty()
-  purchase_date: Date;
+  purchaseDate: Date;
 
   @IsNotEmpty()
   @IsNumber()
-  transport_id: number;
+  transportId: number;
 
   @IsNotEmpty()
   @IsNumber()
-  vendor_id: number;
+  vendorId: number;
 
   @IsNotEmpty()
   @IsNumber()
-  location_id: number;
+  locationId: number;
 
   @IsNotEmpty()
+  @IsNumber()
+  @IsPositive()
   quantity: number;
 
   @IsNotEmpty()
+  @IsNumber()
+  @IsPositive()
   cost: number;
 
   @IsNumber()
   @IsOptional()
-  speed_rating_id: number;
+  speedRatingId: number;
 
   @IsNumber()
   @IsOptional()
-  load_index_id: number;
+  loadIndexId: number;
 }

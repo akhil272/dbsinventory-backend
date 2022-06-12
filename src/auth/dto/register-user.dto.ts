@@ -3,11 +3,11 @@ import { IsNotEmpty, IsOptional, IsString, Matches } from 'class-validator';
 export class RegisterUserDto {
   @IsString()
   @IsNotEmpty()
-  first_name: string;
+  firstName: string;
 
   @IsString()
   @IsNotEmpty()
-  last_name: string;
+  lastName: string;
 
   @IsOptional()
   email: string;
@@ -15,5 +15,5 @@ export class RegisterUserDto {
   @IsString()
   @IsNotEmpty()
   @Matches(/^\+[1-9]\d{1,14}$/)
-  phone_number: string;
+  phoneNumber: string;
 }

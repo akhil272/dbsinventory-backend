@@ -24,11 +24,11 @@ export class QuotationsRepository extends Repository<Quotation> {
         'quotation.id',
         'quotation.status',
         'quotation.price',
-        'quotation.created_at',
+        'quotation.createdAt',
         'quotation.count',
         'quotation.notes',
-        'user.first_name',
-        'user.last_name',
+        'user.firstName',
+        'user.lastName',
       ])
       .leftJoin('quotation.user', 'user');
     if (status) {
@@ -36,15 +36,15 @@ export class QuotationsRepository extends Repository<Quotation> {
     }
     if (sortBy) {
       if (sortBy === 'ASC') {
-        query.orderBy('quotation.created_at', 'ASC');
+        query.orderBy('quotation.createdAt', 'ASC');
       }
       if (sortBy === 'DESC') {
-        query.orderBy('quotation.created_at', 'DESC');
+        query.orderBy('quotation.createdAt', 'DESC');
       }
     }
     if (search) {
       query.andWhere(
-        '(LOWER(user.first_name) LIKE LOWER(:search) or LOWER(user.last_name) LIKE LOWER(:search) )',
+        '(LOWER(user.firstName) LIKE LOWER(:search) or LOWER(user.lastName) LIKE LOWER(:search) )',
         { search: `%${search}%` },
       );
     }
@@ -52,8 +52,8 @@ export class QuotationsRepository extends Repository<Quotation> {
       .take(take)
       .skip(skip)
       .getManyAndCount();
-    const last_page = Math.ceil(total / take);
-    if (last_page < page) {
+    const lastPage = Math.ceil(total / take);
+    if (lastPage < page) {
       throw new InternalServerErrorException('Requested page does not exists.');
     }
     try {
@@ -62,7 +62,7 @@ export class QuotationsRepository extends Repository<Quotation> {
         meta: {
           total,
           page,
-          last_page,
+          lastPage,
         },
       };
     } catch (error) {
@@ -79,12 +79,12 @@ export class QuotationsRepository extends Repository<Quotation> {
         'quotation.id',
         'quotation.status',
         'quotation.price',
-        'quotation.created_at',
+        'quotation.createdAt',
         'quotation.count',
         'quotation.notes',
         'quotation.validity',
-        'user.first_name',
-        'user.last_name',
+        'user.firstName',
+        'user.lastName',
       ])
       .leftJoin('quotation.user', 'user')
       .leftJoinAndSelect('quotation.userQuotes', 'userQuotes')
