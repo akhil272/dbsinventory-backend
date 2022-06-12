@@ -27,6 +27,7 @@ export class QuotationsRepository extends Repository<Quotation> {
         'quotation.createdAt',
         'quotation.count',
         'quotation.notes',
+        'quotation.validity',
         'user.firstName',
         'user.lastName',
       ])
@@ -53,6 +54,9 @@ export class QuotationsRepository extends Repository<Quotation> {
       .skip(skip)
       .getManyAndCount();
     const lastPage = Math.ceil(total / take);
+    if (total === 0) {
+      throw new NotFoundException('No quotations available.');
+    }
     if (lastPage < page) {
       throw new InternalServerErrorException('Requested page does not exists.');
     }

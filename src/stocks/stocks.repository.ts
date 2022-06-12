@@ -88,6 +88,9 @@ export class StocksRepository extends Repository<Stock> {
     }
     query.orderBy('stock.purchaseDate', 'ASC');
     const [stocks, total] = await query.take(take).skip(skip).getManyAndCount();
+    if (total === 0) {
+      throw new NotFoundException('No stocks available.');
+    }
     const lastPage = Math.ceil(total / take);
     if (lastPage < page) {
       throw new InternalServerErrorException('Requested page does not exists.');
@@ -170,6 +173,9 @@ export class StocksRepository extends Repository<Stock> {
       .leftJoinAndSelect('stock.location', 'location')
       .leftJoinAndSelect('stock.transport', 'transport')
       .leftJoinAndSelect('tyreDetail.tyreSize', 'tyreSize')
+      .leftJoinAndSelect('stock.productLine', 'productLine')
+      .leftJoinAndSelect('stock.speedRating', 'speedRating')
+      .leftJoinAndSelect('stock.loadIndex', 'loadIndex')
       .where('(brand.name = :brand)', { brand })
       .andWhere('(tyreSize.value = :tyreSize)', { tyreSize })
       .getMany();
@@ -191,6 +197,9 @@ export class StocksRepository extends Repository<Stock> {
         .leftJoinAndSelect('stock.vendor', 'vendor')
         .leftJoinAndSelect('stock.location', 'location')
         .leftJoinAndSelect('stock.transport', 'transport')
+        .leftJoinAndSelect('stock.productLine', 'productLine')
+        .leftJoinAndSelect('stock.speedRating', 'speedRating')
+        .leftJoinAndSelect('stock.loadIndex', 'loadIndex')
         .where('(brand.name = :brand)', { brand })
         .andWhere('(pattern.name = :pattern)', { pattern })
         .andWhere('(tyreSize.value = :tyreSize)', { tyreSize })
@@ -206,6 +215,9 @@ export class StocksRepository extends Repository<Stock> {
         .leftJoinAndSelect('stock.vendor', 'vendor')
         .leftJoinAndSelect('stock.location', 'location')
         .leftJoinAndSelect('stock.transport', 'transport')
+        .leftJoinAndSelect('stock.productLine', 'productLine')
+        .leftJoinAndSelect('stock.speedRating', 'speedRating')
+        .leftJoinAndSelect('stock.loadIndex', 'loadIndex')
         .where('(brand.name = :brand)', { brand })
         .andWhere('(pattern.name = :pattern)', { pattern })
         .andWhere('(tyreSize.value = :tyreSize)', { tyreSize })
@@ -222,6 +234,9 @@ export class StocksRepository extends Repository<Stock> {
         .leftJoinAndSelect('stock.vendor', 'vendor')
         .leftJoinAndSelect('stock.location', 'location')
         .leftJoinAndSelect('stock.transport', 'transport')
+        .leftJoinAndSelect('stock.productLine', 'productLine')
+        .leftJoinAndSelect('stock.speedRating', 'speedRating')
+        .leftJoinAndSelect('stock.loadIndex', 'loadIndex')
         .where('(brand.name = :brand)', { brand })
         .andWhere('(pattern.name = :pattern)', { pattern })
         .andWhere('(tyreSize.value = :tyreSize)', { tyreSize })
@@ -238,6 +253,9 @@ export class StocksRepository extends Repository<Stock> {
       .leftJoinAndSelect('stock.vendor', 'vendor')
       .leftJoinAndSelect('stock.location', 'location')
       .leftJoinAndSelect('stock.transport', 'transport')
+      .leftJoinAndSelect('stock.productLine', 'productLine')
+      .leftJoinAndSelect('stock.speedRating', 'speedRating')
+      .leftJoinAndSelect('stock.loadIndex', 'loadIndex')
       .where('(brand.name = :brand)', { brand })
       .andWhere('(pattern.name = :pattern)', { pattern })
       .andWhere('(tyreSize.value = :tyreSize)', { tyreSize })
