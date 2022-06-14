@@ -74,4 +74,10 @@ export class User {
 
   @DeleteDateColumn()
   deletedAt?: Date;
+
+  @Column({ nullable: true })
+  addressLine1: string;
+
+  @Column({ nullable: true })
+  addressLine2: string;
 }
