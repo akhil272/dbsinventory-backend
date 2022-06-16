@@ -17,13 +17,18 @@ import JwtAuthenticationGuard from 'src/auth/jwt-authentication.guard';
 import RequestWithUser from 'src/auth/request-with-user.interface';
 import { QuotationsResponseDto } from './dto/quotation-response.dto';
 import { GetQuotationsFilterDto } from './dto/get-quotations-filter.dto';
+import { Role } from 'src/users/entities/role.enum';
+import { Roles } from 'src/users/roles.decorator';
+import { RolesGuard } from 'src/users/roles.guard';
 
 @Controller('quotations')
-@UseGuards(JwtAuthenticationGuard)
+@UseGuards(JwtAuthenticationGuard, RolesGuard)
+@Roles(Role.ADMIN, Role.MANAGER, Role.EMPLOYEE)
 export class QuotationsController {
   constructor(private readonly quotationsService: QuotationsService) {}
 
   @Post()
+  @Roles(Role.ADMIN, Role.MANAGER, Role.USER, Role.EMPLOYEE)
   create(
     @Body() createQuotationDto: CreateQuotationDto,
     @Req() request: RequestWithUser,

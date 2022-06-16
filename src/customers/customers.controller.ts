@@ -6,12 +6,19 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
+import JwtAuthenticationGuard from 'src/auth/jwt-authentication.guard';
+import { Role } from 'src/users/entities/role.enum';
+import { Roles } from 'src/users/roles.decorator';
+import { RolesGuard } from 'src/users/roles.guard';
 import { CustomersService } from './customers.service';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
 
 @Controller('customers')
+@UseGuards(JwtAuthenticationGuard, RolesGuard)
+@Roles(Role.ADMIN, Role.MANAGER, Role.EMPLOYEE)
 export class CustomersController {
   constructor(private readonly customersService: CustomersService) {}
 

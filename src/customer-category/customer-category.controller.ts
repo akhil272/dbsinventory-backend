@@ -7,7 +7,12 @@ import {
   Param,
   Delete,
   Query,
+  UseGuards,
 } from '@nestjs/common';
+import JwtAuthenticationGuard from 'src/auth/jwt-authentication.guard';
+import { Role } from 'src/users/entities/role.enum';
+import { Roles } from 'src/users/roles.decorator';
+import { RolesGuard } from 'src/users/roles.guard';
 import { ApiResponse } from 'src/utils/types/common';
 import { CustomerCategoryService } from './customer-category.service';
 import { CreateCustomerCategoryDto } from './dto/create-customer-category.dto';
@@ -16,6 +21,8 @@ import { UpdateCustomerCategoryDto } from './dto/update-customer-category.dto';
 import { CustomerCategory } from './entities/customer-category.entity';
 
 @Controller('customer-category')
+@UseGuards(JwtAuthenticationGuard, RolesGuard)
+@Roles(Role.ADMIN)
 export class CustomerCategoryController {
   constructor(
     private readonly customerCategoryService: CustomerCategoryService,
