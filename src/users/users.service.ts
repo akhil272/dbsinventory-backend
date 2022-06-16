@@ -14,6 +14,7 @@ import { CreateUserDto } from './dto/create-user-dto';
 import PostgresErrorCode from 'src/database/postgresErrorCodes.enum';
 import LocalFilesService from 'src/local-files/local-files.service';
 import { ApiResponse } from 'src/utils/types/common';
+import { Role } from './entities/role.enum';
 @Injectable()
 export class UsersService {
   constructor(
@@ -138,5 +139,20 @@ export class UsersService {
         isEmailVerified: true,
       },
     );
+  }
+
+  async createNewUser(
+    firstName: string,
+    lastName: string,
+    phoneNumber: string,
+  ) {
+    const user = await this.usersRepository.create({
+      firstName,
+      lastName,
+      phoneNumber,
+      role: Role.USER,
+    });
+    await this.usersRepository.save(user);
+    return user;
   }
 }

@@ -12,4 +12,12 @@ export class CustomersRepository extends Repository<Customer> {
       .getOne();
     return customer;
   }
+
+  async findCustomerByPhoneNumber(phoneNumber: string) {
+    const customer = await this.createQueryBuilder('customer')
+      .leftJoinAndSelect('customer.user', 'user')
+      .where('user.phoneNumber = :phoneNumber', { phoneNumber })
+      .getOne();
+    return customer;
+  }
 }

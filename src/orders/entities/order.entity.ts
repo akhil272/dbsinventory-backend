@@ -1,4 +1,5 @@
 import { Type } from 'class-transformer';
+import { Customer } from 'src/customers/entities/customer.entity';
 import { Stock } from 'src/stocks/entities/stock.entity';
 import {
   Column,
@@ -26,11 +27,8 @@ export class Order {
   @Column()
   employeeName: string;
 
-  @Column()
-  customerName: string;
-
-  @Column()
-  customerPhoneNumber: string;
+  @ManyToOne(() => Customer, (customer) => customer.orders)
+  customer: Customer;
 
   @Column()
   profit: number;

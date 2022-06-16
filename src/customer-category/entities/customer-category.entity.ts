@@ -6,7 +6,7 @@ export class CustomerCategory {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ unique: true })
   name: string;
 
   @OneToMany(() => Customer, (customer) => customer.customerCategory)

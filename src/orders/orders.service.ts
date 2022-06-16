@@ -1,11 +1,14 @@
 import {
   ConflictException,
+  HttpException,
+  HttpStatus,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Parser } from 'json2csv';
 import { NotFoundError } from 'rxjs';
+import { CustomersService } from 'src/customers/customers.service';
 import { Stock } from 'src/stocks/entities/stock.entity';
 import { User } from 'src/users/entities/user.entity';
 import { ApiResponse } from 'src/utils/types/common';
@@ -20,40 +23,71 @@ export class OrdersService {
   constructor(
     @InjectRepository(OrdersRepository)
     private ordersRepository: OrdersRepository,
+    private customersService: CustomersService,
     @InjectRepository(Stock) private stockRepository: Repository<Stock>,
   ) {}
 
   async addOrder(createOrderDto: CreateOrderDto, user: User): Promise<Order> {
-    const { id, salePrice, quantity, customerName, customerPhoneNumber } =
+    const { id, salePrice, quantity, firstName, lastName, phoneNumber } =
       createOrderDto;
-    const result = await this.stockRepository.findOne(id);
-    if (!result) {
-      throw NotFoundError;
+    const stock = await this.stockRepository.findOne(id);
+    if (!stock) {
+      throw new HttpException('Stock not found', HttpStatus.NOT_FOUND);
     }
-    if (quantity > result.quantity) {
+    if (quantity > stock.quantity) {
       throw new ConflictException('Not enough stock quantity');
     }
-    const profit = (salePrice - result.cost) * quantity;
+    const profit = (salePrice - stock.cost) * quantity;
+    const customer = await this.customersService.findCustomerByPhoneNumber(
+      phoneNumber,
+    );
+    if (!customer) {
+      const newCustomer = await this.customersService.createNewCustomer(
+        firstName,
+        lastName,
+        phoneNumber,
+      );
+      try {
+        const order = this.ordersRepository.create({
+          quantity,
+          employeeName: user.firstName,
+          salePrice,
+          saleDate: new Date(),
+          customer: newCustomer,
+          profit,
+        });
 
+        stock.quantity -= quantity;
+        order.stock = stock;
+        if (stock.quantity === 0) {
+          stock.soldOut = true;
+        }
+
+        await this.ordersRepository.save(order);
+        await this.stockRepository.save(stock);
+        return order;
+      } catch (error) {
+        throw new InternalServerErrorException('Failed to add order');
+      }
+    }
     try {
       const order = this.ordersRepository.create({
         quantity,
         employeeName: user.firstName,
         salePrice,
         saleDate: new Date(),
-        customerName,
-        customerPhoneNumber,
+        customer,
         profit,
       });
 
-      result.quantity -= quantity;
-      order.stock = result;
-      if (result.quantity === 0) {
-        result.soldOut = true;
+      stock.quantity -= quantity;
+      order.stock = stock;
+      if (stock.quantity === 0) {
+        stock.soldOut = true;
       }
 
       await this.ordersRepository.save(order);
-      await this.stockRepository.save(result);
+      await this.stockRepository.save(stock);
       return order;
     } catch (error) {
       throw new InternalServerErrorException('Failed to add order');
@@ -91,8 +125,7 @@ export class OrdersService {
         Sold_Price: order.salePrice,
         Quantity: order.quantity,
         Employee_Name: order.employeeName,
-        Customer_Name: order.customerName,
-        Customer_Phone_Number: order.customerPhoneNumber,
+
         Profit: order.profit,
         Stock_ID: order.stock,
       });

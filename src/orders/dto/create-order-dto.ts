@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, Matches } from 'class-validator';
 
 export class CreateOrderDto {
   @IsNotEmpty()
@@ -15,9 +15,16 @@ export class CreateOrderDto {
 
   @IsNotEmpty()
   @IsString()
-  customerName: string;
+  firstName: string;
 
   @IsNotEmpty()
   @IsString()
-  customerPhoneNumber: string;
+  lastName: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Matches(/^\+[1-9]\d{1,14}$/, {
+    message: 'Phone number must be in international format',
+  })
+  phoneNumber: string;
 }

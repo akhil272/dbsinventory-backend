@@ -1,4 +1,5 @@
 import { CustomerCategory } from 'src/customer-category/entities/customer-category.entity';
+import { Order } from 'src/orders/entities/order.entity';
 import { Quotation } from 'src/quotations/entities/quotation.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
@@ -26,4 +27,7 @@ export class Customer {
   @OneToOne(() => User, (user) => user.customer)
   user: User;
   quotationsCount: number;
+
+  @OneToMany(() => Order, (order) => order.customer)
+  orders: Order[];
 }
