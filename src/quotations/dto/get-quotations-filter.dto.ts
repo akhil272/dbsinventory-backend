@@ -6,6 +6,9 @@ export class GetQuotationsFilterDto {
   search?: string;
 
   @IsOptional()
+  customerCategory?: string;
+
+  @IsOptional()
   take?: number;
 
   @IsOptional()

@@ -53,17 +53,22 @@ export class StocksRepository extends Repository<Stock> {
       .leftJoinAndSelect('stock.productLine', 'productLine')
       .leftJoinAndSelect('stock.loadIndex', 'loadIndex')
       .leftJoinAndSelect('stock.speedRating', 'speedRating');
-    if (tyreDetailId) {
-      query.where('stock.tyreDetail = :id', { id: tyreDetailId });
+    if (brand) {
+      query.where('(brand.name ILIKE :brand)', { brand: `%${brand}%` });
     }
     if (size) {
       query.where('(tyreSize.value ILIKE :size)', { size: `%${size}%` });
     }
+    if (size && brand) {
+      query
+        .where('(brand.name ILIKE :brand)', { brand: `%${brand}%` })
+        .andWhere('(tyreSize.value ILIKE :size)', { size: `%${size}%` });
+    }
+    if (tyreDetailId) {
+      query.where('stock.tyreDetail = :id', { id: tyreDetailId });
+    }
     if (pattern) {
       query.where('(pattern.name ILIKE :pattern)', { pattern: `%${pattern}%` });
-    }
-    if (brand) {
-      query.where('(brand.name ILIKE :brand)', { brand: `%${brand}%` });
     }
     if (location) {
       query.where('(location.name ILIKE :location)', {

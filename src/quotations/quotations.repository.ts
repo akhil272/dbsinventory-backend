@@ -12,7 +12,14 @@ export class QuotationsRepository extends Repository<Quotation> {
   async getQuotations(
     filterDto: GetQuotationsFilterDto,
   ): Promise<QuotationsResponseDto> {
-    const { take = 25, page = 1, status, sortBy, search } = filterDto;
+    const {
+      take = 25,
+      page = 1,
+      status,
+      sortBy,
+      search,
+      customerCategory,
+    } = filterDto;
     const query = this.createQueryBuilder('quotation');
     const skip = (page - 1) * take;
     const count = await query.getCount();
@@ -28,12 +35,26 @@ export class QuotationsRepository extends Repository<Quotation> {
         'quotation.count',
         'quotation.notes',
         'quotation.validity',
+        'customer.id',
         'user.firstName',
         'user.lastName',
+        'user.phoneNumber',
+        'customerCategory.name',
       ])
-      .leftJoin('quotation.user', 'user');
+      .leftJoin('quotation.customer', 'customer')
+      .leftJoin('customer.customerCategory', 'customerCategory')
+      .leftJoin('customer.user', 'user')
+      .loadRelationCountAndMap(
+        'customer.quotationsCount',
+        'customer.quotations',
+      );
     if (status) {
       query.andWhere('quotation.status = :status', { status });
+    }
+    if (customerCategory) {
+      query.andWhere('customerCategory.name = :customerCategory', {
+        customerCategory,
+      });
     }
     if (sortBy) {
       if (sortBy === 'ASC') {
@@ -43,9 +64,10 @@ export class QuotationsRepository extends Repository<Quotation> {
         query.orderBy('quotation.createdAt', 'DESC');
       }
     }
+
     if (search) {
       query.andWhere(
-        '(LOWER(user.firstName) LIKE LOWER(:search) or LOWER(user.lastName) LIKE LOWER(:search) )',
+        '(LOWER(user.firstName) LIKE LOWER(:search) or LOWER(user.lastName) LIKE LOWER(:search) or LOWER(user.phoneNumber) LIKE LOWER(:search) )',
         { search: `%${search}%` },
       );
     }
@@ -87,10 +109,19 @@ export class QuotationsRepository extends Repository<Quotation> {
         'quotation.count',
         'quotation.notes',
         'quotation.validity',
+        'customer.id',
         'user.firstName',
         'user.lastName',
+        'user.phoneNumber',
+        'customerCategory.name',
       ])
-      .leftJoin('quotation.user', 'user')
+      .leftJoin('quotation.customer', 'customer')
+      .leftJoin('customer.customerCategory', 'customerCategory')
+      .leftJoin('customer.user', 'user')
+      .loadRelationCountAndMap(
+        'customer.quotationsCount',
+        'customer.quotations',
+      )
       .leftJoinAndSelect('quotation.userQuotes', 'userQuotes')
       .where('quotation.id = :id', { id });
     const quotation = await query.getOne();

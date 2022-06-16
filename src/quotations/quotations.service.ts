@@ -1,5 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CustomersService } from 'src/customers/customers.service';
 import { UserQuoteService } from 'src/user-quote/user-quote.service';
 import { User } from 'src/users/entities/user.entity';
 import { CreateQuotationDto } from './dto/create-quotation.dto';
@@ -15,12 +16,14 @@ export class QuotationsService {
     @InjectRepository(QuotationsRepository)
     private readonly quotationsRepository: QuotationsRepository,
     private readonly userQuoteService: UserQuoteService,
+    private readonly customersService: CustomersService,
   ) {}
   async create(createQuotationDto: CreateQuotationDto, user: User) {
     const { userQuotes } = createQuotationDto;
     const count = userQuotes.length;
+    const customer = await this.customersService.findElseCreateCustomer(user);
     const quotation = this.quotationsRepository.create({
-      user,
+      customer,
       count,
     });
     await this.quotationsRepository.save(quotation);

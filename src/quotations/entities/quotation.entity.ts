@@ -1,3 +1,4 @@
+import { Customer } from 'src/customers/entities/customer.entity';
 import { UserQuote } from 'src/user-quote/entities/user-quote.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
@@ -34,8 +35,8 @@ export class Quotation {
   @Column({ nullable: true })
   validity: number;
 
-  @ManyToOne(() => User, (user) => user.quotations)
-  user: User;
+  @ManyToOne(() => Customer, (customer) => customer.quotations)
+  customer: Customer;
 
   @CreateDateColumn()
   createdAt: Date;

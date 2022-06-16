@@ -1,6 +1,6 @@
 import { Exclude } from 'class-transformer';
+import { Customer } from 'src/customers/entities/customer.entity';
 import LocalFile from 'src/local-files/entities/local-file.entity';
-import { Quotation } from 'src/quotations/entities/quotation.entity';
 import { Stock } from 'src/stocks/entities/stock.entity';
 import {
   Column,
@@ -63,9 +63,6 @@ export class User {
   @Column({ nullable: true })
   avatarId?: number;
 
-  @OneToMany(() => Quotation, (quotation) => quotation.user)
-  quotations: Quotation[];
-
   @CreateDateColumn()
   createdAt: Date;
 
@@ -80,4 +77,8 @@ export class User {
 
   @Column({ nullable: true })
   addressLine2: string;
+
+  @OneToOne(() => Customer, (customer) => customer.user)
+  @JoinColumn()
+  customer: Customer;
 }

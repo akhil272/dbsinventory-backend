@@ -25,6 +25,8 @@ import { PDFModule } from './pdf/pdf.module';
 import { SpeedRatingModule } from './speed-rating/speed-rating.module';
 import { LoadIndexModule } from './load-index/load-index.module';
 import { ProductLineModule } from './product-line/product-line.module';
+import { CustomersModule } from './customers/customers.module';
+import { CustomerCategoryModule } from './customer-category/customer-category.module';
 
 @Module({
   imports: [
@@ -54,6 +56,8 @@ import { ProductLineModule } from './product-line/product-line.module';
     SpeedRatingModule,
     LoadIndexModule,
     ProductLineModule,
+    CustomersModule,
+    CustomerCategoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -4,9 +4,14 @@ import { QuotationsController } from './quotations.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { QuotationsRepository } from './quotations.repository';
 import { UserQuoteModule } from 'src/user-quote/user-quote.module';
+import { CustomersModule } from 'src/customers/customers.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([QuotationsRepository]), UserQuoteModule],
+  imports: [
+    TypeOrmModule.forFeature([QuotationsRepository]),
+    UserQuoteModule,
+    CustomersModule,
+  ],
   controllers: [QuotationsController],
   providers: [QuotationsService],
   exports: [QuotationsService],

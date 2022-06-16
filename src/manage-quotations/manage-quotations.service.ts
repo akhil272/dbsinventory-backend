@@ -48,7 +48,7 @@ export class ManageQuotationsService {
     if (!quotation) {
       throw new NotFoundException('Quotation not found');
     }
-    const user = await this.usersService.getUserById(quotation.user.id);
+    const user = await this.usersService.getUserById(quotation.customer.id);
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -68,7 +68,9 @@ export class ManageQuotationsService {
     if (!quotation) {
       throw new NotFoundException('Quotation not found');
     }
-    const user = await this.usersService.getUserById(quotation.user.id);
+    const user = await this.usersService.getUserByPhoneNumber(
+      quotation.customer.user.phoneNumber,
+    );
     if (!user) {
       throw new NotFoundException('User not found');
     }
