@@ -17,7 +17,7 @@ export class CustomersService {
     private readonly usersService: UsersService,
   ) {}
   create(createCustomerDto: CreateCustomerDto) {
-    return 'This action adds a new customer';
+    return this.customersRepository.create(createCustomerDto);
   }
 
   findAll() {
@@ -27,7 +27,9 @@ export class CustomersService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} customer`;
+    return this.customersRepository.findOne(id, {
+      relations: ['customerCategory', 'user', 'orders'],
+    });
   }
 
   async update(id: number, updateCustomerDto: UpdateCustomerDto) {

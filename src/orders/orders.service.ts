@@ -7,7 +7,6 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Parser } from 'json2csv';
-import { NotFoundError } from 'rxjs';
 import { CustomersService } from 'src/customers/customers.service';
 import { Stock } from 'src/stocks/entities/stock.entity';
 import { User } from 'src/users/entities/user.entity';
@@ -105,29 +104,30 @@ export class OrdersService {
   async export(exportFileDto: ExportFileDto) {
     const parser = new Parser({
       fields: [
-        'Order_Id',
-        'Sale_Date',
-        'Sold_Price',
+        'OrderId',
+        'SaleDate',
+        'SoldPrice',
         'Quantity',
-        'Employee_Name',
-        'Customer_Name',
-        'Customer_Phone_Number',
+        'EmployeeName',
+        'Customer',
         'Profit',
-        'Stock_ID',
+        'Stock',
+        'CreatedAt',
       ],
     });
     const orders = await this.ordersRepository.getExportData(exportFileDto);
     const json = [];
     orders.forEach((order) => {
       json.push({
-        Order_Id: order.id,
-        Sale_Date: order.saleDate,
-        Sold_Price: order.salePrice,
+        OrderId: order.id,
+        SaleDate: order.saleDate,
+        SoldPrice: order.salePrice,
         Quantity: order.quantity,
-        Employee_Name: order.employeeName,
-
+        EmployeeName: order.employeeName,
+        Customer: order.customer,
         Profit: order.profit,
-        Stock_ID: order.stock,
+        Stock: order.stock,
+        CreatedAt: order.createdAt,
       });
     });
     const csv = parser.parse(json);
