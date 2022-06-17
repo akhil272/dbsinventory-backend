@@ -27,6 +27,7 @@ import { LoadIndexModule } from './load-index/load-index.module';
 import { ProductLineModule } from './product-line/product-line.module';
 import { CustomersModule } from './customers/customers.module';
 import { CustomerCategoryModule } from './customer-category/customer-category.module';
+import { ServicesModule } from './services/services.module';
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { CustomerCategoryModule } from './customer-category/customer-category.mo
     ProductLineModule,
     CustomersModule,
     CustomerCategoryModule,
+    ServicesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

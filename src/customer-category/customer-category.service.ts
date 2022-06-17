@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import PostgresErrorCode from 'src/database/postgresErrorCodes.enum';
 import { ApiResponse } from 'src/utils/types/common';
 import { CustomerCategoryRepository } from './customer-category.repository';
 import { CreateCustomerCategoryDto } from './dto/create-customer-category.dto';
@@ -13,11 +14,25 @@ export class CustomerCategoryService {
     @InjectRepository(CustomerCategoryRepository)
     private readonly customerCategoryRepository: CustomerCategoryRepository,
   ) {}
-  create(createCustomerCategoryDto: CreateCustomerCategoryDto) {
-    const customerCategory = this.customerCategoryRepository.create(
-      createCustomerCategoryDto,
-    );
-    return this.customerCategoryRepository.save(customerCategory);
+  async create(createCustomerCategoryDto: CreateCustomerCategoryDto) {
+    try {
+      const customerCategory = this.customerCategoryRepository.create(
+        createCustomerCategoryDto,
+      );
+      await this.customerCategoryRepository.save(customerCategory);
+      return customerCategory;
+    } catch (error) {
+      if (error?.code === PostgresErrorCode.UniqueViolation) {
+        throw new HttpException(
+          'Customer category already exists in the system.',
+          HttpStatus.CONFLICT,
+        );
+      }
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   async findAll(
