@@ -1,6 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import PostgresErrorCode from 'src/database/postgresErrorCodes.enum';
+import { Quotation } from 'src/quotations/entities/quotation.entity';
+import { QuotationsService } from 'src/quotations/quotations.service';
 import { ApiResponse } from 'src/utils/types/common';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { GetServicesFilterDto } from './dto/get-services-filter.dto';
@@ -44,7 +46,11 @@ export class ServicesService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} service`;
+    const service = this.servicesRepository.findOne(id);
+    if (!service) {
+      throw new HttpException('Service not found', HttpStatus.NOT_FOUND);
+    }
+    return service;
   }
 
   update(id: number, updateServiceDto: UpdateServiceDto) {
@@ -53,5 +59,13 @@ export class ServicesService {
 
   remove(id: number) {
     return `This action removes a #${id} service`;
+  }
+
+  async addServiceToQuotation(serviceId: number) {
+    const service = await this.findOne(serviceId);
+    if (!service) {
+      throw new HttpException('Service not found', HttpStatus.NOT_FOUND);
+    }
+    return service;
   }
 }

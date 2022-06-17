@@ -42,6 +42,8 @@ export class QuotationsRepository extends Repository<Quotation> {
         'customerCategory.name',
       ])
       .leftJoin('quotation.customer', 'customer')
+      .leftJoinAndSelect('quotation.quotationServices', 'quotationServices')
+      .leftJoinAndSelect('quotationServices.service', 'service')
       .leftJoin('customer.customerCategory', 'customerCategory')
       .leftJoin('customer.user', 'user')
       .loadRelationCountAndMap(
@@ -116,6 +118,8 @@ export class QuotationsRepository extends Repository<Quotation> {
         'customerCategory.name',
       ])
       .leftJoin('quotation.customer', 'customer')
+      .leftJoinAndSelect('quotation.quotationServices', 'quotationServices')
+      .leftJoinAndSelect('quotationServices.service', 'service')
       .leftJoin('customer.customerCategory', 'customerCategory')
       .leftJoin('customer.user', 'user')
       .loadRelationCountAndMap(

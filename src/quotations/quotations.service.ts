@@ -1,6 +1,8 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CustomersService } from 'src/customers/customers.service';
+import { QuotationServicesService } from 'src/quotation-services/quotation-services.service';
+import { ServicesService } from 'src/services/services.service';
 import { UserQuoteService } from 'src/user-quote/user-quote.service';
 import { User } from 'src/users/entities/user.entity';
 import { CreateQuotationDto } from './dto/create-quotation.dto';
@@ -17,9 +19,10 @@ export class QuotationsService {
     private readonly quotationsRepository: QuotationsRepository,
     private readonly userQuoteService: UserQuoteService,
     private readonly customersService: CustomersService,
+    private readonly quotationServicesService: QuotationServicesService,
   ) {}
   async create(createQuotationDto: CreateQuotationDto, user: User) {
-    const { userQuotes } = createQuotationDto;
+    const { userQuotes, serviceIds } = createQuotationDto;
     const count = userQuotes.length;
     const customer = await this.customersService.findElseCreateCustomer(user);
     const quotation = this.quotationsRepository.create({
@@ -27,10 +30,23 @@ export class QuotationsService {
       count,
     });
     await this.quotationsRepository.save(quotation);
-
     userQuotes.map(async (quote) => {
       await this.userQuoteService.createQuoteWithQuotation(quote, quotation);
     });
+    if (!serviceIds) {
+      return quotation;
+    }
+    const quotationServices = [];
+    serviceIds.map(async ({ id }) => {
+      const quotationService =
+        await this.quotationServicesService.createQuotationService(
+          id,
+          quotation,
+        );
+      quotationServices.push(quotationService);
+    });
+    quotation.quotationServices = quotationServices;
+    await this.quotationsRepository.save(quotation);
     return quotation;
   }
 

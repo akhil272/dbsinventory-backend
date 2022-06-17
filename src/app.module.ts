@@ -28,6 +28,7 @@ import { ProductLineModule } from './product-line/product-line.module';
 import { CustomersModule } from './customers/customers.module';
 import { CustomerCategoryModule } from './customer-category/customer-category.module';
 import { ServicesModule } from './services/services.module';
+import { QuotationServicesModule } from './quotation-services/quotation-services.module';
 
 @Module({
   imports: [
@@ -60,6 +61,7 @@ import { ServicesModule } from './services/services.module';
     CustomersModule,
     CustomerCategoryModule,
     ServicesModule,
+    QuotationServicesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

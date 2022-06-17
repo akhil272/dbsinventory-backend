@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
-import { IsArray, ValidateNested } from 'class-validator';
+import { IsArray, IsOptional, ValidateNested } from 'class-validator';
+import { GetServiceDto } from 'src/services/dto/get-service.dto';
 import { CreateUserQuoteDto } from 'src/user-quote/dto/create-user-quote.dto';
 
 export class CreateQuotationDto {
@@ -7,4 +8,10 @@ export class CreateQuotationDto {
   @ValidateNested({ each: true })
   @Type(() => CreateUserQuoteDto)
   userQuotes: CreateUserQuoteDto[];
+
+  @IsArray()
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => GetServiceDto)
+  serviceIds: GetServiceDto[];
 }

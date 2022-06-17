@@ -1,6 +1,6 @@
 import { Customer } from 'src/customers/entities/customer.entity';
+import { QuotationService } from 'src/quotation-services/entities/quotation-service.entity';
 import { UserQuote } from 'src/user-quote/entities/user-quote.entity';
-import { User } from 'src/users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
@@ -43,4 +43,10 @@ export class Quotation {
 
   @Column()
   count: number;
+
+  @OneToMany(
+    () => QuotationService,
+    (quotationService) => quotationService.quotation,
+  )
+  quotationServices: QuotationService[];
 }

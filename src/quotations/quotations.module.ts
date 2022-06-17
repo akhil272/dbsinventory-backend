@@ -5,12 +5,16 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { QuotationsRepository } from './quotations.repository';
 import { UserQuoteModule } from 'src/user-quote/user-quote.module';
 import { CustomersModule } from 'src/customers/customers.module';
+import { ServicesModule } from 'src/services/services.module';
+import { QuotationServicesModule } from 'src/quotation-services/quotation-services.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([QuotationsRepository]),
     UserQuoteModule,
     CustomersModule,
+    ServicesModule,
+    QuotationServicesModule,
   ],
   controllers: [QuotationsController],
   providers: [QuotationsService],
