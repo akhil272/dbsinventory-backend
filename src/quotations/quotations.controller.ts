@@ -20,6 +20,7 @@ import { GetQuotationsFilterDto } from './dto/get-quotations-filter.dto';
 import { Role } from 'src/users/entities/role.enum';
 import { Roles } from 'src/users/roles.decorator';
 import { RolesGuard } from 'src/users/roles.guard';
+import { CreateUserAndQuotationDto } from './dto/create-user-and-quotation.dto';
 
 @Controller('quotations')
 @UseGuards(JwtAuthenticationGuard, RolesGuard)
@@ -60,5 +61,14 @@ export class QuotationsController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.quotationsService.remove(+id);
+  }
+
+  @Post('create/user')
+  createUserAndQuotation(
+    @Body() createUserAndQuotation: CreateUserAndQuotationDto,
+  ) {
+    return this.quotationsService.createUserAndQuotation(
+      createUserAndQuotation,
+    );
   }
 }

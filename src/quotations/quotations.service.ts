@@ -2,10 +2,11 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CustomersService } from 'src/customers/customers.service';
 import { QuotationServicesService } from 'src/quotation-services/quotation-services.service';
-import { ServicesService } from 'src/services/services.service';
 import { UserQuoteService } from 'src/user-quote/user-quote.service';
 import { User } from 'src/users/entities/user.entity';
+import { UsersService } from 'src/users/users.service';
 import { CreateQuotationDto } from './dto/create-quotation.dto';
+import { CreateUserAndQuotationDto } from './dto/create-user-and-quotation.dto';
 import { GetQuotationsFilterDto } from './dto/get-quotations-filter.dto';
 import { QuotationsResponseDto } from './dto/quotation-response.dto';
 import { UpdateQuotationDto } from './dto/update-quotation.dto';
@@ -20,6 +21,7 @@ export class QuotationsService {
     private readonly userQuoteService: UserQuoteService,
     private readonly customersService: CustomersService,
     private readonly quotationServicesService: QuotationServicesService,
+    private readonly usersService: UsersService,
   ) {}
   async create(createQuotationDto: CreateQuotationDto, user: User) {
     const { userQuotes, serviceIds } = createQuotationDto;
@@ -84,5 +86,17 @@ export class QuotationsService {
 
   async updateQuotationStatus(quotation: Quotation): Promise<Quotation> {
     return await this.quotationsRepository.save(quotation);
+  }
+
+  async createUserAndQuotation(
+    createUserAndQuotation: CreateUserAndQuotationDto,
+  ) {
+    const { user, userId, ...createQuotationDto } = createUserAndQuotation;
+    const findOrCreateUser = await this.usersService.findOrCreateUser(
+      user,
+      userId,
+    );
+    const quotation = await this.create(createQuotationDto, findOrCreateUser);
+    return quotation;
   }
 }

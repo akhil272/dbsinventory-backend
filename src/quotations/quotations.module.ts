@@ -7,6 +7,7 @@ import { UserQuoteModule } from 'src/user-quote/user-quote.module';
 import { CustomersModule } from 'src/customers/customers.module';
 import { ServicesModule } from 'src/services/services.module';
 import { QuotationServicesModule } from 'src/quotation-services/quotation-services.module';
+import { UsersModule } from 'src/users/users.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { QuotationServicesModule } from 'src/quotation-services/quotation-servic
     CustomersModule,
     ServicesModule,
     QuotationServicesModule,
+    UsersModule,
   ],
   controllers: [QuotationsController],
   providers: [QuotationsService],

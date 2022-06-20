@@ -13,15 +13,15 @@ export class CreateUserQuoteDto {
 
   @IsString()
   @IsOptional()
-  speedRating: string;
+  tyreSpeedRating: string;
 
   @IsNumber()
   @IsOptional()
-  loadIndex: number;
+  tyreLoadIndex: number;
 
   @IsString()
   @IsOptional()
-  notes: string;
+  userNotes: string;
 
   @IsNumber()
   quantity: number;

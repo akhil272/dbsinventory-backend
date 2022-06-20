@@ -9,6 +9,19 @@ export class OrdersRepository extends Repository<Order> {
     const query = this.createQueryBuilder('order');
     try {
       const orders = await query
+        .select([
+          'order.id',
+          'order.saleDate',
+          'order.salePrice',
+          'order.quantity',
+          'order.profit',
+          'order.employeeName',
+          'order.customer',
+          'user.firstName',
+          'user.lastName',
+        ])
+        .leftJoinAndSelect('order.customer', 'customer')
+        .leftJoin('customer.user', 'user')
         .where('order.stockId= :stockId', { stockId: id })
         .getMany();
       return orders;

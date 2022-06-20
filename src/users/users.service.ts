@@ -15,6 +15,7 @@ import PostgresErrorCode from 'src/database/postgresErrorCodes.enum';
 import LocalFilesService from 'src/local-files/local-files.service';
 import { ApiResponse } from 'src/utils/types/common';
 import { Role } from './entities/role.enum';
+import { RegisterUserDto } from 'src/auth/dto/register-user.dto';
 @Injectable()
 export class UsersService {
   constructor(
@@ -25,7 +26,28 @@ export class UsersService {
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
     try {
-      const user = await this.usersRepository.create({ ...createUserDto });
+      const user = this.usersRepository.create({ ...createUserDto });
+      await this.usersRepository.save(user);
+      return user;
+    } catch (error) {
+      if (error?.code === PostgresErrorCode.UniqueViolation) {
+        throw new HttpException(
+          'User with that phone number already exists',
+          HttpStatus.CONFLICT,
+        );
+      }
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async createNewUserFromQuotation(
+    createUserDto: RegisterUserDto,
+  ): Promise<User> {
+    try {
+      const user = this.usersRepository.create({ ...createUserDto });
       await this.usersRepository.save(user);
       return user;
     } catch (error) {
@@ -154,5 +176,26 @@ export class UsersService {
     });
     await this.usersRepository.save(user);
     return user;
+  }
+
+  async create(user: RegisterUserDto): Promise<User> {
+    const newUser = this.usersRepository.create({ ...user });
+    return this.usersRepository.save(newUser);
+  }
+
+  async findOrCreateUser(user: RegisterUserDto, userId: number): Promise<User> {
+    if (userId) {
+      return await this.usersRepository.findOne(userId);
+    }
+    if (user) {
+      const findUserByPhoneNumber = await this.usersRepository.findOne({
+        where: { phoneNumber: user.phoneNumber },
+      });
+
+      if (!findUserByPhoneNumber) {
+        return await this.create(user);
+      }
+      return findUserByPhoneNumber;
+    }
   }
 }

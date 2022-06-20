@@ -32,6 +32,7 @@ export class LoadIndexController {
   }
 
   @Get()
+  @Roles(Role.ADMIN, Role.MANAGER, Role.EMPLOYEE, Role.USER)
   findAll(
     @Query() filterDto: GetLoadIndexesFilterDto,
   ): Promise<ApiResponse<LoadIndex[]>> {
