@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import RequestWithUser from 'src/auth/request-with-user.interface';
 import { MailService } from 'src/mail/mail.service';
+import { OrdersService } from 'src/orders/orders.service';
 import { PDFService } from 'src/pdf/pdf.service';
 import { Status } from 'src/quotations/entities/status.enum';
 import { QuotationsService } from 'src/quotations/quotations.service';
@@ -13,6 +14,7 @@ import SmsService from 'src/sms/sms.service';
 import { UpdateUserQuoteDto } from 'src/user-quote/dto/update-user-quote.dto';
 import { UserQuoteService } from 'src/user-quote/user-quote.service';
 import { UsersService } from 'src/users/users.service';
+import { GetOverviewDto } from './dto/get-overview.dto';
 import { SendQuotationDto } from './dto/send-quotation.dto';
 
 @Injectable()
@@ -25,6 +27,7 @@ export class ManageQuotationsService {
     private readonly usersService: UsersService,
     private readonly mailService: MailService,
     private readonly smsService: SmsService,
+    private readonly ordersService: OrdersService,
   ) {}
 
   async updateQuotationPriceWithUserQuote(
@@ -93,5 +96,15 @@ export class ManageQuotationsService {
     quotation.status = Status.WAITING;
     await this.quotationsService.updateQuotationStatus(quotation);
     return quotation;
+  }
+
+  async adminOverview(getOverviewDto: GetOverviewDto) {
+    const [ordersCount, profit] = await this.ordersService.getCountOfOrders(
+      getOverviewDto,
+    );
+    const [receivedQuotations, pendingQuotations] =
+      await this.quotationsService.getCountOfQuotations(getOverviewDto);
+
+    return { ordersCount, profit, receivedQuotations, pendingQuotations };
   }
 }

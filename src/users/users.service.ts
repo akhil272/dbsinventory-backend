@@ -198,4 +198,8 @@ export class UsersService {
       return findUserByPhoneNumber;
     }
   }
+
+  getOverView(userId: number) {
+    return this.usersRepository.getOverView(userId);
+  }
 }

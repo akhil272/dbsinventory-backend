@@ -124,4 +124,10 @@ export class UsersController {
   async getImage(@Param('path') path: string, @Res() res: Response) {
     res.sendFile(path, { root: './uploadedFiles/avatars' });
   }
+
+  @Get('overview/:id')
+  @Roles(Role.ADMIN, Role.EMPLOYEE, Role.MANAGER, Role.USER)
+  getOverView(@Param('id') id: string) {
+    return this.usersService.getOverView(+id);
+  }
 }

@@ -58,4 +58,27 @@ export class UsersRepository extends Repository<User> {
       return { success: false };
     }
   }
+
+  async getOverView(userId: number) {
+    const query = this.createQueryBuilder('user');
+    query
+      .where('user.id =:id', { id: userId })
+      .select([
+        'user.id',
+        'user.firstName',
+        'user.lastName',
+        'user.phoneNumber',
+        'user.email',
+        'user.role',
+      ])
+      .leftJoinAndSelect('user.customer', 'customer');
+    const quotationAndOrders = await query
+      .leftJoinAndSelect('customer.orders', 'orders')
+      .leftJoinAndSelect('customer.quotations', 'quotations')
+      .getOne();
+
+    return {
+      quotationAndOrders,
+    };
+  }
 }

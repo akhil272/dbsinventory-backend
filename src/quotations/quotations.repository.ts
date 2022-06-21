@@ -2,6 +2,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
+import { GetOverviewDto } from 'src/manage-quotations/dto/get-overview.dto';
 import { EntityRepository, Repository } from 'typeorm';
 import { GetQuotationsFilterDto } from './dto/get-quotations-filter.dto';
 import { QuotationsResponseDto } from './dto/quotation-response.dto';
@@ -130,5 +131,25 @@ export class QuotationsRepository extends Repository<Quotation> {
       .where('quotation.id = :id', { id });
     const quotation = await query.getOne();
     return quotation;
+  }
+
+  async getCountOfQuotations(getOverviewDto: GetOverviewDto) {
+    const query = this.createQueryBuilder('quotation');
+    const start = new Date(getOverviewDto.startDate);
+    const end = new Date(getOverviewDto.endDate);
+
+    start.setHours(0, 0, 0, 0);
+    end.setHours(24, 0, 0, 0);
+
+    const receivedQuotations = await query
+      .where('quotation.createdAt >= :start', { start })
+      .andWhere('quotation.createdAt <= :end', { end })
+      .getCount();
+    const status = 'PENDING';
+    const pendingQuotations = await query
+      .andWhere('quotation.status = :status', { status })
+      .getCount();
+
+    return [receivedQuotations, pendingQuotations];
   }
 }

@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { OrdersModule } from 'src/orders/orders.module';
 import { PDFModule } from 'src/pdf/pdf.module';
 import { QuotationsModule } from 'src/quotations/quotations.module';
 import { SmsModule } from 'src/sms/sms.module';
@@ -14,6 +15,7 @@ import { ManageQuotationsService } from './manage-quotations.service';
     PDFModule,
     UsersModule,
     SmsModule,
+    OrdersModule,
   ],
   controllers: [ManageQuotationsController],
   providers: [ManageQuotationsService],

@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Param,
   Patch,
   Post,
@@ -14,6 +15,7 @@ import { ManageQuotationsService } from './manage-quotations.service';
 import { Response } from 'express';
 import RequestWithUser from 'src/auth/request-with-user.interface';
 import JwtAuthenticationGuard from 'src/auth/jwt-authentication.guard';
+import { GetOverviewDto } from './dto/get-overview.dto';
 
 @Controller('manage-quotations')
 @UseGuards(JwtAuthenticationGuard)
@@ -51,5 +53,10 @@ export class ManageQuotationsController {
   @Post('send')
   sendQuotation(@Body() sendQuotationDto: SendQuotationDto) {
     return this.manageQuotationsService.sendQuotation(sendQuotationDto);
+  }
+
+  @Get('admin/overview')
+  adminOverview(@Body() getOverviewDto: GetOverviewDto) {
+    return this.manageQuotationsService.adminOverview(getOverviewDto);
   }
 }

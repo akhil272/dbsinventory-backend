@@ -8,6 +8,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Parser } from 'json2csv';
 import { CustomersService } from 'src/customers/customers.service';
+import { GetOverviewDto } from 'src/manage-quotations/dto/get-overview.dto';
 import { Stock } from 'src/stocks/entities/stock.entity';
 import { User } from 'src/users/entities/user.entity';
 import { ApiResponse } from 'src/utils/types/common';
@@ -132,5 +133,9 @@ export class OrdersService {
     });
     const csv = parser.parse(json);
     return csv;
+  }
+
+  getCountOfOrders(getOverviewDto: GetOverviewDto) {
+    return this.ordersRepository.getCountOfORders(getOverviewDto);
   }
 }

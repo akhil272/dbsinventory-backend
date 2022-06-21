@@ -1,6 +1,7 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CustomersService } from 'src/customers/customers.service';
+import { GetOverviewDto } from 'src/manage-quotations/dto/get-overview.dto';
 import { QuotationServicesService } from 'src/quotation-services/quotation-services.service';
 import { UserQuoteService } from 'src/user-quote/user-quote.service';
 import { User } from 'src/users/entities/user.entity';
@@ -98,5 +99,9 @@ export class QuotationsService {
     );
     const quotation = await this.create(createQuotationDto, findOrCreateUser);
     return quotation;
+  }
+
+  getCountOfQuotations(getOverviewDto: GetOverviewDto) {
+    return this.quotationsRepository.getCountOfQuotations(getOverviewDto);
   }
 }
