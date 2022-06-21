@@ -55,7 +55,7 @@ export class ManageQuotationsController {
     return this.manageQuotationsService.sendQuotation(sendQuotationDto);
   }
 
-  @Get('admin/overview')
+  @Post('admin/overview')
   adminOverview(@Body() getOverviewDto: GetOverviewDto) {
     return this.manageQuotationsService.adminOverview(getOverviewDto);
   }
