@@ -8,8 +8,11 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { BrandService } from 'src/brand/brand.service';
 import PostgresErrorCode from 'src/database/postgresErrorCodes.enum';
+import { ApiResponse } from 'src/utils/types/common';
 import { CreatePatternDto } from './dto/create-pattern.dto';
+import { GetPatternsFilterDto } from './dto/get-pattern-filter.dto';
 import { UpdatePatternDto } from './dto/update-pattern.dto';
+import { Pattern } from './entities/pattern.entity';
 import { PatternRepository } from './pattern.repository';
 
 @Injectable()
@@ -37,8 +40,14 @@ export class PatternService {
     }
   }
 
-  async findAll() {
-    return await this.patternRepository.find();
+  async findAll(
+    filterDto: GetPatternsFilterDto,
+  ): Promise<ApiResponse<Pattern[]>> {
+    const patterns = await this.patternRepository.getPatterns(filterDto);
+    return {
+      success: true,
+      data: patterns,
+    };
   }
 
   async findOne(id: number) {

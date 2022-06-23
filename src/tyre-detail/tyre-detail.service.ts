@@ -108,8 +108,13 @@ export class TyreDetailService {
   }
 
   async remove(id: number) {
+    const tyreDetail = await this.tyreDetailRepository.findOne({
+      where: { tyreSizeId: id },
+    });
+
     try {
-      return await this.tyreDetailRepository.delete(id);
+      await this.tyreDetailRepository.delete(tyreDetail.id);
+      return await this.tyreSizeService.remove(tyreDetail.tyreSizeId);
     } catch (error) {
       if (error?.code === PostgresErrorCode.ForeignKeyViolation) {
         throw new HttpException(

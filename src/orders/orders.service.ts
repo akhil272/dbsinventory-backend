@@ -135,7 +135,7 @@ export class OrdersService {
     return csv;
   }
 
-  getCountOfOrders(getOverviewDto: GetOverviewDto) {
-    return this.ordersRepository.getCountOfORders(getOverviewDto);
+  getTotalSalesAndProfit(getOverviewDto: GetOverviewDto) {
+    return this.ordersRepository.getTotalSalesAndProfit(getOverviewDto);
   }
 }

@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import PostgresErrorCode from 'src/database/postgresErrorCodes.enum';
 import { ApiResponse } from 'src/utils/types/common';
 import { CreateProductLineDto } from './dto/create-product-line.dto';
 import { GetProductLineFilterDto } from './dto/get-product-line-filter.dto';
@@ -13,9 +14,24 @@ export class ProductLineService {
     @InjectRepository(ProductLineRepository)
     private readonly productLineRepository: ProductLineRepository,
   ) {}
-  create(createProductLineDto: CreateProductLineDto) {
-    const productLine = this.productLineRepository.create(createProductLineDto);
-    return this.productLineRepository.save(productLine);
+  async create(createProductLineDto: CreateProductLineDto) {
+    try {
+      const productLine =
+        this.productLineRepository.create(createProductLineDto);
+      await this.productLineRepository.save(productLine);
+      return productLine;
+    } catch (error) {
+      if (error?.code === PostgresErrorCode.UniqueViolation) {
+        throw new HttpException(
+          'Product line already exists in the system',
+          HttpStatus.CONFLICT,
+        );
+      }
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   async findAll(

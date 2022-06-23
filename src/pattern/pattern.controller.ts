@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { PatternService } from './pattern.service';
 import { CreatePatternDto } from './dto/create-pattern.dto';
@@ -15,6 +16,9 @@ import JwtAuthenticationGuard from 'src/auth/jwt-authentication.guard';
 import { Role } from 'src/users/entities/role.enum';
 import { Roles } from 'src/users/roles.decorator';
 import { RolesGuard } from 'src/users/roles.guard';
+import { GetPatternsFilterDto } from './dto/get-pattern-filter.dto';
+import { ApiResponse } from 'src/utils/types/common';
+import { Pattern } from './entities/pattern.entity';
 
 @Controller('pattern')
 @UseGuards(JwtAuthenticationGuard, RolesGuard)
@@ -28,8 +32,10 @@ export class PatternController {
   }
 
   @Get()
-  findAll() {
-    return this.patternService.findAll();
+  findAll(
+    @Query() filterDto: GetPatternsFilterDto,
+  ): Promise<ApiResponse<Pattern[]>> {
+    return this.patternService.findAll(filterDto);
   }
 
   @Get(':id')

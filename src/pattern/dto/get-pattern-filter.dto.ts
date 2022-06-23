@@ -1,6 +1,6 @@
 import { IsOptional, IsString } from 'class-validator';
 
-export class GetBrandsFilterDto {
+export class GetPatternsFilterDto {
   @IsOptional()
   @IsString()
   search: string;

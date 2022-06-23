@@ -6,7 +6,7 @@ export class ProductLine {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ unique: true })
   name: string;
 
   @OneToMany(() => Stock, (stock) => stock.productLine)

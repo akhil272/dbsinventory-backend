@@ -99,12 +99,41 @@ export class ManageQuotationsService {
   }
 
   async adminOverview(getOverviewDto: GetOverviewDto) {
-    const [ordersCount, profit] = await this.ordersService.getCountOfOrders(
-      getOverviewDto,
-    );
+    const [totalSales, profit] =
+      await this.ordersService.getTotalSalesAndProfit(getOverviewDto);
     const [receivedQuotations, pendingQuotations] =
       await this.quotationsService.getCountOfQuotations(getOverviewDto);
-
-    return { ordersCount, profit, receivedQuotations, pendingQuotations };
+    const yesterdayStartDate = new Date(getOverviewDto.startDate);
+    const yesterdayEndDate = new Date(getOverviewDto.endDate);
+    yesterdayStartDate.setDate(yesterdayStartDate.getDate() - 1);
+    yesterdayEndDate.setDate(yesterdayEndDate.getDate() - 1);
+    const yesterdayOverview = {
+      startDate: yesterdayStartDate,
+      endDate: yesterdayEndDate,
+    };
+    const [yTotalSales, yProfit] =
+      await this.ordersService.getTotalSalesAndProfit(yesterdayOverview);
+    const [yReceivedQuotations, yPendingQuotations] =
+      await this.quotationsService.getCountOfQuotations(getOverviewDto);
+    const increaseInSale = Math.floor(
+      ((totalSales - yTotalSales) / yTotalSales) * 100,
+    );
+    const increaseInProfits = Math.floor(((profit - yProfit) / yProfit) * 100);
+    const increaseInQuotationReceived = Math.floor(
+      ((receivedQuotations - yReceivedQuotations) / yReceivedQuotations) * 100,
+    );
+    const increaseInPendingQuotations = Math.floor(
+      ((pendingQuotations - yPendingQuotations) / yPendingQuotations) * 100,
+    );
+    return {
+      totalSales,
+      profit,
+      receivedQuotations,
+      pendingQuotations,
+      increaseInSale,
+      increaseInProfits,
+      increaseInQuotationReceived,
+      increaseInPendingQuotations,
+    };
   }
 }

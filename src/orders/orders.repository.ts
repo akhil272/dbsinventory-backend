@@ -49,7 +49,7 @@ export class OrdersRepository extends Repository<Order> {
     }
   }
 
-  async getCountOfORders(getOverviewDto: GetOverviewDto) {
+  async getTotalSalesAndProfit(getOverviewDto: GetOverviewDto) {
     const query = this.createQueryBuilder('order');
     const start = new Date(getOverviewDto.startDate);
     const end = new Date(getOverviewDto.endDate);
@@ -57,13 +57,14 @@ export class OrdersRepository extends Repository<Order> {
     start.setHours(0, 0, 0, 0);
     end.setHours(24, 0, 0, 0);
 
-    const orderCount = await query
+    const { totalSales } = await query
       .where('order.createdAt >= :start', { start })
       .andWhere('order.createdAt <= :end', { end })
-      .getCount();
+      .select('SUM(order.salePrice)', 'totalSales')
+      .getRawOne();
     const { profit } = await query
       .select('SUM(order.profit)', 'profit')
       .getRawOne();
-    return [orderCount, profit];
+    return [totalSales, profit];
   }
 }
