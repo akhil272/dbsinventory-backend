@@ -54,11 +54,11 @@ export class ServicesService {
   }
 
   update(id: number, updateServiceDto: UpdateServiceDto) {
-    return `This action updates a #${id} service`;
+    return this.servicesRepository.update(id, updateServiceDto);
   }
 
   remove(id: number) {
-    return `This action removes a #${id} service`;
+    return this.servicesRepository.delete(id);
   }
 
   async addServiceToQuotation(serviceId: number) {

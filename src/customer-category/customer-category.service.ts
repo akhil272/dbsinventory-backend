@@ -58,6 +58,6 @@ export class CustomerCategoryService {
   }
 
   remove(id: number) {
-    return `This action removes a #${id} customerCategory`;
+    return this.customerCategoryRepository.delete(id);
   }
 }

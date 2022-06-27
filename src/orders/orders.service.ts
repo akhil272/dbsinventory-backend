@@ -107,7 +107,7 @@ export class OrdersService {
       fields: [
         'OrderId',
         'SaleDate',
-        'SoldPrice',
+        'SalePrice',
         'Quantity',
         'EmployeeName',
         'Customer',
@@ -122,7 +122,7 @@ export class OrdersService {
       json.push({
         OrderId: order.id,
         SaleDate: order.saleDate,
-        SoldPrice: order.salePrice,
+        SalePrice: order.salePrice,
         Quantity: order.quantity,
         EmployeeName: order.employeeName,
         Customer: order.customer,

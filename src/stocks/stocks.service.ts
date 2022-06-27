@@ -182,14 +182,14 @@ export class StocksService {
     const parser = new Parser({
       fields: [
         'StockId',
-        'ProductLine',
+        'ProductLineId',
         'DOM',
         'PurchaseDate',
         'PurchasedQuantity',
-        'SpeedRatingId',
-        'LoadIndexId',
         'Quantity',
         'Cost',
+        'SpeedRatingId',
+        'LoadIndexId',
         'SoldOut',
         'TyreDetailId',
         'TransportId',
@@ -207,7 +207,7 @@ export class StocksService {
     stocks.forEach((stock) => {
       json.push({
         StockId: stock.id,
-        ProductLine: stock.productLine,
+        ProductLineId: stock.productLine,
         DOM: stock.dom,
         PurchaseDate: stock.purchaseDate,
         PurchasedQuantity: stock.purchasedQuantity,
