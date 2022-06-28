@@ -32,7 +32,7 @@ export class AuthController {
   } | void> {
     const user = await this.authService.register(registerUserDto);
     const accessToken = await this.authService.generateAccessToken(user);
-    await this.authService.generateOtpForNewUser(user);
+    // await this.authService.generateOtpForNewUser(user);
     return {
       success: true,
       data: { accessToken },
