@@ -1,10 +1,12 @@
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { Order } from 'src/orders/entities/order.entity';
@@ -12,19 +14,25 @@ import { Transport } from 'src/transport/entities/transport.entity';
 import { Vendor } from 'src/vendor/entities/vendor.entity';
 import { Location } from 'src/location/entities/location.entity';
 import { TyreDetail } from 'src/tyre-detail/entities/tyre-detail.entity';
+import { LoadIndex } from 'src/load-index/entities/load-index.entity';
+import { SpeedRating } from 'src/speed-rating/entities/speed-rating.entity';
+import { ProductLine } from 'src/product-line/entities/product-line.entity';
 @Entity()
 export class Stock {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  product_line: string;
+  @ManyToOne(() => ProductLine, (product_line) => product_line.stocks)
+  productLine: ProductLine;
 
   @Column()
   dom: string;
 
   @Column()
-  purchase_date: Date;
+  purchaseDate: Date;
+
+  @Column()
+  purchasedQuantity: number;
 
   @Column()
   quantity: number;
@@ -32,8 +40,14 @@ export class Stock {
   @Column()
   cost: number;
 
+  @ManyToOne(() => SpeedRating, (speedRating) => speedRating.stocks)
+  speedRating: SpeedRating;
+
+  @ManyToOne(() => LoadIndex, (loadIndex) => loadIndex.stocks)
+  loadIndex: LoadIndex;
+
   @Column('boolean', { default: false })
-  sold_out: boolean;
+  soldOut: boolean;
 
   @ManyToOne(() => TyreDetail, (tyreDetail) => tyreDetail.stocks)
   tyreDetail: TyreDetail;
@@ -54,5 +68,11 @@ export class Stock {
   orders: Order[];
 
   @CreateDateColumn()
-  created_at: Date;
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+
+  @DeleteDateColumn()
+  deletedAt: Date;
 }

@@ -7,7 +7,7 @@ export class TyreSize {
   id: number;
 
   @Column({ unique: true })
-  size: string;
+  value: string;
 
   @OneToMany(() => TyreDetail, (tyreDetail) => tyreDetail.tyreSize)
   tyreDetails: TyreDetail[];

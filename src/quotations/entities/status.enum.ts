@@ -1,0 +1,6 @@
+export enum Status {
+  PENDING = 'PENDING',
+  WAITING = 'WAITING',
+  ACCEPTED = 'ACCEPTED',
+  FOLLOWUP = 'FOLLOWUP',
+}

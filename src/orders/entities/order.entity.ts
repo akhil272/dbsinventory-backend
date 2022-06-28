@@ -1,6 +1,15 @@
 import { Type } from 'class-transformer';
+import { Customer } from 'src/customers/entities/customer.entity';
 import { Stock } from 'src/stocks/entities/stock.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity()
 export class Order {
@@ -9,26 +18,32 @@ export class Order {
 
   @Type(() => Date)
   @Column({ type: Date })
-  sale_date: Date;
+  saleDate: Date;
 
   @Column()
-  sold_price: number;
+  salePrice: number;
 
   @Column()
   quantity: number;
 
   @Column()
-  employee_name: string;
+  employeeName: string;
 
-  @Column()
-  customer_name: string;
-
-  @Column()
-  customer_phone_number: string;
+  @ManyToOne(() => Customer, (customer) => customer.orders)
+  customer: Customer;
 
   @Column()
   profit: number;
 
   @ManyToOne((_type) => Stock, (stock) => stock.orders)
   stock: Stock;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+
+  @DeleteDateColumn()
+  deletedAt: Date;
 }

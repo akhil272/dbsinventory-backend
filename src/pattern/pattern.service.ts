@@ -8,8 +8,11 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { BrandService } from 'src/brand/brand.service';
 import PostgresErrorCode from 'src/database/postgresErrorCodes.enum';
+import { ApiResponse } from 'src/utils/types/common';
 import { CreatePatternDto } from './dto/create-pattern.dto';
+import { GetPatternsFilterDto } from './dto/get-pattern-filter.dto';
 import { UpdatePatternDto } from './dto/update-pattern.dto';
+import { Pattern } from './entities/pattern.entity';
 import { PatternRepository } from './pattern.repository';
 
 @Injectable()
@@ -22,8 +25,8 @@ export class PatternService {
 
   async create(createPatternDto: CreatePatternDto) {
     try {
-      const { name, brand_id } = createPatternDto;
-      const brand = await this.brandService.findOne(brand_id);
+      const { name, brandId } = createPatternDto;
+      const brand = await this.brandService.findOne(brandId);
       const pattern = this.patternRepository.create({
         name,
         brand,
@@ -37,8 +40,14 @@ export class PatternService {
     }
   }
 
-  async findAll() {
-    return await this.patternRepository.find();
+  async findAll(
+    filterDto: GetPatternsFilterDto,
+  ): Promise<ApiResponse<Pattern[]>> {
+    const patterns = await this.patternRepository.getPatterns(filterDto);
+    return {
+      success: true,
+      data: patterns,
+    };
   }
 
   async findOne(id: number) {
@@ -55,10 +64,8 @@ export class PatternService {
     try {
       const pattern = await this.findOne(id);
       pattern.name = updatePatternDto.name;
-      if (updatePatternDto.brand_id) {
-        const brand = await this.brandService.findOne(
-          updatePatternDto.brand_id,
-        );
+      if (updatePatternDto.brandId) {
+        const brand = await this.brandService.findOne(updatePatternDto.brandId);
         pattern.brand = brand;
       }
       await this.patternRepository.save(pattern);

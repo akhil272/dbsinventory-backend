@@ -1,12 +1,5 @@
-import { IsString } from 'class-validator';
-
-export class LocalFileDto {
-  @IsString()
+interface LocalFileDto {
   filename: string;
-
-  @IsString()
   path: string;
-
-  @IsString()
   mimetype: string;
 }

@@ -7,16 +7,19 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { StocksMetaDto } from './dto/stocks-meta-dto';
+import { StocksWithMetaDto } from './dto/stocks-with-meta-dto';
 import { Transport } from 'src/transport/entities/transport.entity';
 import { Vendor } from 'src/vendor/entities/vendor.entity';
 import { Location } from 'src/location/entities/location.entity';
 import { TyreDetail } from 'src/tyre-detail/entities/tyre-detail.entity';
 import { StocksExportFileDto } from './dto/stocks-export-file-dto';
+import { LoadIndex } from 'src/load-index/entities/load-index.entity';
+import { SpeedRating } from 'src/speed-rating/entities/speed-rating.entity';
+import { ProductLine } from 'src/product-line/entities/product-line.entity';
 
 @EntityRepository(Stock)
 export class StocksRepository extends Repository<Stock> {
-  async getStocks(filterDto: GetStocksFilterDto): Promise<StocksMetaDto> {
+  async getStocks(filterDto: GetStocksFilterDto): Promise<StocksWithMetaDto> {
     const {
       brand,
       size,
@@ -25,13 +28,13 @@ export class StocksRepository extends Repository<Stock> {
       vendor,
       transport,
       location,
-      tyreDetail_id,
+      tyreDetailId,
       take = 25,
       page = 1,
     } = filterDto;
     const query = this.createQueryBuilder('stock').where(
-      'stock.sold_out= :sold_out',
-      { sold_out: false },
+      'stock.soldOut= :soldOut',
+      { soldOut: false },
     );
 
     const skip = (page - 1) * take;
@@ -46,18 +49,26 @@ export class StocksRepository extends Repository<Stock> {
       .leftJoinAndSelect('tyreDetail.tyreSize', 'tyreSize')
       .leftJoinAndSelect('stock.vendor', 'vendor')
       .leftJoinAndSelect('stock.location', 'location')
-      .leftJoinAndSelect('stock.transport', 'transport');
-    if (tyreDetail_id) {
-      query.where('stock.tyreDetail = :id', { id: tyreDetail_id });
+      .leftJoinAndSelect('stock.transport', 'transport')
+      .leftJoinAndSelect('stock.productLine', 'productLine')
+      .leftJoinAndSelect('stock.loadIndex', 'loadIndex')
+      .leftJoinAndSelect('stock.speedRating', 'speedRating');
+    if (brand) {
+      query.where('(brand.name ILIKE :brand)', { brand: `%${brand}%` });
     }
     if (size) {
-      query.where('(tyreSize.size ILIKE :size)', { size: `%${size}%` });
+      query.where('(tyreSize.value ILIKE :size)', { size: `%${size}%` });
+    }
+    if (size && brand) {
+      query
+        .where('(brand.name ILIKE :brand)', { brand: `%${brand}%` })
+        .andWhere('(tyreSize.value ILIKE :size)', { size: `%${size}%` });
+    }
+    if (tyreDetailId) {
+      query.where('stock.tyreDetail = :id', { id: tyreDetailId });
     }
     if (pattern) {
       query.where('(pattern.name ILIKE :pattern)', { pattern: `%${pattern}%` });
-    }
-    if (brand) {
-      query.where('(brand.name ILIKE :brand)', { brand: `%${brand}%` });
     }
     if (location) {
       query.where('(location.name ILIKE :location)', {
@@ -76,13 +87,17 @@ export class StocksRepository extends Repository<Stock> {
     }
     if (search) {
       query.where(
-        '(LOWER(brand.name) LIKE LOWER(:search) or LOWER(tyreSize.size) LIKE LOWER(:search) or LOWER(pattern.name) LIKE LOWER(:search))',
+        '(LOWER(brand.name) LIKE LOWER(:search) or LOWER(tyreSize.value) LIKE LOWER(:search) or LOWER(pattern.name) LIKE LOWER(:search))',
         { search: `%${search}%` },
       );
     }
+    query.orderBy('stock.purchaseDate', 'ASC');
     const [stocks, total] = await query.take(take).skip(skip).getManyAndCount();
-    const last_page = Math.ceil(total / take);
-    if (last_page < page) {
+    if (total === 0) {
+      throw new NotFoundException('No stocks available.');
+    }
+    const lastPage = Math.ceil(total / take);
+    if (lastPage < page) {
       throw new InternalServerErrorException('Requested page does not exists.');
     }
     try {
@@ -91,7 +106,7 @@ export class StocksRepository extends Repository<Stock> {
         meta: {
           total,
           page,
-          last_page,
+          lastPage,
         },
       };
     } catch (error) {
@@ -108,20 +123,26 @@ export class StocksRepository extends Repository<Stock> {
     vendor: Vendor,
     location: Location,
     tyreDetail: TyreDetail,
+    speedRating: SpeedRating,
+    loadIndex: LoadIndex,
+    productLine: ProductLine,
   ) {
-    const { product_line, dom, purchase_date, quantity, cost } = createStockDto;
+    const { dom, purchaseDate, quantity, cost } = createStockDto;
     try {
       const stock = this.create({
-        product_line,
+        productLine,
         dom,
-        purchase_date,
+        purchaseDate,
         tyreDetail,
         transport,
         vendor,
         location,
+        purchasedQuantity: quantity,
         quantity,
         cost,
         user,
+        speedRating,
+        loadIndex,
       });
       await this.save(stock);
       return stock;
@@ -132,19 +153,120 @@ export class StocksRepository extends Repository<Stock> {
 
   async getExportData(stocksExportFileDto: StocksExportFileDto) {
     const query = this.createQueryBuilder('stock');
-    const start = new Date(stocksExportFileDto.start_date);
+    const start = new Date(stocksExportFileDto.startDate);
     start.setHours(0, 0, 0, 0);
-    const end = new Date(stocksExportFileDto.end_date);
+    const end = new Date(stocksExportFileDto.endDate);
     end.setHours(24, 0, 0, 0);
     try {
       const stocks = await query
-        .where('stock.created_at >= :start', { start })
-        .andWhere('stock.created_at <= :end', { end })
+        .where('stock.createdAt >= :start', { start })
+        .andWhere('stock.createdAt <= :end', { end })
         .loadAllRelationIds()
         .getMany();
       return stocks;
     } catch (error) {
       throw new InternalServerErrorException('Failed to fetch stock data.');
     }
+  }
+
+  async findManyByBrandAndTyreSize(brand: string, tyreSize: string) {
+    return await this.createQueryBuilder('stock')
+      .leftJoinAndSelect('stock.tyreDetail', 'tyreDetail')
+      .leftJoinAndSelect('tyreDetail.pattern', 'pattern')
+      .leftJoinAndSelect('pattern.brand', 'brand')
+      .leftJoinAndSelect('stock.vendor', 'vendor')
+      .leftJoinAndSelect('stock.location', 'location')
+      .leftJoinAndSelect('stock.transport', 'transport')
+      .leftJoinAndSelect('tyreDetail.tyreSize', 'tyreSize')
+      .leftJoinAndSelect('stock.productLine', 'productLine')
+      .leftJoinAndSelect('stock.speedRating', 'speedRating')
+      .leftJoinAndSelect('stock.loadIndex', 'loadIndex')
+      .where('(brand.name = :brand)', { brand })
+      .andWhere('(tyreSize.value = :tyreSize)', { tyreSize })
+      .getMany();
+  }
+
+  async findOneByBrandPatternTyreSizeSpeedRatingLoadIndex(
+    brand: string,
+    pattern: string,
+    tyreSize: string,
+    speedRating: string,
+    loadIndex: number,
+  ) {
+    if (!speedRating && !loadIndex) {
+      const stock = await this.createQueryBuilder('stock')
+        .leftJoinAndSelect('stock.tyreDetail', 'tyreDetail')
+        .leftJoinAndSelect('tyreDetail.pattern', 'pattern')
+        .leftJoinAndSelect('pattern.brand', 'brand')
+        .leftJoinAndSelect('tyreDetail.tyreSize', 'tyreSize')
+        .leftJoinAndSelect('stock.vendor', 'vendor')
+        .leftJoinAndSelect('stock.location', 'location')
+        .leftJoinAndSelect('stock.transport', 'transport')
+        .leftJoinAndSelect('stock.productLine', 'productLine')
+        .leftJoinAndSelect('stock.speedRating', 'speedRating')
+        .leftJoinAndSelect('stock.loadIndex', 'loadIndex')
+        .where('(brand.name = :brand)', { brand })
+        .andWhere('(pattern.name = :pattern)', { pattern })
+        .andWhere('(tyreSize.value = :tyreSize)', { tyreSize })
+        .getOne();
+      return stock;
+    }
+    if (!loadIndex) {
+      const stock = await this.createQueryBuilder('stock')
+        .leftJoinAndSelect('stock.tyreDetail', 'tyreDetail')
+        .leftJoinAndSelect('tyreDetail.pattern', 'pattern')
+        .leftJoinAndSelect('pattern.brand', 'brand')
+        .leftJoinAndSelect('tyreDetail.tyreSize', 'tyreSize')
+        .leftJoinAndSelect('stock.vendor', 'vendor')
+        .leftJoinAndSelect('stock.location', 'location')
+        .leftJoinAndSelect('stock.transport', 'transport')
+        .leftJoinAndSelect('stock.productLine', 'productLine')
+        .leftJoinAndSelect('stock.speedRating', 'speedRating')
+        .leftJoinAndSelect('stock.loadIndex', 'loadIndex')
+        .where('(brand.name = :brand)', { brand })
+        .andWhere('(pattern.name = :pattern)', { pattern })
+        .andWhere('(tyreSize.value = :tyreSize)', { tyreSize })
+        .andWhere('(stock.speedRating = :speedRating)', { speedRating })
+        .getOne();
+      return stock;
+    }
+    if (!speedRating) {
+      const stock = await this.createQueryBuilder('stock')
+        .leftJoinAndSelect('stock.tyreDetail', 'tyreDetail')
+        .leftJoinAndSelect('tyreDetail.pattern', 'pattern')
+        .leftJoinAndSelect('pattern.brand', 'brand')
+        .leftJoinAndSelect('tyreDetail.tyreSize', 'tyreSize')
+        .leftJoinAndSelect('stock.vendor', 'vendor')
+        .leftJoinAndSelect('stock.location', 'location')
+        .leftJoinAndSelect('stock.transport', 'transport')
+        .leftJoinAndSelect('stock.productLine', 'productLine')
+        .leftJoinAndSelect('stock.speedRating', 'speedRating')
+        .leftJoinAndSelect('stock.loadIndex', 'loadIndex')
+        .where('(brand.name = :brand)', { brand })
+        .andWhere('(pattern.name = :pattern)', { pattern })
+        .andWhere('(tyreSize.value = :tyreSize)', { tyreSize })
+        .andWhere('(stock.loadIndex = :loadIndex)', { loadIndex })
+        .getOne();
+      return stock;
+    }
+
+    const stock = await this.createQueryBuilder('stock')
+      .leftJoinAndSelect('stock.tyreDetail', 'tyreDetail')
+      .leftJoinAndSelect('tyreDetail.pattern', 'pattern')
+      .leftJoinAndSelect('pattern.brand', 'brand')
+      .leftJoinAndSelect('tyreDetail.tyreSize', 'tyreSize')
+      .leftJoinAndSelect('stock.vendor', 'vendor')
+      .leftJoinAndSelect('stock.location', 'location')
+      .leftJoinAndSelect('stock.transport', 'transport')
+      .leftJoinAndSelect('stock.productLine', 'productLine')
+      .leftJoinAndSelect('stock.speedRating', 'speedRating')
+      .leftJoinAndSelect('stock.loadIndex', 'loadIndex')
+      .where('(brand.name = :brand)', { brand })
+      .andWhere('(pattern.name = :pattern)', { pattern })
+      .andWhere('(tyreSize.value = :tyreSize)', { tyreSize })
+      .andWhere('(stock.speedRating = :speedRating)', { speedRating })
+      .andWhere('(stock.loadIndex = :loadIndex)', { loadIndex })
+      .getOne();
+    return stock;
   }
 }

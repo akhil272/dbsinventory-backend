@@ -12,7 +12,6 @@ export class RefreshTokenRepository extends Repository<RefreshToken> {
     expiresIn: number,
   ): Promise<RefreshToken> {
     const token = new RefreshToken();
-
     token.userId = user.id;
     token.isRevoked = false;
 
@@ -20,12 +19,12 @@ export class RefreshTokenRepository extends Repository<RefreshToken> {
     expiration.setTime(expiration.getTime() + expiresIn);
 
     token.expires = expiration;
-
     try {
-      await token.save();
+      await this.save(token);
+      this.logger.log(`Created refresh token for user ${user?.phoneNumber}`);
     } catch (error) {
       this.logger.error(
-        `Failed to create refresh token for user ${user?.phone_number}`,
+        `Failed to create refresh token for user ${user?.phoneNumber}`,
         error.stack,
       );
       throw new InternalServerErrorException();

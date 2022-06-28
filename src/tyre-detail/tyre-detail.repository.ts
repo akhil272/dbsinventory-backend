@@ -14,7 +14,7 @@ export class TyreDetailRepository extends Repository<TyreDetail> {
       'tyreSize',
     );
     if (search) {
-      query.where('(tyreSize.size ILIKE :search)', {
+      query.where('(tyreSize.value ILIKE :search)', {
         search: `%${search}%`,
       });
     }

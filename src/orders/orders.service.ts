@@ -1,11 +1,14 @@
 import {
   ConflictException,
+  HttpException,
+  HttpStatus,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Parser } from 'json2csv';
-import { NotFoundError } from 'rxjs';
+import { CustomersService } from 'src/customers/customers.service';
+import { GetOverviewDto } from 'src/manage-quotations/dto/get-overview.dto';
 import { Stock } from 'src/stocks/entities/stock.entity';
 import { User } from 'src/users/entities/user.entity';
 import { ApiResponse } from 'src/utils/types/common';
@@ -20,40 +23,71 @@ export class OrdersService {
   constructor(
     @InjectRepository(OrdersRepository)
     private ordersRepository: OrdersRepository,
+    private customersService: CustomersService,
     @InjectRepository(Stock) private stockRepository: Repository<Stock>,
   ) {}
 
   async addOrder(createOrderDto: CreateOrderDto, user: User): Promise<Order> {
-    const { id, sold_price, quantity, customer_name, customer_phone_number } =
+    const { id, salePrice, quantity, firstName, lastName, phoneNumber } =
       createOrderDto;
-    const result = await this.stockRepository.findOne(id);
-    if (!result) {
-      throw NotFoundError;
+    const stock = await this.stockRepository.findOne(id);
+    if (!stock) {
+      throw new HttpException('Stock not found', HttpStatus.NOT_FOUND);
     }
-    if (quantity > result.quantity) {
+    if (quantity > stock.quantity) {
       throw new ConflictException('Not enough stock quantity');
     }
-    const profit = (sold_price - result.cost) * quantity;
+    const profit = (salePrice - stock.cost) * quantity;
+    const customer = await this.customersService.findCustomerByPhoneNumber(
+      phoneNumber,
+    );
+    if (!customer) {
+      const newCustomer = await this.customersService.createNewCustomer(
+        firstName,
+        lastName,
+        phoneNumber,
+      );
+      try {
+        const order = this.ordersRepository.create({
+          quantity,
+          employeeName: user.firstName,
+          salePrice,
+          saleDate: new Date(),
+          customer: newCustomer,
+          profit,
+        });
 
+        stock.quantity -= quantity;
+        order.stock = stock;
+        if (stock.quantity === 0) {
+          stock.soldOut = true;
+        }
+
+        await this.ordersRepository.save(order);
+        await this.stockRepository.save(stock);
+        return order;
+      } catch (error) {
+        throw new InternalServerErrorException('Failed to add order');
+      }
+    }
     try {
       const order = this.ordersRepository.create({
         quantity,
-        employee_name: user.first_name,
-        sold_price,
-        sale_date: new Date(),
-        customer_name,
-        customer_phone_number,
+        employeeName: user.firstName,
+        salePrice,
+        saleDate: new Date(),
+        customer,
         profit,
       });
 
-      result.quantity -= quantity;
-      order.stock = result;
-      if (result.quantity === 0) {
-        result.sold_out = true;
+      stock.quantity -= quantity;
+      order.stock = stock;
+      if (stock.quantity === 0) {
+        stock.soldOut = true;
       }
 
       await this.ordersRepository.save(order);
-      await this.stockRepository.save(result);
+      await this.stockRepository.save(stock);
       return order;
     } catch (error) {
       throw new InternalServerErrorException('Failed to add order');
@@ -71,33 +105,37 @@ export class OrdersService {
   async export(exportFileDto: ExportFileDto) {
     const parser = new Parser({
       fields: [
-        'ID',
-        'Sale_Date',
-        'Sold_Price',
+        'OrderId',
+        'SaleDate',
+        'SalePrice',
         'Quantity',
-        'Employee_Name',
-        'Customer_Name',
-        'Customer_Phone_Number',
+        'EmployeeName',
+        'Customer',
         'Profit',
-        'Stock_ID',
+        'Stock',
+        'CreatedAt',
       ],
     });
     const orders = await this.ordersRepository.getExportData(exportFileDto);
     const json = [];
     orders.forEach((order) => {
       json.push({
-        ID: order.id,
-        Sale_Date: order.sale_date,
-        Sold_Price: order.sold_price,
+        OrderId: order.id,
+        SaleDate: order.saleDate,
+        SalePrice: order.salePrice,
         Quantity: order.quantity,
-        Employee_Name: order.employee_name,
-        Customer_Name: order.customer_name,
-        Customer_Phone_Number: order.customer_phone_number,
+        EmployeeName: order.employeeName,
+        Customer: order.customer,
         Profit: order.profit,
-        Stock_ID: order.stock,
+        Stock: order.stock,
+        CreatedAt: order.createdAt,
       });
     });
     const csv = parser.parse(json);
     return csv;
+  }
+
+  getTotalSalesAndProfit(getOverviewDto: GetOverviewDto) {
+    return this.ordersRepository.getTotalSalesAndProfit(getOverviewDto);
   }
 }

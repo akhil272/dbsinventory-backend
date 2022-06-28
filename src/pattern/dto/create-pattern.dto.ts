@@ -7,5 +7,5 @@ export class CreatePatternDto {
 
   @IsNumber()
   @IsNotEmpty()
-  brand_id: number;
+  brandId: number;
 }

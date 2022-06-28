@@ -12,7 +12,7 @@ import { CreateTyreSizeDto } from './dto/create-tyre-size.dto';
 import { GetTyreSizeFilterDto } from './dto/get-tyre-size-filter.dto';
 import { UpdateTyreSizeDto } from './dto/update-tyre-size.dto';
 import { TyreSize } from './entities/tyre-size.entity';
-import { TyreSizeRepository } from './tyre-size.respository';
+import { TyreSizeRepository } from './tyre-size.repository';
 
 @Injectable()
 export class TyreSizeService {
@@ -22,10 +22,10 @@ export class TyreSizeService {
   ) {}
 
   async create(createTyreSizeDto: CreateTyreSizeDto) {
-    const { size } = createTyreSizeDto;
+    const { tyreSizeValue } = createTyreSizeDto;
     try {
       const tyreSize = this.tyreSizeRepository.create({
-        size,
+        value: tyreSizeValue,
       });
       await this.tyreSizeRepository.save(tyreSize);
       return tyreSize;
@@ -61,15 +61,15 @@ export class TyreSizeService {
     return tyreSize;
   }
 
-  async findWithSize(size: string): Promise<TyreSize> {
-    const tyreSize = await this.tyreSizeRepository.findOne({ size });
+  async findWithSize(value: string): Promise<TyreSize> {
+    const tyreSize = await this.tyreSizeRepository.findOne({ value });
     return tyreSize;
   }
 
   async update(id: number, updateTyreSizeDto: UpdateTyreSizeDto) {
     try {
       const tyreSize = await this.findOne(id);
-      tyreSize.size = updateTyreSizeDto.size;
+      tyreSize.value = updateTyreSizeDto.tyreSizeValue;
       await this.tyreSizeRepository.save(tyreSize);
       return tyreSize;
     } catch (error) {

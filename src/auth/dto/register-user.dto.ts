@@ -1,19 +1,36 @@
-import { IsNotEmpty, IsOptional, IsString, Matches } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Matches,
+} from 'class-validator';
 
 export class RegisterUserDto {
   @IsString()
   @IsNotEmpty()
-  first_name: string;
+  firstName: string;
 
   @IsString()
   @IsNotEmpty()
-  last_name: string;
+  lastName: string;
 
   @IsOptional()
+  @IsEmail()
   email: string;
 
   @IsString()
   @IsNotEmpty()
-  @Matches(/^\+[1-9]\d{1,14}$/)
-  phone_number: string;
+  @Matches(/^\+[1-9]\d{1,14}$/, {
+    message: 'Phone number must be in international format',
+  })
+  phoneNumber: string;
+
+  @IsString()
+  @IsOptional()
+  addressLine1: string;
+
+  @IsString()
+  @IsOptional()
+  addressLine2: string;
 }

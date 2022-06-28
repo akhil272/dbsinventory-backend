@@ -12,7 +12,7 @@ import {
   ClassSerializerInterceptor,
   Req,
   UploadedFile,
-  BadRequestException,
+  Res,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user-dto';
@@ -26,7 +26,11 @@ import JwtAuthenticationGuard from 'src/auth/jwt-authentication.guard';
 import RequestWithUser from 'src/auth/request-with-user.interface';
 import { GetUser } from 'src/auth/get-user.decorator';
 import { ApiResponse } from 'src/utils/types/common';
-import LocalFilesInterceptor from 'src/local-files/local-files.interceptor';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
+import { Response } from 'express';
+import { Express } from 'express';
 
 @Controller('users')
 @UseGuards(JwtAuthenticationGuard, RolesGuard)
@@ -66,54 +70,64 @@ export class UsersController {
     return this.usersService.deleteUser(+id);
   }
 
-  @Post('avatar')
-  @Roles(Role.ADMIN, Role.EMPLOYEE, Role.MANAGER, Role.USER)
-  @UseInterceptors(
-    LocalFilesInterceptor({
-      fieldName: 'file',
-      path: '/avatars',
-      fileFilter: (request, file, callback) => {
-        if (!file.mimetype.includes('image')) {
-          return callback(
-            new BadRequestException('Provide a valid image'),
-            false,
-          );
-        }
-        callback(null, true);
-      },
-      limits: {
-        fileSize: Math.pow(1024, 2), // 1MB
-      },
-    }),
-  )
-  async addAvatar(
-    @Req() request: RequestWithUser,
-    @UploadedFile() file: Express.Multer.File,
-  ) {
-    return this.usersService.addAvatar(request.user.id, {
-      path: file.path,
-      filename: file.originalname,
-      mimetype: file.mimetype,
-    });
-  }
-
   @Get('user/info')
   @Roles(Role.ADMIN, Role.EMPLOYEE, Role.MANAGER, Role.USER)
   getMe(@GetUser() user: User): {
     id: number;
-    first_name: string;
-    last_name: string | undefined;
-    phone_number: string;
+    firstName: string;
+    lastName: string | undefined;
+    phoneNumber: string;
     email: string;
-    roles: string;
+    role: string;
   } {
     return {
       id: user.id,
-      first_name: user.first_name,
-      last_name: user.last_name,
-      phone_number: user.phone_number,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      phoneNumber: user.phoneNumber,
       email: user.email,
-      roles: user.roles,
+      role: user.role,
     };
+  }
+
+  @Post('avatar')
+  @Roles(Role.ADMIN, Role.EMPLOYEE, Role.MANAGER, Role.USER)
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: diskStorage({
+        destination: './uploadedFiles/avatars',
+        filename: (request, file, callback) => {
+          const randomName = Array(32)
+            .fill(null)
+            .map(() => Math.round(Math.random() * 16).toString(16))
+            .join('');
+          return callback(null, `${randomName}${extname(file.originalname)}`);
+        },
+      }),
+    }),
+  )
+  async addAvatars(
+    @Req() request: RequestWithUser,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    await this.usersService.addAvatar(request.user.id, {
+      path: file.path,
+      filename: file.originalname,
+      mimetype: file.mimetype,
+    });
+    return {
+      url: file.path,
+    };
+  }
+
+  @Get('avatars/:path')
+  async getImage(@Param('path') path: string, @Res() res: Response) {
+    res.sendFile(path, { root: './uploadedFiles/avatars' });
+  }
+
+  @Get('overview/:id')
+  @Roles(Role.ADMIN, Role.EMPLOYEE, Role.MANAGER, Role.USER)
+  getOverView(@Param('id') id: string) {
+    return this.usersService.getOverView(+id);
   }
 }

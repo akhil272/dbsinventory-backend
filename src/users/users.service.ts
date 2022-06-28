@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GetUsersFilterDto } from './dto/get-users-filter.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -9,7 +14,8 @@ import { CreateUserDto } from './dto/create-user-dto';
 import PostgresErrorCode from 'src/database/postgresErrorCodes.enum';
 import LocalFilesService from 'src/local-files/local-files.service';
 import { ApiResponse } from 'src/utils/types/common';
-import { LocalFileDto } from 'src/local-files/dto/local-file.dto';
+import { Role } from './entities/role.enum';
+import { RegisterUserDto } from 'src/auth/dto/register-user.dto';
 @Injectable()
 export class UsersService {
   constructor(
@@ -20,7 +26,7 @@ export class UsersService {
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
     try {
-      const user = await this.usersRepository.create({ ...createUserDto });
+      const user = this.usersRepository.create({ ...createUserDto });
       await this.usersRepository.save(user);
       return user;
     } catch (error) {
@@ -37,8 +43,29 @@ export class UsersService {
     }
   }
 
-  getUserByPhoneNumber(phone_number: string): Promise<User> {
-    return this.usersRepository.getUserByPhoneNumber(phone_number);
+  async createNewUserFromQuotation(
+    createUserDto: RegisterUserDto,
+  ): Promise<User> {
+    try {
+      const user = this.usersRepository.create({ ...createUserDto });
+      await this.usersRepository.save(user);
+      return user;
+    } catch (error) {
+      if (error?.code === PostgresErrorCode.UniqueViolation) {
+        throw new HttpException(
+          'User with that phone number already exists',
+          HttpStatus.CONFLICT,
+        );
+      }
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  getUserByPhoneNumber(phoneNumber: string): Promise<User> {
+    return this.usersRepository.getUserByPhoneNumber(phoneNumber);
   }
 
   async getUsers(filterDto: GetUsersFilterDto): Promise<ApiResponse<User[]>> {
@@ -63,18 +90,18 @@ export class UsersService {
   async setCurrentRefreshToken(refreshToken: string, userId: number) {
     const currentHashedRefreshToken = await bcrypt.hash(refreshToken, 10);
     await this.usersRepository.update(userId, {
-      current_hashed_refresh_token: currentHashedRefreshToken,
+      currentHashedRefreshToken,
     });
   }
 
   async getUserIfRefreshTokenMatches(
     refreshToken: string,
-    phone_number: string,
+    phoneNumber: string,
   ) {
-    const user = await this.getUserByPhoneNumber(phone_number);
+    const user = await this.getUserByPhoneNumber(phoneNumber);
     const isRefreshTokenMatching = await bcrypt.compare(
       refreshToken,
-      user.current_hashed_refresh_token,
+      user.currentHashedRefreshToken,
     );
     if (isRefreshTokenMatching) {
       return user;
@@ -83,7 +110,7 @@ export class UsersService {
 
   async removeRefreshToken(userId: number) {
     return await this.usersRepository.update(userId, {
-      current_hashed_refresh_token: null,
+      currentHashedRefreshToken: null,
     });
   }
 
@@ -91,9 +118,9 @@ export class UsersService {
     id: number,
     updateUserDto: UpdateUserDto,
   ): Promise<User> {
-    const { roles } = updateUserDto;
+    const { role } = updateUserDto;
     const user = await this.getUserById(+id);
-    user.roles = roles;
+    user.role = role;
     await this.usersRepository.save(user);
     return user;
   }
@@ -106,7 +133,7 @@ export class UsersService {
     return this.usersRepository.update(
       { id: userId },
       {
-        is_verified: true,
+        isPhoneNumberVerified: true,
       },
     );
   }
@@ -115,5 +142,64 @@ export class UsersService {
     await this.usersRepository.update(userId, {
       avatarId: avatar.id,
     });
+  }
+
+  async getUserByMail(email: string) {
+    const user = await this.usersRepository.findOne({ email });
+    if (!user) {
+      throw new NotFoundException(
+        'Provided email not registered in the system.',
+      );
+    }
+    return user;
+  }
+
+  async markEmailAsConfirmed(email: string) {
+    return this.usersRepository.update(
+      { email },
+      {
+        isEmailVerified: true,
+      },
+    );
+  }
+
+  async createNewUser(
+    firstName: string,
+    lastName: string,
+    phoneNumber: string,
+  ) {
+    const user = await this.usersRepository.create({
+      firstName,
+      lastName,
+      phoneNumber,
+      role: Role.USER,
+    });
+    await this.usersRepository.save(user);
+    return user;
+  }
+
+  async create(user: RegisterUserDto): Promise<User> {
+    const newUser = this.usersRepository.create({ ...user });
+    return this.usersRepository.save(newUser);
+  }
+
+  async findOrCreateUser(user: RegisterUserDto, userId: number): Promise<User> {
+    if (userId) {
+      return await this.usersRepository.findOne(userId);
+    }
+    if (user) {
+      const findUserByPhoneNumber = await this.usersRepository.findOne({
+        where: { phoneNumber: user.phoneNumber },
+      });
+
+      if (!findUserByPhoneNumber) {
+        return await this.create(user);
+      }
+      return findUserByPhoneNumber;
+    }
+  }
+
+  getOverView(userId: number) {
+    return this.usersRepository.getOverView(userId);
   }
 }

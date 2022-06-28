@@ -17,6 +17,18 @@ import { TyreDetailModule } from './tyre-detail/tyre-detail.module';
 import { SmsModule } from './sms/sms.module';
 import { LocalFilesModule } from './local-files/local-files.module';
 import { DatabaseModule } from './database/database.module';
+import { MailModule } from './mail/mail.module';
+import { QuotationsModule } from './quotations/quotations.module';
+import { UserQuoteModule } from './user-quote/user-quote.module';
+import { ManageQuotationsModule } from './manage-quotations/manage-quotations.module';
+import { PDFModule } from './pdf/pdf.module';
+import { SpeedRatingModule } from './speed-rating/speed-rating.module';
+import { LoadIndexModule } from './load-index/load-index.module';
+import { ProductLineModule } from './product-line/product-line.module';
+import { CustomersModule } from './customers/customers.module';
+import { CustomerCategoryModule } from './customer-category/customer-category.module';
+import { ServicesModule } from './services/services.module';
+import { QuotationServicesModule } from './quotation-services/quotation-services.module';
 
 @Module({
   imports: [
@@ -38,6 +50,18 @@ import { DatabaseModule } from './database/database.module';
     TyreDetailModule,
     SmsModule,
     LocalFilesModule,
+    MailModule,
+    QuotationsModule,
+    UserQuoteModule,
+    ManageQuotationsModule,
+    PDFModule,
+    SpeedRatingModule,
+    LoadIndexModule,
+    ProductLineModule,
+    CustomersModule,
+    CustomerCategoryModule,
+    ServicesModule,
+    QuotationServicesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

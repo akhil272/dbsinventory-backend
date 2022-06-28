@@ -10,6 +10,7 @@ import { PassportModule } from '@nestjs/passport';
 import { UsersModule } from 'src/users/users.module';
 import { RefreshTokenRepository } from './refresh-token.repository';
 import { SmsModule } from 'src/sms/sms.module';
+import { MailModule } from 'src/mail/mail.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { SmsModule } from 'src/sms/sms.module';
     PassportModule.register({ defaultStrategy: 'jwt' }),
     ConfigModule,
     SmsModule,
+    MailModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
