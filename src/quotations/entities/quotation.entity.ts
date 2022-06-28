@@ -4,10 +4,12 @@ import { UserQuote } from 'src/user-quote/entities/user-quote.entity';
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Status } from './status.enum';
 
@@ -38,9 +40,6 @@ export class Quotation {
   @ManyToOne(() => Customer, (customer) => customer.quotations)
   customer: Customer;
 
-  @CreateDateColumn()
-  createdAt: Date;
-
   @Column()
   count: number;
 
@@ -49,4 +48,13 @@ export class Quotation {
     (quotationService) => quotationService.quotation,
   )
   quotationServices: QuotationService[];
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+
+  @DeleteDateColumn()
+  deletedAt: Date;
 }

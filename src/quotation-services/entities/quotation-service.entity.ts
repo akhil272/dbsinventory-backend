@@ -1,6 +1,14 @@
 import { Quotation } from 'src/quotations/entities/quotation.entity';
 import { Service } from 'src/services/entities/service.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity()
 export class QuotationService {
@@ -24,4 +32,13 @@ export class QuotationService {
 
   @ManyToOne(() => Service, (service) => service.quotationServices)
   service: Service;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+
+  @DeleteDateColumn()
+  deletedAt: Date;
 }

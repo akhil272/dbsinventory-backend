@@ -3,10 +3,13 @@ import { Stock } from 'src/stocks/entities/stock.entity';
 import { TyreSize } from 'src/tyre-size/entities/tyre-size.entity';
 import {
   Column,
+  CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
@@ -28,4 +31,13 @@ export class TyreDetail {
 
   @ManyToOne(() => TyreSize, (tyreSize) => tyreSize.tyreDetails)
   tyreSize: TyreSize;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+
+  @DeleteDateColumn()
+  deletedAt: Date;
 }

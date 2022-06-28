@@ -1,5 +1,13 @@
 import { Customer } from 'src/customers/entities/customer.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity()
 export class CustomerCategory {
@@ -11,4 +19,13 @@ export class CustomerCategory {
 
   @OneToMany(() => Customer, (customer) => customer.customerCategory)
   customers: Customer[];
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+
+  @DeleteDateColumn()
+  deletedAt: Date;
 }
