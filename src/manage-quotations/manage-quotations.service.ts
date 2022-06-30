@@ -4,6 +4,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import RequestWithUser from 'src/auth/request-with-user.interface';
 import { MailService } from 'src/mail/mail.service';
 import { OrdersService } from 'src/orders/orders.service';
@@ -135,5 +136,11 @@ export class ManageQuotationsService {
       increaseInQuotationReceived,
       increaseInPendingQuotations,
     };
+  }
+
+  @Cron(CronExpression.EVERY_DAY_AT_8AM)
+  updateQuotationStatus() {
+    this.logger.log('Updating quotations based on validity every day at 8am');
+    this.quotationsService.checkForValidity();
   }
 }
