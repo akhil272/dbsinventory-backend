@@ -7,6 +7,7 @@ import { EntityRepository, Repository } from 'typeorm';
 import { GetQuotationsFilterDto } from './dto/get-quotations-filter.dto';
 import { QuotationsResponseDto } from './dto/quotation-response.dto';
 import { Quotation } from './entities/quotation.entity';
+import { Status } from './entities/status.enum';
 
 @EntityRepository(Quotation)
 export class QuotationsRepository extends Repository<Quotation> {
@@ -151,5 +152,29 @@ export class QuotationsRepository extends Repository<Quotation> {
       .getCount();
 
     return [receivedQuotations, pendingQuotations];
+  }
+
+  expiredDate(updateDate: Date, days: number) {
+    updateDate.setHours(23, 59, 59, 999);
+    updateDate.setDate(updateDate.getDate() + days);
+    return updateDate;
+  }
+
+  async checkForValidity() {
+    const query = this.createQueryBuilder('quotation');
+    const status = 'WAITING';
+    const waitingQuotations = await query
+      .where('quotation.status = :status', { status })
+      .getMany();
+    waitingQuotations.map((quotation) => {
+      const expiredDate = this.expiredDate(
+        quotation.updatedAt,
+        quotation.validity,
+      );
+      if (expiredDate < new Date()) {
+        quotation.status = Status.FOLLOWUP;
+        this.save(quotation);
+      }
+    });
   }
 }

@@ -104,4 +104,8 @@ export class QuotationsService {
   getCountOfQuotations(getOverviewDto: GetOverviewDto) {
     return this.quotationsRepository.getCountOfQuotations(getOverviewDto);
   }
+
+  checkForValidity() {
+    return this.quotationsRepository.checkForValidity();
+  }
 }
