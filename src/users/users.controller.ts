@@ -31,6 +31,7 @@ import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { Response } from 'express';
 import { Express } from 'express';
+import { UpdateUserProfileDto } from './dto/update-user-profile.dto';
 
 @Controller('users')
 @UseGuards(JwtAuthenticationGuard, RolesGuard)
@@ -57,7 +58,17 @@ export class UsersController {
     return this.usersService.getUserById(+id);
   }
 
-  @Patch('/:id')
+  @Patch(':id')
+  @Roles(Role.ADMIN, Role.EMPLOYEE, Role.MANAGER, Role.USER)
+  updateUserProfile(
+    @Param('id') id: string,
+    @Body() updateUserProfileDto: UpdateUserProfileDto,
+  ) {
+    return this.usersService.updateUserProfile(+id, updateUserProfileDto);
+  }
+
+  @Patch('role/:id')
+  @Roles(Role.ADMIN)
   updateUserRoleById(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
@@ -88,6 +99,12 @@ export class UsersController {
       email: user.email,
       role: user.role,
     };
+  }
+
+  @Get('avatars/:id')
+  async getAvatar(@Param('id') id: string) {
+    const file = await this.usersService.getFilePath(+id);
+    return { fileName: file.path.slice(14) };
   }
 
   @Post('avatar')

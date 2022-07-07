@@ -16,6 +16,7 @@ import LocalFilesService from 'src/local-files/local-files.service';
 import { ApiResponse } from 'src/utils/types/common';
 import { Role } from './entities/role.enum';
 import { RegisterUserDto } from 'src/auth/dto/register-user.dto';
+import { UpdateUserProfileDto } from './dto/update-user-profile.dto';
 @Injectable()
 export class UsersService {
   constructor(
@@ -125,6 +126,24 @@ export class UsersService {
     return user;
   }
 
+  async updateUserProfile(
+    id: number,
+    updateUserProfileDto: UpdateUserProfileDto,
+  ) {
+    await this.usersRepository.update(id, updateUserProfileDto);
+    const user = await this.getUserById(id);
+    const { phoneNumber, email } = updateUserProfileDto;
+    if (phoneNumber !== user.phoneNumber) {
+      user.isPhoneNumberVerified = false;
+      await this.usersRepository.save(user);
+    }
+    if (email !== user.email) {
+      user.isEmailVerified = false;
+      await this.usersRepository.save(user);
+    }
+    return user;
+  }
+
   async deleteUser(id: number): Promise<{ success: boolean }> {
     return this.usersRepository.deleteUser(id);
   }
@@ -142,6 +161,11 @@ export class UsersService {
     await this.usersRepository.update(userId, {
       avatarId: avatar.id,
     });
+  }
+
+  async getFilePath(avatarId: number) {
+    const filePath = await this.localFilesService.getFileById(avatarId);
+    return filePath;
   }
 
   async getUserByMail(email: string) {
