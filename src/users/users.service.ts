@@ -130,7 +130,6 @@ export class UsersService {
     id: number,
     updateUserProfileDto: UpdateUserProfileDto,
   ) {
-    await this.usersRepository.update(id, updateUserProfileDto);
     const user = await this.getUserById(id);
     const { phoneNumber, email } = updateUserProfileDto;
     if (phoneNumber !== user.phoneNumber) {
@@ -141,6 +140,7 @@ export class UsersService {
       user.isEmailVerified = false;
       await this.usersRepository.save(user);
     }
+    await this.usersRepository.update(id, updateUserProfileDto);
     return user;
   }
 

@@ -9,6 +9,7 @@ import {
   UseGuards,
   Req,
   Query,
+  ForbiddenException,
 } from '@nestjs/common';
 import { QuotationsService } from './quotations.service';
 import { CreateQuotationDto } from './dto/create-quotation.dto';
@@ -46,11 +47,19 @@ export class QuotationsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  @Roles(Role.ADMIN, Role.MANAGER, Role.USER, Role.EMPLOYEE)
+  async findOne(@Param('id') id: string, @Req() request: RequestWithUser) {
+    if (request.user.role === Role.USER) {
+      const quotation = await this.quotationsService.findOne(+id);
+      if (quotation.customer.user.phoneNumber !== request.user.phoneNumber) {
+        throw new ForbiddenException('Access denied');
+      }
+    }
     return this.quotationsService.findOne(+id);
   }
 
   @Patch(':id')
+  @Roles(Role.ADMIN, Role.MANAGER, Role.USER, Role.EMPLOYEE)
   update(
     @Param('id') id: string,
     @Body() updateQuotationDto: UpdateQuotationDto,

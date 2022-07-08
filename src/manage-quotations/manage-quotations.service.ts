@@ -52,14 +52,15 @@ export class ManageQuotationsService {
     if (!quotation) {
       throw new NotFoundException('Quotation not found');
     }
-    const user = await this.usersService.getUserById(quotation.customer.id);
+    const user = await this.usersService.getUserById(
+      quotation.customer.user.id,
+    );
     if (!user) {
       throw new NotFoundException('User not found');
     }
     if (user.id !== request.user.id) {
       throw new ForbiddenException('You can not download others quotation');
     }
-
     const pdf = await this.pdfService.generatePDFWithQuotationAndUser(
       user,
       quotation,

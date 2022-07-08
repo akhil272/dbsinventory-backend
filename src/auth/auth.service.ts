@@ -316,7 +316,7 @@ export class AuthService {
     return this.refreshTokenRepository.findTokenById(tokenId);
   }
 
-  async sendMailConfirmationLink(user) {
+  async sendMailConfirmationLink(user: User) {
     const findUser = await this.usersService.getUserByMail(user.email);
     if (findUser.isEmailVerified) {
       throw new ConflictException('Email already verified.');

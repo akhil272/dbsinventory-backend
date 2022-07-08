@@ -114,6 +114,7 @@ export class QuotationsRepository extends Repository<Quotation> {
         'quotation.notes',
         'quotation.validity',
         'customer.id',
+        'user.id',
         'user.firstName',
         'user.lastName',
         'user.phoneNumber',

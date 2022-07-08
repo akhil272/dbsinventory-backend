@@ -1,5 +1,9 @@
 import { MailerService } from '@nestjs-modules/mailer';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/users/entities/user.entity';
@@ -42,7 +46,7 @@ export class MailService {
   async confirmEmail(email: string) {
     const user = await this.usersService.getUserByMail(email);
     if (user.isEmailVerified) {
-      throw new BadRequestException('Email already confirmed');
+      throw new ConflictException('Email already confirmed');
     }
     await this.usersService.markEmailAsConfirmed(email);
   }

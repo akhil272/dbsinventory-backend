@@ -35,7 +35,7 @@ export class ManageQuotationsController {
     );
   }
 
-  @Post('download/pdf/:id')
+  @Get('download/pdf/:id')
   async sendPDFQuotation(
     @Param('id') id: string,
     @Req() request: RequestWithUser,
