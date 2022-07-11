@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { Quotation } from 'src/quotations/entities/quotation.entity';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import VerificationTokenPayload from './verificationTokenPayload.interface';
@@ -69,10 +70,10 @@ export class MailService {
     }
   }
 
-  async sendQuotationToUserByMail(user: User, quotation) {
+  async sendQuotationToUserByMail(user: User, quotation: Quotation) {
     const url = `${this.configService.get(
-      'BASE_URL',
-    )}/manage-quotations/download/pdf/${quotation.id}`;
+      'EMAIL_CONFIRMATION_URL',
+    )}?quotationId=${quotation.id}`;
     await this.mailerService.sendMail({
       to: user.email,
       // from: '"Support Team" <support@example.com>', // override default from
@@ -81,6 +82,9 @@ export class MailService {
       context: {
         name: user.firstName,
         url,
+        date: quotation.updatedAt,
+        due_date: quotation.validity,
+        total: quotation.price,
       },
     });
   }

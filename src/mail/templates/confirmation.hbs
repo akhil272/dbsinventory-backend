@@ -1,317 +1,528 @@
-<!DOCTYPE html>
+<html lang='en' xmlns:v='urn:schemas-microsoft-com:vml'>
+  <head>
+    <meta charset='utf-8' />
+    <meta name='x-apple-disable-message-reformatting' />
+    <meta http-equiv='x-ua-compatible' content='ie=edge' />
+    <meta name='viewport' content='width=device-width, initial-scale=1' />
+    <meta
+      name='format-detection'
+      content='telephone=no, date=no, address=no, email=no'
+    />
+    <!--[if mso]>
+  <noscript>
+    <xml>
+      <o:OfficeDocumentSettings xmlns:o="urn:schemas-microsoft-com:office:office">
+        <o:PixelsPerInch>96</o:PixelsPerInch>
+      </o:OfficeDocumentSettings>
+    </xml>
+  </noscript>
+  <style>
+    td,th,div,p,a,h1,h2,h3,h4,h5,h6 {font-family: "Segoe UI", sans-serif; mso-line-height-rule: exactly;}
+  </style>
+  <![endif]-->
 
-<html lang="en" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:v="urn:schemas-microsoft-com:vml">
-<head>
-<title></title>
-<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<!--[if mso]><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch><o:AllowPNG/></o:OfficeDocumentSettings></xml><![endif]-->
-<!--[if !mso]><!-->
-<link href="https://fonts.googleapis.com/css?family=Cormorant+Garamond" rel="stylesheet" type="text/css"/>
-<link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css"/>
-<link href="https://fonts.googleapis.com/css?family=Bitter" rel="stylesheet" type="text/css"/>
-<link href="https://fonts.googleapis.com/css?family=Arvo" rel="stylesheet" type="text/css"/>
-<link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" type="text/css"/>
-<link href="https://fonts.googleapis.com/css?family=Cabin" rel="stylesheet" type="text/css"/>
-<link href="https://fonts.googleapis.com/css?family=Droid+Serif" rel="stylesheet" type="text/css"/>
-<link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet" type="text/css"/>
-<link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet" type="text/css"/>
-<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet" type="text/css"/>
-<link href="https://fonts.googleapis.com/css?family=Shrikhand" rel="stylesheet" type="text/css"/>
-<link href="https://fonts.googleapis.com/css2?family=Satisfy&display=swap" rel="stylesheet" type="text/css"/>
-<link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet" type="text/css"/>
-<link href="https://fonts.googleapis.com/css?family=Abril+Fatface" rel="stylesheet" type="text/css"/>
-<link href="https://fonts.googleapis.com/css?family=Alegreya" rel="stylesheet" type="text/css"/>
-<link href="https://fonts.googleapis.com/css?family=Lora" rel="stylesheet" type="text/css"/>
-<link href="https://fonts.googleapis.com/css?family=Merriweather" rel="stylesheet" type="text/css"/>
-<link href="https://fonts.googleapis.com/css?family=Catamaran" rel="stylesheet" type="text/css"/>
-<link href="https://fonts.googleapis.com/css?family=Monda" rel="stylesheet" type="text/css"/>
-<link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet" type="text/css"/>
-<!--<![endif]-->
-<style>
-		* {
-			box-sizing: border-box;
-		}
+    <title>New Account</title>
 
-		body {
-			margin: 0;
-			padding: 0;
-		}
+    <link rel='preconnect' href='https://fonts.googleapis.com' />
+    <link rel='preconnect' href='https://fonts.gstatic.com' crossorigin='' />
+    <link
+      href='https://fonts.googleapis.com/css2?family=Lato&display=swap'
+      rel='stylesheet'
+      media='screen'
+    />
 
-		a[x-apple-data-detectors] {
-			color: inherit !important;
-			text-decoration: inherit !important;
-		}
+    <style>/* Tailwind CSS components */ /** * @import here any custom CSS
+      components - that is, CSS that * you'd want loaded before the Tailwind
+      utilities, so the * utilities can still override them. */ /* Tailwind CSS
+      utility classes */ .float-right { float: right !important; } .-mx-0_5 {
+      margin-left: -2px !important; margin-right: -2px !important; } .-mx-0 {
+      margin-left: 0 !important; margin-right: 0 !important; } .block { display:
+      block !important; } .table { display: table !important; } .h-full {
+      height: 100% !important; } .w-500px { width: 500px !important; } .w-150px
+      { width: 150px !important; } .w-47pc { width: 47% !important; } .w-600px {
+      width: 600px !important; } .max-w-500px { max-width: 500px !important; }
+      .max-w-1-2 { max-width: 50% !important; } .max-w-150px { max-width: 150px
+      !important; } .max-w-350px { max-width: 350px !important; } .max-w-325px {
+      max-width: 325px !important; } .border { border-width: 1px !important; }
+      .bg-slate-darkest { background-color: #333333 !important; } .bg-blue-700 {
+      background-color: #1d4ed8 !important; } .bg-slate-lightest {
+      background-color: #F5F7FA !important; } .bg-slate-lighter {
+      background-color: #E6E9ED !important; } .bg-ceej-blue { background-color:
+      #539be2 !important; } .bg-ceej-blue-light { background-color: #B3E5FC
+      !important; } .bg-ceej-red { background-color: #ec6d64 !important; }
+      .bg-ceej-black { background-color: #111111 !important; }
+      .bg-ceej-red-light { background-color: #FFE0DE !important; }
+      .bg-ceej-green { background-color: #66BB7F !important; }
+      .bg-ceej-green-light { background-color: #C0EDE0 !important; }
+      .bg-ceej-orange { background-color: #FFA73B !important; }
+      .bg-ceej-orange-light { background-color: #FFECD1 !important; }
+      .bg-ceej-purple { background-color: #7c72dc !important; }
+      .bg-ceej-purple-light { background-color: #C6C2ED !important; } .p-7 {
+      padding: 28px !important; } .p-15px { padding: 15px !important; } .px-2 {
+      padding-left: 8px !important; padding-right: 8px !important; } .py-70px {
+      padding-top: 70px !important; padding-bottom: 70px !important; } .px-15px
+      { padding-left: 15px !important; padding-right: 15px !important; } .px-20
+      { padding-left: 80px !important; padding-right: 80px !important; } .px-7 {
+      padding-left: 28px !important; padding-right: 28px !important; } .pt-7 {
+      padding-top: 28px !important; } .pt-25px { padding-top: 25px !important; }
+      .pt-15px { padding-top: 15px !important; } .pb-15px { padding-bottom: 15px
+      !important; } .pb-35px { padding-bottom: 35px !important; } .pb-25px {
+      padding-bottom: 25px !important; } .align-middle { vertical-align: middle
+      !important; } .text-xs { font-size: 12px !important; } .text-2xs {
+      font-size: 13px !important; } .text-base { font-size: 16px !important; }
+      .text-3xl { font-size: 30px !important; } .text-0 { font-size: 0
+      !important; } .text-2xl { font-size: 24px !important; } .text-4xl {
+      font-size: 36px !important; } .text-32px { font-size: 32px !important; }
+      .italic { font-style: italic !important; } .leading-4 { line-height: 16px
+      !important; } .leading-20 { line-height: 80px !important; } .leading-6 {
+      line-height: 24px !important; } .text-slate-darker { color: #444444
+      !important; } .text-slate-darkest { color: #333333 !important; }
+      .text-blue-700 { color: #1d4ed8 !important; } .text-slate-light { color:
+      #AAAAAA !important; } .text-green-500 { color: #22c55e !important; }
+      .text-ceej-blue { color: #539be2 !important; } .text-ceej-red { color:
+      #ec6d64 !important; } .text-ceej-green { color: #66BB7F !important; }
+      .text-ceej-purple { color: #7c72dc !important; } .break-word { word-break:
+      break-word !important; } /* Your custom utility classes */ /* * Here is
+      where you can define your custom utility classes. * * We wrap them in the
+      `utilities` @layer directive, so * that Tailwind moves them to the correct
+      location. * * More info: *
+      https://tailwindcss.com/docs/functions-and-directives#layer */
+      .hover-border-red-600:hover { border-color: #dc2626 !important; }
+      .hover-border-green-600:hover { border-color: #16a34a !important; }
+      .hover-border-orange-500:hover { border-color: #f97316 !important; }
+      .hover-border-purple-600:hover { border-color: #9333ea !important; }
+      .hover-bg-blue-600:hover { background-color: #2563eb !important; }
+      .hover-bg-red-600:hover { background-color: #dc2626 !important; }
+      .hover-bg-green-600:hover { background-color: #16a34a !important; }
+      .hover-bg-orange-500:hover { background-color: #f97316 !important; }
+      .hover-bg-purple-600:hover { background-color: #9333ea !important; }
+      .hover-bg-red-500:hover { background-color: #ef4444 !important; }
+      .hover-underline:hover { text-decoration-line: underline !important; }
+      .hover-text-decoration-underline:hover { text-decoration: underline; }
+      @media screen { .all-font-sans { font-family: ui-sans-serif, system-ui,
+      -apple-system, "Segoe UI", sans-serif !important; } .all-font-lato {
+      font-family: "Lato", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+      sans-serif !important; } } @media (max-width: 525px) { .sm-mx-auto {
+      margin-left: auto !important; margin-right: auto !important; } .sm-block {
+      display: block !important; } .sm-hidden { display: none !important; }
+      .sm-w-full { width: 100% !important; } .sm-max-w-full { max-width: 100%
+      !important; } .sm-border-0 { border-width: 0px !important; } .sm-p-15px {
+      padding: 15px !important; } .sm-p-0 { padding: 0 !important; } .sm-py-50px
+      { padding-top: 50px !important; padding-bottom: 50px !important; }
+      .sm-px-15px { padding-left: 15px !important; padding-right: 15px
+      !important; } .sm-pt-7_5 { padding-top: 30px !important; } .sm-pb-0 {
+      padding-bottom: 0 !important; } .sm-pt-7 { padding-top: 28px !important; }
+      .sm-text-center { text-align: center !important; } .sm-text-base {
+      font-size: 16px !important; } .sm-text-32px { font-size: 32px !important;
+      } .sm-leading-8 { line-height: 32px !important; } }
+    </style>
+    <style>
+      a[x-apple-data-detectors] { color: inherit !important; text-decoration:
+      inherit !important; }
+    </style>
 
-		#MessageViewBody a {
-			color: inherit;
-			text-decoration: none;
-		}
+  </head>
+  <body
+    style='word-break: break-word; -webkit-font-smoothing: antialiased; margin: 0; width: 100%; background-color: #f4f4f4; padding: 0'
+  >
 
-		p {
-			line-height: inherit
-		}
+    <div style='display: none'>
+      We're thrilled to have you here! Get ready to dive into your new account.
+      &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847;
+      &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847;
+      &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847;
+      &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847;
+      &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847;
+      &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847;
+      &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847;
+      &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847;
+      &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847;
+      &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847;
+      &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847;
+      &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847;
+      &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847;
+      &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847;
+      &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847;
+    </div>
+    <div
+      role='article'
+      aria-roledescription='email'
+      aria-label='New Account'
+      lang='en'
+    >
 
-		.desktop_hide,
-		.desktop_hide table {
-			mso-hide: all;
-			display: none;
-			max-height: 0px;
-			overflow: hidden;
-		}
+      <table
+        class='all-font-lato'
+        style='width: 100%'
+        border='0'
+        cellpadding='0'
+        cellspacing='0'
+        role='presentation'
+      >
+        <!-- LOGO -->
+        <tr>
+          <td align='center' style='background-color: #d1d5db'>
+            <!--[if (gte mso 9)|(IE)]>
+            <table align="center" cellspacing="0" cellpadding="0" style="width: 600px;">
+              <tr>
+                <td align="center" valign="top">
+                  <![endif]-->
+            <table
+              style='width: 100%; max-width: 600px'
+              border='0'
+              cellpadding='0'
+              cellspacing='0'
+              role='presentation'
+            >
+              <tr>
+                <td
+                  align='center'
+                  style='padding-left: 10px; padding-right: 10px; padding-top: 40px; padding-bottom: 40px; vertical-align: top'
+                  valign='top'
+                >
+                  <a href='https://dbstyres.com' target='_blank'>
+                    <img
+                      src='https://dbsinventory-web-frontend.vercel.app/images/Get_Quote.png'
+                      alt='Logo'
+                      style='width: 40px; font-size: 18px; color: #fff'
+                    />
+                  </a>
+                </td>
+              </tr>
+            </table>
+            <!--[if (gte mso 9)|(IE)]>
+                </td>
+              </tr>
+            </table>
+          <![endif]-->
+          </td>
+        </tr>
+        <!-- HERO -->
+        <tr>
+          <td
+            align='center'
+            style='background-color: #d1d5db; padding-left: 10px; padding-right: 10px'
+          >
+            <!--[if (gte mso 9)|(IE)]>
+            <table align="center" cellspacing="0" cellpadding="0" style="width: 600px;">
+              <tr>
+                <td align="center" valign="top">
+                  <![endif]-->
+            <table
+              style='width: 100%; max-width: 600px'
+              border='0'
+              cellpadding='0'
+              cellspacing='0'
+              role='presentation'
+            >
+              <tr>
+                <td
+                  align='center'
+                  style='border-top-left-radius: 4px; border-top-right-radius: 4px; background-color: #fff; padding: 20px; padding-top: 40px; vertical-align: top; line-height: 48px; color: #111111'
+                  valign='top'
+                >
+                  <h1
+                    class='sm-text-32px sm-leading-8 tracking-loose'
+                    style='margin: 0; font-size: 48px; font-weight: 400'
+                  >
+                    Welcome!
+                    {{name}}
+                  </h1>
+                </td>
+              </tr>
+            </table>
+            <!--[if (gte mso 9)|(IE)]>
+                </td>
+              </tr>
+            </table>
+          <![endif]-->
+          </td>
+        </tr>
+        <!-- COPY BLOCK -->
+        <tr>
+          <td
+            align='center'
+            style='background-color: #f4f4f4; padding-left: 10px; padding-right: 10px'
+          >
+            <!--[if (gte mso 9)|(IE)]>
+            <table align="center" cellspacing="0" cellpadding="0" style="width: 600px;">
+              <tr>
+                <td align="center" valign="top">
+                  <![endif]-->
+            <table
+              style='width: 100%; max-width: 600px'
+              border='0'
+              cellpadding='0'
+              cellspacing='0'
+              role='presentation'
+            >
+              <!-- COPY -->
+              <tr>
+                <td
+                  align='left'
+                  style='background-color: #fff; padding-left: 30px; padding-right: 30px; padding-top: 5px; padding-bottom: 40px; line-height: 25px; color: #666666'
+                >
+                  <p style='margin: 0; font-size: 18px'>
+                    We're excited to have you get started. First, you need to
+                    confirm your account. Just press the button below.
+                  </p>
+                </td>
+              </tr>
+              <!-- BUTTON -->
+              <tr>
+                <td align='left' style='background-color: #fff'>
+                  <table
+                    style='width: 100%'
+                    border='0'
+                    cellpadding='0'
+                    cellspacing='0'
+                    role='presentation'
+                  >
+                    <tr>
+                      <td
+                        align='center'
+                        style='background-color: #fff; padding-left: 30px; padding-right: 30px; padding-top: 5px; padding-bottom: 60px'
+                      >
+                        <table
+                          border='0'
+                          cellpadding='0'
+                          cellspacing='0'
+                          role='presentation'
+                        >
+                          <tr>
+                            <td
+                              align='center'
+                              class='hover-bg-red-500'
+                              style='border-radius: 2px; background-color: #404040'
+                            >
+                              <a
+                                href='{{url}}'
+                                target='_blank'
+                                class='all-font-sans hover-border-orange-500'
+                                style='text-decoration: none; border: 1px solid; display: inline-block; border-radius: 2px; padding-top: 15px; padding-bottom: 15px; padding-left: 25px; padding-right: 25px; font-size: 20px; color: #fff'
+                              >Confirm Account</a>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <!-- COPY -->
+              <tr>
+                <td
+                  align='left'
+                  style='background-color: #fff; padding-left: 30px; padding-right: 30px; line-height: 25px; color: #666666'
+                >
+                  <p style='margin: 0; font-size: 18px'>
+                    If that doesn't work, copy and paste the following link in
+                    your browser:
+                  </p>
+                </td>
+              </tr>
+              <!-- COPY -->
+              <tr>
+                <td
+                  align='left'
+                  style='background-color: #fff; padding-top: 20px; padding-bottom: 20px; padding-left: 30px; padding-right: 30px; font-size: 18px; line-height: 25px; color: #666666'
+                >
+                  <p style='margin: 0'>
+                    <a
+                      href='{{url}}'
+                      target='_blank'
+                      class='hover-text-decoration-underline'
+                      style='text-decoration: none; color: #FFA73B'
+                    >{{url}}</a>
+                  </p>
+                </td>
+              </tr>
+              <!-- COPY -->
+              <tr>
+                <td
+                  align='left'
+                  style='background-color: #fff; padding-left: 30px; padding-right: 30px; padding-bottom: 5px; font-size: 18px; line-height: 25px; color: #666666'
+                >
+                  <p style='margin: 0'>
+                    If you have any questions, just reply to this email—we're
+                    always happy to help out.
+                  </p>
+                </td>
+              </tr>
+              <!-- COPY -->
+              <tr>
+                <td
+                  align='left'
+                  style='border-bottom-left-radius: 4px; border-bottom-right-radius: 4px; background-color: #fff; padding-left: 30px; padding-right: 30px; padding-bottom: 40px; font-size: 18px; line-height: 25px; color: #666666'
+                >
+                  <p style='margin: 0'>
+                    Cheers,<br />
+                    DBS Tyres
+                  </p>
+                </td>
+              </tr>
+            </table>
+            <!--[if (gte mso 9)|(IE)]>
+                </td>
+              </tr>
+            </table>
+          <![endif]-->
+          </td>
+        </tr>
+        <!-- SUPPORT CALLOUT -->
+        <tr>
+          <td
+            align='center'
+            style='background-color: #f4f4f4; padding-left: 10px; padding-right: 10px; padding-top: 30px'
+          >
+            <!--[if (gte mso 9)|(IE)]>
+            <table align="center" cellspacing="0" cellpadding="0" style="width: 600px;">
+              <tr>
+                <td align="center" valign="top">
+                  <![endif]-->
+            <table
+              style='width: 100%; max-width: 600px'
+              border='0'
+              cellpadding='0'
+              cellspacing='0'
+              role='presentation'
+            >
+              <!-- HEADLINE -->
+              <tr>
+                <td
+                  align='center'
+                  style='border-radius: 4px; background-color: #d1d5db; padding: 30px; font-size: 18px; line-height: 25px; color: #666666'
+                >
+                  <h2
+                    style='margin: 0; font-size: 20px; font-weight: 400; color: #111111'
+                  >
+                    Need more help?
+                  </h2>
+                  <p style='margin: 0'>
+                    <a
+                      href='https://dbstyres.com'
+                      target='_blank'
+                      class='hover-text-decoration-underline'
+                      style='text-decoration: none; color: #404040'
+                    >We're here, ready to talk</a>
+                  </p>
+                </td>
+              </tr>
+            </table>
+            <!--[if (gte mso 9)|(IE)]>
+                </td>
+              </tr>
+            </table>
+          <![endif]-->
+          </td>
+        </tr>
+        <!-- FOOTER -->
+        <tr>
+          <td
+            align='center'
+            style='background-color: #f4f4f4; padding-left: 10px; padding-right: 10px'
+          >
+            <!--[if (gte mso 9)|(IE)]>
+      <table align="center" cellspacing="0" cellpadding="0" style="width: 600px;">
+        <tr>
+          <td align="center" valign="top">
+            <![endif]-->
+            <table
+              style='width: 100%; max-width: 600px'
+              border='0'
+              cellpadding='0'
+              cellspacing='0'
+              role='presentation'
+            >
+              <!-- NAVIGATION -->
+              <tr>
+                <td
+                  align='left'
+                  style='background-color: #f4f4f4; padding: 30px; font-size: 14px; line-height: 18px; color: #666666'
+                >
+                  <p style='margin: 0'>
+                    <a
+                      href='https://dbstyres.com'
+                      target='_blank'
+                      class='hover-text-decoration-underline'
+                      style='text-decoration: none; font-weight: 700; color: #111111'
+                    >Dashboard</a>
+                    -
+                    <a
+                      href='https://dbstyres.com'
+                      target='_blank'
+                      class='hover-text-decoration-underline'
+                      style='text-decoration: none; font-weight: 700; color: #111111'
+                    >Profile</a>
+                    -
+                    <a
+                      href='https://dbstyres.com'
+                      target='_blank'
+                      class='hover-text-decoration-underline'
+                      style='text-decoration: none; font-weight: 700; color: #111111'
+                    >Help</a>
+                  </p>
+                </td>
+              </tr>
+              <!-- PERMISSION REMINDER -->
+              <tr>
+                <td
+                  align='left'
+                  style='background-color: #f4f4f4; padding: 30px; padding-top: 0; font-size: 14px; line-height: 18px; color: #666666'
+                >
+                  <p style='margin: 0'>
+                    You received this email because this mail id was used to
+                    register at www.dbstyres.com. If this mail is not of your
+                    concern,
+                    <a
+                      href='https://dbstyres.com'
+                      target='_blank'
+                      class='hover-text-decoration-underline'
+                      style='text-decoration: none; font-weight: 700; color: #111111'
+                    >click here to report.</a>.
+                  </p>
+                </td>
+              </tr>
+              <!-- UNSUBSCRIBE -->
+              <tr>
+                <td
+                  align='left'
+                  style='background-color: #f4f4f4; padding: 30px; padding-top: 0; font-size: 14px; line-height: 18px; color: #666666'
+                >
+                  <p style='margin: 0'>
+                    If these emails get annoying, please feel free to
+                    <a
+                      href='https://dbstyres.com'
+                      target='_blank'
+                      class='hover-text-decoration-underline'
+                      style='text-decoration: none; font-weight: 700; color: #111111'
+                    >unsubscribe</a>.
+                  </p>
+                </td>
+              </tr>
+              <!-- ADDRESS -->
+              <tr>
+                <td
+                  align='left'
+                  style='background-color: #f4f4f4; padding: 30px; padding-top: 0; font-size: 14px; line-height: 18px; color: #666666'
+                >
+                  <p style='margin: 0'>
+                    DBS Tyres - 34/138 H, NH Bye Pass - Edappally, Kochi -
+                    Kerala -682024
+                  </p>
+                </td>
+              </tr>
+            </table>
+            <!--[if (gte mso 9)|(IE)]>
+          </td>
+        </tr>
+      </table>
+    <![endif]-->
+          </td>
+        </tr>
 
-		.menu_block.desktop_hide .menu-links span {
-			mso-hide: all;
-		}
+      </table>
 
-		@media (max-width:625px) {
-			.desktop_hide table.icons-inner {
-				display: inline-block !important;
-			}
-
-			.icons-inner {
-				text-align: center;
-			}
-
-			.icons-inner td {
-				margin: 0 auto;
-			}
-
-			.image_block img.big,
-			.row-content {
-				width: 100% !important;
-			}
-
-			.menu-checkbox[type=checkbox]~.menu-links {
-				display: none !important;
-				padding: 5px 0;
-			}
-
-			.menu-checkbox[type=checkbox]:checked~.menu-trigger .menu-open,
-			.menu-checkbox[type=checkbox]~.menu-links span.sep {
-				display: none !important;
-			}
-
-			.menu-checkbox[type=checkbox]:checked~.menu-links,
-			.menu-checkbox[type=checkbox]~.menu-trigger {
-				display: block !important;
-				max-width: none !important;
-				max-height: none !important;
-				font-size: inherit !important;
-			}
-
-			.menu-checkbox[type=checkbox]~.menu-links>a,
-			.menu-checkbox[type=checkbox]~.menu-links>span.label {
-				display: block !important;
-				text-align: center;
-			}
-
-			.menu-checkbox[type=checkbox]:checked~.menu-trigger .menu-close {
-				display: block !important;
-			}
-
-			.mobile_hide {
-				display: none;
-			}
-
-			.stack .column {
-				width: 100%;
-				display: block;
-			}
-
-			.mobile_hide {
-				min-height: 0;
-				max-height: 0;
-				max-width: 0;
-				overflow: hidden;
-				font-size: 0px;
-			}
-
-			.desktop_hide,
-			.desktop_hide table {
-				display: table !important;
-				max-height: none !important;
-			}
-		}
-
-		#menu102:checked~.menu-links {
-			background-color: #ffffff !important;
-		}
-
-		#menu102:checked~.menu-links a,
-		#menu102:checked~.menu-links span {
-			color: #000000 !important;
-		}
-	</style>
-</head>
-<body style="background-color: #dbdbdb; margin: 0; padding: 0; -webkit-text-size-adjust: none; text-size-adjust: none;">
-<table border="0" cellpadding="0" cellspacing="0" class="nl-container" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #dbdbdb;" width="100%">
-<tbody>
-<tr>
-<td>
-<table align="center" border="0" cellpadding="0" cellspacing="0" class="row row-1" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f5f5f5; background-position: top center; background-video: url('');" width="100%">
-<tbody>
-<tr>
-<td>
-<table align="center" border="0" cellpadding="0" cellspacing="0" class="row-content stack" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; color: #000000; background-color: #f5f5f5; width: 605px;" width="605">
-<tbody>
-<tr>
-<td class="column column-1" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top; padding-left: 5px; padding-right: 5px; padding-top: 15px; padding-bottom: 0px; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;" width="100%">
-<table border="0" cellpadding="0" cellspacing="0" class="text_block" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;" width="100%">
-<tr>
-<td style="padding-top:50px;">
-<div style="font-family: Arial, sans-serif">
-<div class="txtTinyMce-wrapper" style="font-size: 14px; font-family: 'Poppins', Arial, Helvetica, sans-serif; mso-line-height-alt: 16.8px; color: #474747; line-height: 1.2;">
-<p style="margin: 0; font-size: 14px; text-align: center; letter-spacing: 1px;"><span style="font-size:30px;">Welcome to</span></p>
-</div>
-</div>
-</td>
-</tr>
-</table>
-<table border="0" cellpadding="0" cellspacing="0" class="image_block" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
-<tr>
-<td style="padding-bottom:10px;padding-top:10px;width:100%;padding-right:0px;padding-left:0px;">
-<div align="center" style="line-height:10px"><a href="www.dbstyres.com" style="outline:none" tabindex="-1" target="_blank"><img alt="DBS Logo" src="images/DBS_Logo_Header.png" style="display: block; height: auto; border: 0; width: 200px; max-width: 100%;" title="Good hair day" width="200"/></a></div>
-</td>
-</tr>
-</table>
-<table border="0" cellpadding="0" cellspacing="0" class="text_block" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;" width="100%">
-<tr>
-<td style="padding-bottom:20px;padding-top:20px;">
-<div style="font-family: Arial, sans-serif">
-<div class="txtTinyMce-wrapper" style="font-size: 14px; font-family: 'Poppins', Arial, Helvetica, sans-serif; mso-line-height-alt: 16.8px; color: #474747; line-height: 1.2;">
-<p style="margin: 0; font-size: 14px; text-align: left; letter-spacing: 1px;"><span style="font-size:16px;">Hi {{name}}, thank you for registering with us. Please click the below button to verify the mail address. </span></p>
-<p style="margin: 0; font-size: 14px; text-align: center; letter-spacing: 1px; mso-line-height-alt: 16.8px;"> </p>
-<p style="margin: 0; font-size: 14px; text-align: left; letter-spacing: 1px;"><span style="font-size:16px;"><strong>Note</strong>: The link will be expired within 2hrs. In case if you fail to verify within 2hrs, visit www.dbstyres.com and initiate verify mail address from profile screen.</span></p>
-</div>
-</div>
-</td>
-</tr>
-</table>
-<table border="0" cellpadding="10" cellspacing="0" class="button_block" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
-<tr>
-<td>
-<div align="center">
-<!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="www.dbstyres.com" style="height:42px;width:96px;v-text-anchor:middle;" arcsize="24%" stroke="false" fillcolor="#f21313"><w:anchorlock/><v:textbox inset="0px,0px,0px,0px"><center style="color:#dbdbdb; font-family:Arial, sans-serif; font-size:16px"><![endif]--><a href='{{url}}' style="text-decoration:none;display:inline-block;color:#dbdbdb;background-color:#f21313;border-radius:10px;width:auto;border-top:0px solid #000000;font-weight:400;border-right:0px solid #000000;border-bottom:0px solid #000000;border-left:0px solid #000000;padding-top:5px;padding-bottom:5px;font-family:Poppins, Arial, Helvetica, sans-serif;text-align:center;mso-border-alt:none;word-break:keep-all;" target="_blank"><span style="padding-left:20px;padding-right:20px;font-size:16px;display:inline-block;letter-spacing:1px;"><span style="font-size: 16px; line-height: 2; word-break: break-word; mso-line-height-alt: 32px;">Verify </span></span></a>
-<!--[if mso]></center></v:textbox></v:roundrect><![endif]-->
-</div>
-</td>
-</tr>
-</table>
-<table border="0" cellpadding="0" cellspacing="0" class="image_block" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
-<tr>
-<td style="width:100%;padding-right:0px;padding-left:0px;">
-<div align="center" style="line-height:10px"><a href="www.dbstyres.com" style="outline:none" tabindex="-1" target="_blank"><img alt="DBS Cover Art" class="big" src="images/dbsinmcover1.jpg" style="display: block; height: auto; border: 0; width: 590px; max-width: 100%;" title="GHD model placeholder" width="590"/></a></div>
-</td>
-</tr>
-</table>
-</td>
-</tr>
-</tbody>
-</table>
-</td>
-</tr>
-</tbody>
-</table>
-<table align="center" border="0" cellpadding="0" cellspacing="0" class="row row-2" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #ffffff;" width="100%">
-<tbody>
-<tr>
-<td>
-<table align="center" border="0" cellpadding="0" cellspacing="0" class="row-content stack" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; color: #000000; background-color: #ffffff; width: 605px;" width="605">
-<tbody>
-<tr>
-<td class="column column-1" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top; padding-top: 5px; padding-bottom: 0px; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;" width="100%">
-<table border="0" cellpadding="15" cellspacing="0" class="image_block" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
-<tr>
-<td>
-<div align="center" style="line-height:10px"><a href="www.dbstyres.com" style="outline:none" tabindex="-1" target="_blank"><img alt="company logo" src="images/DBS_Logo_Header.png" style="display: block; height: auto; border: 0; width: 151px; max-width: 100%;" title="company logo" width="151"/></a></div>
-</td>
-</tr>
-</table>
-<table border="0" cellpadding="0" cellspacing="0" class="social_block" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
-<tr>
-<td style="padding-bottom:15px;padding-top:15px;text-align:center;padding-right:0px;padding-left:0px;">
-<table align="center" border="0" cellpadding="0" cellspacing="0" class="social-table" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="156px">
-<tr>
-<td style="padding:0 10px 0 10px;"><a href="https://www.facebook.com/dbstyres/" target="_blank"><img alt="Facebook" height="32" src="images/facebook2x.png" style="display: block; height: auto; border: 0;" title="Facebook" width="32"/></a></td>
-<td style="padding:0 10px 0 10px;"><a href="https://www.instagram.com/dbsautomotive" target="_blank"><img alt="Instagram" height="32" src="images/instagram2x.png" style="display: block; height: auto; border: 0;" title="Instagram" width="32"/></a></td>
-<td style="padding:0 10px 0 10px;"><a href="https://www.whatsapp.com" target="_blank"><img alt="WhatsApp" height="32" src="images/whatsapp2x.png" style="display: block; height: auto; border: 0;" title="WhatsApp" width="32"/></a></td>
-</tr>
-</table>
-</td>
-</tr>
-</table>
-<table border="0" cellpadding="0" cellspacing="0" class="menu_block" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
-<tr>
-<td style="color:#000000;font-family:inherit;font-size:10px;letter-spacing:1px;text-align:center;">
-<table border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
-<tr>
-<td style="text-align:center;font-size:0px;">
-<!--[if !mso]><!--><input class="menu-checkbox" id="menu102" style="display:none !important;max-height:0;visibility:hidden;" type="checkbox"/>
-<!--<![endif]-->
-<div class="menu-trigger" style="display:none;max-height:0px;max-width:0px;font-size:0px;overflow:hidden;"><label class="menu-label" for="menu102" style="height: 36px; width: 36px; display: inline-block; cursor: pointer; mso-hide: all; user-select: none; align: center; text-align: center; color: #000000; text-decoration: none; background-color: #ffffff; border-radius: 0;"><span class="menu-open" style="mso-hide:all;font-size:26px;line-height:36px;">☰</span><span class="menu-close" style="display:none;mso-hide:all;font-size:26px;line-height:36px;">✕</span></label></div>
-<div class="menu-links">
-<!--[if mso]>
-<table role="presentation" border="0" cellpadding="0" cellspacing="0" align="center" style="">
-<tr>
-<td style="padding-top:5px;padding-right:5px;padding-bottom:5px;padding-left:5px">
-<![endif]--><a href="tel:+919446821132" style="padding-top:5px;padding-bottom:5px;padding-left:5px;padding-right:5px;display:inline-block;color:#000000;font-family:Poppins, Arial, Helvetica, sans-serif;font-size:10px;text-decoration:none;letter-spacing:1px;">CALL US</a>
-<!--[if mso]></td><td><![endif]--><span class="sep" style="font-size:10px;font-family:Poppins, Arial, Helvetica, sans-serif;color:#000000;">|</span>
-<!--[if mso]></td><![endif]-->
-<!--[if mso]></td><td style="padding-top:5px;padding-right:5px;padding-bottom:5px;padding-left:5px"><![endif]--><a href="www.dbstyres.com" style="padding-top:5px;padding-bottom:5px;padding-left:5px;padding-right:5px;display:inline-block;color:#000000;font-family:Poppins, Arial, Helvetica, sans-serif;font-size:10px;text-decoration:none;letter-spacing:1px;">GET A QUOTE</a>
-<!--[if mso]></td><td><![endif]--><span class="sep" style="font-size:10px;font-family:Poppins, Arial, Helvetica, sans-serif;color:#000000;">|</span>
-<!--[if mso]></td><![endif]-->
-<!--[if mso]></td><td style="padding-top:5px;padding-right:5px;padding-bottom:5px;padding-left:5px"><![endif]--><a href="www.dbstyres.com" style="padding-top:5px;padding-bottom:5px;padding-left:5px;padding-right:5px;display:inline-block;color:#000000;font-family:Poppins, Arial, Helvetica, sans-serif;font-size:10px;text-decoration:none;letter-spacing:1px;">BOOK APPOINTMENT</a>
-<!--[if mso]></td></tr></table><![endif]-->
-</div>
-</td>
-</tr>
-</table>
-</td>
-</tr>
-</table>
-<table border="0" cellpadding="0" cellspacing="0" class="html_block" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
-<tr>
-<td>
-<div align="center" style="font-family:Poppins, Arial, Helvetica, sans-serif;text-align:center;"><div style="height: 10px;"> </div></div>
-</td>
-</tr>
-</table>
-<table border="0" cellpadding="0" cellspacing="0" class="text_block" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;" width="100%">
-<tr>
-<td style="padding-bottom:15px;padding-left:10px;padding-right:10px;padding-top:10px;">
-<div style="font-family: sans-serif">
-<div class="txtTinyMce-wrapper" style="font-size: 12px; font-family: Poppins, Arial, Helvetica, sans-serif; mso-line-height-alt: 18px; color: #000000; line-height: 1.5;">
-<p style="margin: 0; text-align: center; font-size: 10px; mso-line-height-alt: 15px;"><a href="https://www.google.com/search?q=dbs%20tyres&oq=dbs+tyres&aqs=chrome.0.69i59j0i22i30l2j0i15i22i30j0i390j69i61j69i60l2.2424j0j7&sourceid=chrome&ie=UTF-8&tbs=lf:1,lf_ui:10&tbm=lcl&sxsrf=ALiCzsaF0i4cu-eI2YLBnu9DL6mw4Yl99Q:1656942870377&rflfq=1&num=10&rldimm=8069007266587121921&lqi=CglkYnMgdHlyZXNIvpz-vvWVgIAIWhMQABABGAAYASIJZGJzIHR5cmVzkgEJdGlyZV9zaG9w&phdesc=r6FELbsmnkU&ved=2ahUKEwior86Zsd_4AhVOwTgGHYCcAAgQvS56BAgNEAE&sa=X&rlst=f#" jsaction="rcuQ6b:npT2md;F75qrd" jscontroller="LWZElb" jsdata="QKGTRc;_;CcXPgw" style="color: #3a3a3a;">+9197119 83699</a><br/><span style="font-size:10px;"><a href="mailto:hello@dbstyres.com" rel="noopener" style="color: #3a3a3a;" target="_blank" title="http://www.dbstyres.com">hello@d</a>bstyres.com</span></p>
-<p style="margin: 0; text-align: center; font-size: 10px;"> 34/138 H, NH Bye Pass, Edappally, Kochi, Kerala 682024</p>
-<p style="margin: 0; text-align: center; font-size: 10px;">www.dbstyres.com</p>
-</div>
-</div>
-</td>
-</tr>
-</table>
-<table border="0" cellpadding="0" cellspacing="0" class="html_block" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
-<tr>
-<td>
-<div align="center" style="font-family:Poppins, Arial, Helvetica, sans-serif;text-align:center;"><div style="height:30px;"> </div></div>
-</td>
-</tr>
-</table>
-</td>
-</tr>
-</tbody>
-</table>
-</td>
-</tr>
-</tbody>
-</table>
-</td>
-</tr>
-</tbody>
-</table>
-</td>
-</tr>
-</tbody>
-</table><!-- End -->
-</body>
+    </div>
+  </body>
 </html>
