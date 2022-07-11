@@ -1,4 +1,11 @@
-import { IsNotEmpty, IsNumber, IsString, Matches } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Matches,
+} from 'class-validator';
 
 export class CreateOrderDto {
   @IsNotEmpty()
@@ -20,6 +27,10 @@ export class CreateOrderDto {
   @IsNotEmpty()
   @IsString()
   lastName: string;
+
+  @IsOptional()
+  @IsEmail()
+  email: string;
 
   @IsString()
   @IsNotEmpty()

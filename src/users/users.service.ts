@@ -191,11 +191,13 @@ export class UsersService {
     firstName: string,
     lastName: string,
     phoneNumber: string,
+    email: string,
   ) {
     const user = await this.usersRepository.create({
       firstName,
       lastName,
       phoneNumber,
+      email,
       role: Role.USER,
     });
     await this.usersRepository.save(user);

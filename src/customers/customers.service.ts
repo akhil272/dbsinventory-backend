@@ -74,11 +74,13 @@ export class CustomersService {
     firstName: string,
     lastName: string,
     phoneNumber: string,
+    email: string,
   ) {
     const user = await this.usersService.createNewUser(
       firstName,
       lastName,
       phoneNumber,
+      email,
     );
     const newCustomer = new Customer();
     newCustomer.user = user;

@@ -28,7 +28,7 @@ export class OrdersService {
   ) {}
 
   async addOrder(createOrderDto: CreateOrderDto, user: User): Promise<Order> {
-    const { id, salePrice, quantity, firstName, lastName, phoneNumber } =
+    const { id, salePrice, quantity, firstName, lastName, phoneNumber, email } =
       createOrderDto;
     const stock = await this.stockRepository.findOne(id);
     if (!stock) {
@@ -46,6 +46,7 @@ export class OrdersService {
         firstName,
         lastName,
         phoneNumber,
+        email,
       );
       try {
         const order = this.ordersRepository.create({
