@@ -4,6 +4,7 @@ import {
   HttpStatus,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Parser } from 'json2csv';
@@ -138,5 +139,23 @@ export class OrdersService {
 
   getTotalSalesAndProfit(getOverviewDto: GetOverviewDto) {
     return this.ordersRepository.getTotalSalesAndProfit(getOverviewDto);
+  }
+
+  async remove(id: number) {
+    const order = await this.ordersRepository.findOne(id, {
+      relations: ['stock'],
+    });
+    if (!order) throw new NotFoundException('Order ID does not exists');
+    const stock = await this.stockRepository.findOne(order.stock.id);
+    stock.quantity = stock.quantity + order.quantity;
+    try {
+      await this.stockRepository.save(stock);
+      return this.ordersRepository.delete(id);
+    } catch (error) {
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }

@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   Param,
@@ -50,5 +51,12 @@ export class OrdersController {
     res.header('Content-Type', 'text/csv');
     res.attachment('orders.csv');
     return res.send(csv);
+  }
+
+  @Delete(':id')
+  @Roles(Role.ADMIN)
+  @HttpCode(200)
+  remove(@Param('id') id: string) {
+    return this.ordersService.remove(+id);
   }
 }
