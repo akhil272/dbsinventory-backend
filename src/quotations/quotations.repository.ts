@@ -22,7 +22,7 @@ export class QuotationsRepository extends Repository<Quotation> {
       search,
       customerCategory,
     } = filterDto;
-    const query = this.createQueryBuilder('quotation');
+    const query = this.createQueryBuilder('quotation').withDeleted();
     const skip = (page - 1) * take;
     const count = await query.getCount();
     if (count <= 0) {
@@ -41,6 +41,7 @@ export class QuotationsRepository extends Repository<Quotation> {
         'user.firstName',
         'user.lastName',
         'user.phoneNumber',
+        'user.deletedAt',
         'customerCategory.name',
       ])
       .leftJoin('quotation.customer', 'customer')
