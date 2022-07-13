@@ -27,8 +27,8 @@ import { OrdersService } from './orders.service';
 export class OrdersController {
   constructor(private ordersService: OrdersService) {}
 
-  @Roles(Role.ADMIN, Role.MANAGER, Role.EMPLOYEE)
   @Post()
+  @Roles(Role.ADMIN, Role.MANAGER, Role.EMPLOYEE)
   createStock(
     @Body() createOrderDto: CreateOrderDto,
     @GetUser() user: User,
@@ -37,14 +37,14 @@ export class OrdersController {
   }
 
   //get all orders of specific stock item passed by stockid
-  @Roles(Role.ADMIN)
   @Get('/:id')
+  @Roles(Role.ADMIN)
   getAllOrders(@Param('id') id: string): Promise<ApiResponse<Order[]>> {
     return this.ordersService.getOrders(+id);
   }
 
-  @Roles(Role.ADMIN)
   @Post('export')
+  @Roles(Role.ADMIN)
   @HttpCode(200)
   async export(@Body() exportFileDto: ExportFileDto, @Res() res: Response) {
     const csv = await this.ordersService.export(exportFileDto);

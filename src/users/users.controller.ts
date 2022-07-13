@@ -52,8 +52,8 @@ export class UsersController {
     return this.usersService.getUsers(filterDto);
   }
 
-  @Roles(Role.ADMIN, Role.EMPLOYEE, Role.MANAGER, Role.USER)
   @Get('/:id')
+  @Roles(Role.ADMIN, Role.EMPLOYEE, Role.MANAGER, Role.USER)
   getUserById(@Param('id') id: string): Promise<User> {
     return this.usersService.getUserById(+id);
   }
@@ -102,6 +102,7 @@ export class UsersController {
   }
 
   @Get('avatars/:id')
+  @Roles(Role.ADMIN, Role.EMPLOYEE, Role.MANAGER, Role.USER)
   async getAvatar(@Param('id') id: string) {
     const file = await this.usersService.getFilePath(+id);
     return { fileName: file.path.slice(14) };
