@@ -23,7 +23,7 @@ export class MailService {
     private readonly usersService: UsersService,
   ) {}
   platformUrl = this.configService.get('PLATFORM_URL');
-  supportPhoneNumber = `tel:${this.configService.get('SUPPORT_PHONE_NUMBER')}`;
+  supportPhoneNumber = this.configService.get('SUPPORT_PHONE');
   logo = this.configService.get('LOGO');
 
   async sendUserConfirmation(user: User) {
@@ -46,6 +46,7 @@ export class MailService {
       context: {
         name: user.firstName,
         url,
+        support_url: this.supportPhoneNumber,
       },
     });
   }
@@ -102,6 +103,7 @@ export class MailService {
       this.logger.log(`Failed to sent quotation to user ${user.firstName}`);
     }
   }
+
   async sendInvoiceToUserByMail(user: User, order: Order) {
     const url = `${this.configService.get('USER_DASHBOARD_URL')}${user.id}`;
     try {
@@ -118,13 +120,14 @@ export class MailService {
           platform_url: this.platformUrl,
           support_url: this.supportPhoneNumber,
           logo: this.logo,
-          action_url: url,
         },
       });
-      this.logger.log(`Mail successfully send to ${user.firstName}`);
+      this.logger.log(
+        `Sale order ${order.id} successfully send to ${user.firstName}`,
+      );
     } catch (error) {
       this.logger.log(
-        `Failed to send mail for user ${user.firstName} error: ${error.message}`,
+        `Failed to send mail for sale order ${order.id} user ${user.firstName} error: ${error.message}`,
       );
     }
   }
@@ -139,6 +142,7 @@ export class MailService {
         template: 'welcome', // `.hbs` extension is appended automatically
         context: {
           name: user.firstName,
+          phoneNumber: user.phoneNumber,
           url,
           support_url: this.supportPhoneNumber,
           logo: this.logo,
