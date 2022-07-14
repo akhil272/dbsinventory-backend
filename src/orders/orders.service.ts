@@ -10,6 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Parser } from 'json2csv';
 import { CustomersService } from 'src/customers/customers.service';
 import { GetOverviewDto } from 'src/manage-quotations/dto/get-overview.dto';
+import { NotificationsService } from 'src/notifications/notifications.service';
 import { Stock } from 'src/stocks/entities/stock.entity';
 import { User } from 'src/users/entities/user.entity';
 import { ApiResponse } from 'src/utils/types/common';
@@ -25,6 +26,7 @@ export class OrdersService {
     @InjectRepository(OrdersRepository)
     private ordersRepository: OrdersRepository,
     private customersService: CustomersService,
+    private notificationsService: NotificationsService,
     @InjectRepository(Stock) private stockRepository: Repository<Stock>,
   ) {}
 
@@ -67,6 +69,7 @@ export class OrdersService {
 
         await this.ordersRepository.save(order);
         await this.stockRepository.save(stock);
+        this.notificationsService.saleOfStock(user, order);
         return order;
       } catch (error) {
         throw new InternalServerErrorException('Failed to add order');
@@ -90,6 +93,7 @@ export class OrdersService {
 
       await this.ordersRepository.save(order);
       await this.stockRepository.save(stock);
+      this.notificationsService.saleOfStock(user, order);
       return order;
     } catch (error) {
       throw new InternalServerErrorException('Failed to add order');

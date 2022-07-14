@@ -30,6 +30,7 @@ import { CustomerCategoryModule } from './customer-category/customer-category.mo
 import { ServicesModule } from './services/services.module';
 import { QuotationServicesModule } from './quotation-services/quotation-services.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     ServicesModule,
     QuotationServicesModule,
     ScheduleModule.forRoot(),
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

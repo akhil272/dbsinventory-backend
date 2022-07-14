@@ -3,9 +3,11 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  Logger,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { Order } from 'src/orders/entities/order.entity';
 import { Quotation } from 'src/quotations/entities/quotation.entity';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
@@ -13,12 +15,16 @@ import VerificationTokenPayload from './verificationTokenPayload.interface';
 
 @Injectable()
 export class MailService {
+  private readonly logger = new Logger(this.constructor.name);
   constructor(
     private readonly jwtService: JwtService,
     private mailerService: MailerService,
     private readonly configService: ConfigService,
     private readonly usersService: UsersService,
   ) {}
+  platformUrl = this.configService.get('PLATFORM_URL');
+  supportPhoneNumber = `tel:${this.configService.get('SUPPORT_PHONE_NUMBER')}`;
+  logo = this.configService.get('LOGO');
 
   async sendUserConfirmation(user: User) {
     const email = user.email;
@@ -36,7 +42,7 @@ export class MailService {
       to: user.email,
       // from: '"Support Team" <support@example.com>', // override default from
       subject: 'Welcome to DBS Tyres! Confirm your Email',
-      template: 'confirmation', // `.hbs` extension is appended automatically
+      template: 'confirmMail', // `.hbs` extension is appended automatically
       context: {
         name: user.firstName,
         url,
@@ -50,6 +56,7 @@ export class MailService {
       throw new ConflictException('Email already confirmed');
     }
     await this.usersService.markEmailAsConfirmed(email);
+    this.welcomeMail(user);
   }
 
   async decodeConfirmationToken(token: string) {
@@ -71,21 +78,77 @@ export class MailService {
   }
 
   async sendQuotationToUserByMail(user: User, quotation: Quotation) {
-    const url = `${this.configService.get(
-      'EMAIL_CONFIRMATION_URL',
-    )}?quotationId=${quotation.id}`;
-    await this.mailerService.sendMail({
-      to: user.email,
-      // from: '"Support Team" <support@example.com>', // override default from
-      subject: 'Your Quotation is ready | DBS Tyres',
-      template: 'sendQuotation', // `.hbs` extension is appended automatically
-      context: {
-        name: user.firstName,
-        url,
-        date: quotation.updatedAt,
-        due_date: quotation.validity,
-        total: quotation.price,
-      },
-    });
+    const url = `${this.configService.get('QUOTATION_URL')}?quotationId=${
+      quotation.id
+    }`;
+    try {
+      await this.mailerService.sendMail({
+        to: user.email,
+        // from: '"Support Team" <support@example.com>', // override default from
+        subject: 'Your Quotation is ready | DBS Tyres',
+        template: 'quotation', // `.hbs` extension is appended automatically
+        context: {
+          name: user.firstName,
+          url,
+          date: quotation.updatedAt,
+          due_date: quotation.validity,
+          total: quotation.price,
+          support_url: this.supportPhoneNumber,
+          logo: this.logo,
+        },
+      });
+      this.logger.log(`Quotation successfully sent to user ${user.firstName}`);
+    } catch (error) {
+      this.logger.log(`Failed to sent quotation to user ${user.firstName}`);
+    }
+  }
+  async sendInvoiceToUserByMail(user: User, order: Order) {
+    const url = `${this.configService.get('USER_DASHBOARD_URL')}${user.id}`;
+    try {
+      await this.mailerService.sendMail({
+        to: user.email,
+        // from: '"Support Team" <support@example.com>', // override default from
+        subject: 'Thank you for doing business | DBS Tyres',
+        template: 'invoice', // `.hbs` extension is appended automatically
+        context: {
+          name: user.firstName,
+          url,
+          date: new Date(order.saleDate).toLocaleDateString('en-GB'),
+          total: order.salePrice,
+          platform_url: this.platformUrl,
+          support_url: this.supportPhoneNumber,
+          logo: this.logo,
+          action_url: url,
+        },
+      });
+      this.logger.log(`Mail successfully send to ${user.firstName}`);
+    } catch (error) {
+      this.logger.log(
+        `Failed to send mail for user ${user.firstName} error: ${error.message}`,
+      );
+    }
+  }
+
+  welcomeMail(user: User) {
+    const url = `${this.configService.get('PROFILE_URL')}${user.id}`;
+    try {
+      this.mailerService.sendMail({
+        to: user.email,
+        // from: '"Support Team" <support@example.com>', // override default from
+        subject: 'Welcome to DBS Tyres! Lets get started',
+        template: 'welcome', // `.hbs` extension is appended automatically
+        context: {
+          name: user.firstName,
+          url,
+          support_url: this.supportPhoneNumber,
+          logo: this.logo,
+        },
+      });
+      this.logger.log(
+        `Welcome mail successfully sent to user ${user.firstName}`,
+      );
+    } catch (error) {
+      this.logger.log(`Failed to sent Welcome mail to user ${user.firstName}`);
+    }
   }
 }
