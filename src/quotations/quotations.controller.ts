@@ -63,8 +63,10 @@ export class QuotationsController {
   update(
     @Param('id') id: string,
     @Body() updateQuotationDto: UpdateQuotationDto,
+    @Req() request: RequestWithUser,
   ) {
-    return this.quotationsService.update(+id, updateQuotationDto);
+    const { user } = request;
+    return this.quotationsService.update(+id, user, updateQuotationDto);
   }
 
   @Delete(':id')

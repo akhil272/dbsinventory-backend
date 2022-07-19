@@ -2,6 +2,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CustomersService } from 'src/customers/customers.service';
 import { GetOverviewDto } from 'src/manage-quotations/dto/get-overview.dto';
+import { NotificationService } from 'src/notification/notification.service';
 import { QuotationServicesService } from 'src/quotation-services/quotation-services.service';
 import { UserQuoteService } from 'src/user-quote/user-quote.service';
 import { User } from 'src/users/entities/user.entity';
@@ -23,6 +24,7 @@ export class QuotationsService {
     private readonly customersService: CustomersService,
     private readonly quotationServicesService: QuotationServicesService,
     private readonly usersService: UsersService,
+    private readonly notificationService: NotificationService,
   ) {}
   async create(createQuotationDto: CreateQuotationDto, user: User) {
     const { userQuotes, serviceIds } = createQuotationDto;
@@ -63,10 +65,13 @@ export class QuotationsService {
     return this.quotationsRepository.findQuoteById(id);
   }
 
-  async update(id: number, updateQuotationDto: UpdateQuotationDto) {
+  async update(id: number, user: User, updateQuotationDto: UpdateQuotationDto) {
     const quotation = await this.quotationsRepository.findOne(id);
     if (!quotation) {
       throw new InternalServerErrorException('Quotation not found');
+    }
+    if (user.role === 'user' && updateQuotationDto.status === 'DECLINED') {
+      this.notificationService.quotationDeclinedByUser(user, quotation);
     }
     return await this.quotationsRepository.update(id, updateQuotationDto);
   }

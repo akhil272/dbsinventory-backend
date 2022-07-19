@@ -8,6 +8,7 @@ import { CustomersModule } from 'src/customers/customers.module';
 import { ServicesModule } from 'src/services/services.module';
 import { QuotationServicesModule } from 'src/quotation-services/quotation-services.module';
 import { UsersModule } from 'src/users/users.module';
+import { NotificationModule } from 'src/notification/notification.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { UsersModule } from 'src/users/users.module';
     ServicesModule,
     QuotationServicesModule,
     UsersModule,
+    NotificationModule,
   ],
   controllers: [QuotationsController],
   providers: [QuotationsService],
