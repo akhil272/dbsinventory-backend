@@ -3,19 +3,22 @@ import { Status } from '../entities/status.enum';
 
 export class GetQuotationsFilterDto {
   @IsOptional()
-  search?: string;
+  search: string;
 
   @IsOptional()
-  customerCategory?: string;
+  customerCategory: string;
 
   @IsOptional()
-  take?: number;
+  take: number;
 
   @IsOptional()
-  page?: number;
+  page: number;
 
   @IsOptional()
-  sortBy?: string;
+  sortBy: string;
+
+  @IsOptional()
+  isUserDeleted: string;
 
   @IsOptional()
   @IsEnum(Status)

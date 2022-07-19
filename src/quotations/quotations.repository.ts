@@ -21,6 +21,7 @@ export class QuotationsRepository extends Repository<Quotation> {
       sortBy,
       search,
       customerCategory,
+      isUserDeleted,
     } = filterDto;
     const query = this.createQueryBuilder('quotation').withDeleted();
     const skip = (page - 1) * take;
@@ -68,6 +69,14 @@ export class QuotationsRepository extends Repository<Quotation> {
       if (sortBy === 'DESC') {
         query.orderBy('quotation.createdAt', 'DESC');
       }
+    }
+
+    if (isUserDeleted === 'true') {
+      query.andWhere('user.deletedAt IS NOT NULL');
+    }
+
+    if (isUserDeleted === 'false') {
+      query.andWhere('user.deletedAt IS NULL');
     }
 
     if (search) {
