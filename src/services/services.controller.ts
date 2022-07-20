@@ -7,6 +7,9 @@ import {
   Param,
   Delete,
   Query,
+  HttpCode,
+  InternalServerErrorException,
+  Res,
 } from '@nestjs/common';
 import { ServicesService } from './services.service';
 import { CreateServiceDto } from './dto/create-service.dto';
@@ -14,6 +17,7 @@ import { UpdateServiceDto } from './dto/update-service.dto';
 import { GetServicesFilterDto } from './dto/get-services-filter.dto';
 import { ApiResponse } from 'src/utils/types/common';
 import { Service } from './entities/service.entity';
+import { Response } from 'express';
 
 @Controller('services')
 export class ServicesController {
@@ -29,6 +33,21 @@ export class ServicesController {
     @Query() filterDto: GetServicesFilterDto,
   ): Promise<ApiResponse<Service[]>> {
     return this.servicesService.findAll(filterDto);
+  }
+
+  @Get('csv')
+  @HttpCode(200)
+  async getCSVFile(@Res() res: Response) {
+    try {
+      const csv = await this.servicesService.getCSVData();
+      res.header('Content-Type', 'text/csv');
+      res.attachment('services.csv');
+      return res.send(csv);
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Failed to fetch data from system.',
+      );
+    }
   }
 
   @Get(':id')

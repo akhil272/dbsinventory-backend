@@ -18,4 +18,14 @@ export class ServicesRepository extends Repository<Service> {
       throw new InternalServerErrorException();
     }
   }
+
+  async getCSVData() {
+    const query = this.createQueryBuilder('service');
+    try {
+      const services = await query.loadAllRelationIds().getMany();
+      return services;
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
 }

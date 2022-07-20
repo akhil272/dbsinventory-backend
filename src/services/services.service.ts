@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Parser } from 'json2csv';
 import PostgresErrorCode from 'src/database/postgresErrorCodes.enum';
 import { Quotation } from 'src/quotations/entities/quotation.entity';
 import { QuotationsService } from 'src/quotations/quotations.service';
@@ -67,5 +68,22 @@ export class ServicesService {
       throw new HttpException('Service not found', HttpStatus.NOT_FOUND);
     }
     return service;
+  }
+
+  async getCSVData() {
+    const parser = new Parser({
+      fields: ['ServiceId', 'Name', 'QuotationServices'],
+    });
+    const services = await this.servicesRepository.getCSVData();
+    const json = [];
+    services.forEach((service) => {
+      json.push({
+        ServiceId: service.id,
+        Name: service.name,
+        QuotationServices: service.quotationServices,
+      });
+    });
+    const csv = parser.parse(json);
+    return csv;
   }
 }
