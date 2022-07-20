@@ -7,8 +7,14 @@ import {
   Param,
   Delete,
   UseGuards,
+  HttpCode,
+  InternalServerErrorException,
+  Query,
+  Res,
 } from '@nestjs/common';
+import { Response } from 'express';
 import JwtAuthenticationGuard from 'src/auth/jwt-authentication.guard';
+import { GetCsvFileDto } from 'src/users/dto/get-csv-file.dto';
 import { Role } from 'src/users/entities/role.enum';
 import { Roles } from 'src/users/roles.decorator';
 import { RolesGuard } from 'src/users/roles.guard';
@@ -30,6 +36,25 @@ export class CustomersController {
   @Get()
   findAll() {
     return this.customersService.findAll();
+  }
+
+  @Get('csv')
+  @Roles(Role.ADMIN)
+  @HttpCode(200)
+  async getCSVFile(
+    @Query() getCsvFileDto: GetCsvFileDto,
+    @Res() res: Response,
+  ) {
+    try {
+      const csv = await this.customersService.getCSVData(getCsvFileDto);
+      res.header('Content-Type', 'text/csv');
+      res.attachment('customers.csv');
+      res.send(csv);
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Failed to fetch data from system.',
+      );
+    }
   }
 
   @Get(':id')

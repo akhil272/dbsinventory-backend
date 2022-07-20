@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Parser } from 'json2csv';
 import { CustomerCategoryService } from 'src/customer-category/customer-category.service';
+import { GetCsvFileDto } from 'src/users/dto/get-csv-file.dto';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { CustomersRepository } from './customers.repository';
@@ -87,5 +89,36 @@ export class CustomersService {
     const customerCategory = await this.customerCategoryService.findOne(1);
     newCustomer.customerCategory = customerCategory;
     return await this.customersRepository.save(newCustomer);
+  }
+
+  async getCSVData(getCsvFileDto: GetCsvFileDto) {
+    const parser = new Parser({
+      fields: [
+        'CustomerId',
+        'CustomerCategory',
+        'Quotations',
+        'User',
+        'QuotationsCount',
+        'Orders',
+        'CreatedAt',
+        'DeletedAt',
+      ],
+    });
+    const customers = await this.customersRepository.getCSVData(getCsvFileDto);
+    const json = [];
+    customers.forEach((customer) => {
+      json.push({
+        CustomerId: customer.id,
+        CustomerCategory: customer.customerCategory,
+        Quotations: customer.quotations,
+        User: customer.user,
+        QuotationsCount: customer.quotationsCount,
+        Orders: customer.orders,
+        CreatedAt: customer.createdAt,
+        DeletedAt: customer.deletedAt,
+      });
+    });
+    const csv = parser.parse(json);
+    return csv;
   }
 }
