@@ -17,6 +17,8 @@ import { ApiResponse } from 'src/utils/types/common';
 import { Role } from './entities/role.enum';
 import { RegisterUserDto } from 'src/auth/dto/register-user.dto';
 import { UpdateUserProfileDto } from './dto/update-user-profile.dto';
+import { GetCsvFileDto } from './dto/get-csv-file.dto';
+import { Parser } from 'json2csv';
 @Injectable()
 export class UsersService {
   constructor(
@@ -227,5 +229,40 @@ export class UsersService {
 
   getOverView(userId: number) {
     return this.usersRepository.getOverView(userId);
+  }
+
+  async getCSVData(getCsvFileDto: GetCsvFileDto) {
+    const parser = new Parser({
+      fields: [
+        'UserId',
+        'FirstName',
+        'LastName',
+        'Email',
+        'PhoneNumber',
+        'Role',
+        'Stocks',
+        'AddressLine1',
+        'AddressLine2',
+        'Customer',
+      ],
+    });
+    const users = await this.usersRepository.getCSVData(getCsvFileDto);
+    const json = [];
+    users.forEach((user) => {
+      json.push({
+        UserId: user.id,
+        FirstName: user.firstName,
+        LastName: user.lastName,
+        Email: user.email,
+        PhoneNumber: user.phoneNumber,
+        Role: user.role,
+        Stocks: user.stocks,
+        AddressLine1: user.addressLine1,
+        AddressLine2: user.addressLine2,
+        Customer: user.customer,
+      });
+    });
+    const csv = parser.parse(json);
+    return csv;
   }
 }

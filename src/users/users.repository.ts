@@ -1,9 +1,14 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { EntityRepository, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { GetUsersFilterDto } from './dto/get-users-filter.dto';
 import PostgresErrorCode from 'src/database/postgresErrorCodes.enum';
 import { RegisterUserDto } from 'src/auth/dto/register-user.dto';
+import { GetCsvFileDto } from './dto/get-csv-file.dto';
 
 @EntityRepository(User)
 export class UsersRepository extends Repository<User> {
@@ -80,5 +85,23 @@ export class UsersRepository extends Repository<User> {
     return {
       quotationAndOrders,
     };
+  }
+
+  async getCSVData(getCsvFileDto: GetCsvFileDto) {
+    const query = this.createQueryBuilder('user');
+    const start = new Date(getCsvFileDto.startDate);
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(getCsvFileDto.endDate);
+    end.setHours(24, 0, 0, 0);
+    try {
+      const users = await query
+        .where('user.createdAt >= :start', { start })
+        .andWhere('user.createdAt <= :end', { end })
+        .loadAllRelationIds()
+        .getMany();
+      return users;
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
   }
 }

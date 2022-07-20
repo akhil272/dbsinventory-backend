@@ -13,6 +13,8 @@ import {
   Req,
   UploadedFile,
   Res,
+  HttpCode,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user-dto';
@@ -32,6 +34,7 @@ import { extname } from 'path';
 import { Response } from 'express';
 import { Express } from 'express';
 import { UpdateUserProfileDto } from './dto/update-user-profile.dto';
+import { GetCsvFileDto } from './dto/get-csv-file.dto';
 
 @Controller('users')
 @UseGuards(JwtAuthenticationGuard, RolesGuard)
@@ -50,6 +53,25 @@ export class UsersController {
     @Query() filterDto: GetUsersFilterDto,
   ): Promise<ApiResponse<User[]>> {
     return this.usersService.getUsers(filterDto);
+  }
+
+  @Get('csv')
+  @Roles(Role.ADMIN)
+  @HttpCode(200)
+  async getCSVFile(
+    @Query() getCsvFileDto: GetCsvFileDto,
+    @Res() res: Response,
+  ) {
+    try {
+      const csv = await this.usersService.getCSVData(getCsvFileDto);
+      res.header('Content-Type', 'text/csv');
+      res.attachment('users.csv');
+      res.send(csv);
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Failed to fetch data from system.',
+      );
+    }
   }
 
   @Get('/:id')
