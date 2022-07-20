@@ -6,6 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Parser } from 'json2csv';
 import PostgresErrorCode from 'src/database/postgresErrorCodes.enum';
 import { ApiResponse } from 'src/utils/types/common';
 import { CreateTyreSizeDto } from './dto/create-tyre-size.dto';
@@ -92,5 +93,22 @@ export class TyreSizeService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  async getCSVData() {
+    const parser = new Parser({
+      fields: ['TyreSizeId', 'Value', 'TyreDetails'],
+    });
+    const tyreSizes = await this.tyreSizeRepository.getCSVData();
+    const json = [];
+    tyreSizes.forEach((tyreSize) => {
+      json.push({
+        TyreSizeId: tyreSize.id,
+        Value: tyreSize.value,
+        TyreDetails: tyreSize.tyreDetails,
+      });
+    });
+    const csv = parser.parse(json);
+    return csv;
   }
 }

@@ -18,4 +18,14 @@ export class TyreSizeRepository extends Repository<TyreSize> {
       throw new InternalServerErrorException();
     }
   }
+
+  async getCSVData() {
+    const query = this.createQueryBuilder('tyre-size');
+    try {
+      const tyreSizes = await query.loadAllRelationIds().getMany();
+      return tyreSizes;
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
 }

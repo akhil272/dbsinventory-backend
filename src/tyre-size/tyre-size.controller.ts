@@ -8,6 +8,9 @@ import {
   Delete,
   UseGuards,
   Query,
+  HttpCode,
+  InternalServerErrorException,
+  Res,
 } from '@nestjs/common';
 import { TyreSizeService } from './tyre-size.service';
 import { CreateTyreSizeDto } from './dto/create-tyre-size.dto';
@@ -19,6 +22,7 @@ import { RolesGuard } from 'src/users/roles.guard';
 import { GetTyreSizeFilterDto } from './dto/get-tyre-size-filter.dto';
 import { TyreSize } from './entities/tyre-size.entity';
 import { ApiResponse } from 'src/utils/types/common';
+import { Response } from 'express';
 
 @Controller('tyre-size')
 @UseGuards(JwtAuthenticationGuard, RolesGuard)
@@ -37,6 +41,21 @@ export class TyreSizeController {
     @Query() filterDto: GetTyreSizeFilterDto,
   ): Promise<ApiResponse<TyreSize[]>> {
     return this.tyreSizeService.findAll(filterDto);
+  }
+
+  @Get('csv')
+  @HttpCode(200)
+  async getCSVFile(@Res() res: Response) {
+    try {
+      const csv = await this.tyreSizeService.getCSVData();
+      res.header('Content-Type', 'text/csv');
+      res.attachment('tyreSizes.csv');
+      return res.send(csv);
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Failed to fetch data from system.',
+      );
+    }
   }
 
   @Get(':id')
