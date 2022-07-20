@@ -22,4 +22,14 @@ export class LoadIndexRepository extends Repository<LoadIndex> {
       throw new InternalServerErrorException();
     }
   }
+
+  async getCSVData() {
+    const query = this.createQueryBuilder('load-index');
+    try {
+      const loadIndexes = await query.loadAllRelationIds().getMany();
+      return loadIndexes;
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
 }

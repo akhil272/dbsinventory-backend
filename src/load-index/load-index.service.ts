@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Parser } from 'json2csv';
 import { ApiResponse } from 'src/utils/types/common';
 import { CreateLoadIndexDto } from './dto/create-load-index.dto';
 import { GetLoadIndexesFilterDto } from './dto/get-load-indexes-filter.dto';
@@ -43,5 +44,22 @@ export class LoadIndexService {
 
   remove(id: number) {
     return this.loadIndexRepository.delete(id);
+  }
+
+  async getCSVData() {
+    const parser = new Parser({
+      fields: ['LoadIndexId', 'Value', 'Stocks'],
+    });
+    const loadIndexes = await this.loadIndexRepository.getCSVData();
+    const json = [];
+    loadIndexes.forEach((loadIndex) => {
+      json.push({
+        LoadIndexId: loadIndex.id,
+        Value: loadIndex.value,
+        Stocks: loadIndex.stocks,
+      });
+    });
+    const csv = parser.parse(json);
+    return csv;
   }
 }
