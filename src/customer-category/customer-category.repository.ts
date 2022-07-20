@@ -22,4 +22,14 @@ export class CustomerCategoryRepository extends Repository<CustomerCategory> {
       throw new InternalServerErrorException();
     }
   }
+
+  async getCSVData() {
+    const query = this.createQueryBuilder('customer-category');
+    try {
+      const customerCategories = await query.loadAllRelationIds().getMany();
+      return customerCategories;
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
 }

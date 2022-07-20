@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Parser } from 'json2csv';
 import PostgresErrorCode from 'src/database/postgresErrorCodes.enum';
 import { ApiResponse } from 'src/utils/types/common';
 import { CustomerCategoryRepository } from './customer-category.repository';
@@ -59,5 +60,23 @@ export class CustomerCategoryService {
 
   remove(id: number) {
     return this.customerCategoryRepository.delete(id);
+  }
+
+  async getCSVData() {
+    const parser = new Parser({
+      fields: ['CustomerCategoryId', 'Name', 'Customers'],
+    });
+    const customerCategories =
+      await this.customerCategoryRepository.getCSVData();
+    const json = [];
+    customerCategories.forEach((customerCategory) => {
+      json.push({
+        CustomerCategoryId: customerCategory.id,
+        Name: customerCategory.name,
+        Customers: customerCategory.customers,
+      });
+    });
+    const csv = parser.parse(json);
+    return csv;
   }
 }
