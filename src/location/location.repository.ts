@@ -18,4 +18,14 @@ export class LocationRepository extends Repository<Location> {
       throw new InternalServerErrorException();
     }
   }
+
+  async getCSVData() {
+    const query = this.createQueryBuilder('location');
+    try {
+      const locations = await query.loadAllRelationIds().getMany();
+      return locations;
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
 }

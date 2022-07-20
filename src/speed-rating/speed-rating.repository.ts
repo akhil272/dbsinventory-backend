@@ -22,4 +22,14 @@ export class SpeedRatingRepository extends Repository<SpeedRating> {
       throw new InternalServerErrorException();
     }
   }
+
+  async getCSVData() {
+    const query = this.createQueryBuilder('speed-rating');
+    try {
+      const speedRatings = await query.loadAllRelationIds().getMany();
+      return speedRatings;
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
 }

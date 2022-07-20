@@ -6,6 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Parser } from 'json2csv';
 import PostgresErrorCode from 'src/database/postgresErrorCodes.enum';
 import { ApiResponse } from 'src/utils/types/common';
 import { CreateLocationDto } from './dto/create-location.dto';
@@ -85,5 +86,22 @@ export class LocationService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  async getCSVData() {
+    const parser = new Parser({
+      fields: ['LocationId', 'Name', 'Stocks'],
+    });
+    const locations = await this.locationRepository.getCSVData();
+    const json = [];
+    locations.forEach((location) => {
+      json.push({
+        LocationId: location.id,
+        Name: location.name,
+        Stocks: location.stocks,
+      });
+    });
+    const csv = parser.parse(json);
+    return csv;
   }
 }

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Parser } from 'json2csv';
 import { ApiResponse } from 'src/utils/types/common';
 import { CreateSpeedRatingDto } from './dto/create-speed-rating.dto';
 import { GetSpeedRatingsFilterDto } from './dto/get-speed-ratings-filter.dto';
@@ -43,5 +44,22 @@ export class SpeedRatingService {
 
   remove(id: number) {
     return this.speedRatingRepository.delete(id);
+  }
+
+  async getCSVData() {
+    const parser = new Parser({
+      fields: ['SpeedRatingId', 'Value', 'Stocks'],
+    });
+    const speedRatings = await this.speedRatingRepository.getCSVData();
+    const json = [];
+    speedRatings.forEach((speedRating) => {
+      json.push({
+        SpeedRatingId: speedRating.id,
+        Value: speedRating.value,
+        Stocks: speedRating.stocks,
+      });
+    });
+    const csv = parser.parse(json);
+    return csv;
   }
 }
