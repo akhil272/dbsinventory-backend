@@ -10,6 +10,9 @@ import {
   Req,
   Query,
   ForbiddenException,
+  HttpCode,
+  InternalServerErrorException,
+  Res,
 } from '@nestjs/common';
 import { QuotationsService } from './quotations.service';
 import { CreateQuotationDto } from './dto/create-quotation.dto';
@@ -22,6 +25,8 @@ import { Role } from 'src/users/entities/role.enum';
 import { Roles } from 'src/users/roles.decorator';
 import { RolesGuard } from 'src/users/roles.guard';
 import { CreateUserAndQuotationDto } from './dto/create-user-and-quotation.dto';
+import { Response } from 'express';
+import { GetCsvFileDto } from 'src/users/dto/get-csv-file.dto';
 
 @Controller('quotations')
 @UseGuards(JwtAuthenticationGuard, RolesGuard)
@@ -44,6 +49,25 @@ export class QuotationsController {
     @Query() filterDto: GetQuotationsFilterDto,
   ): Promise<QuotationsResponseDto> {
     return this.quotationsService.findAll(filterDto);
+  }
+
+  @Get('csv')
+  @Roles(Role.ADMIN)
+  @HttpCode(200)
+  async getCSVFile(
+    @Query() getCsvFileDto: GetCsvFileDto,
+    @Res() res: Response,
+  ) {
+    try {
+      const csv = await this.quotationsService.getCSVData(getCsvFileDto);
+      res.header('Content-Type', 'text/csv');
+      res.attachment('quotations.csv');
+      res.send(csv);
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Failed to fetch data from system.',
+      );
+    }
   }
 
   @Get(':id')

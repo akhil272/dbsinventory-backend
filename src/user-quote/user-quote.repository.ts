@@ -1,5 +1,6 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { Quotation } from 'src/quotations/entities/quotation.entity';
+import { GetCsvFileDto } from 'src/users/dto/get-csv-file.dto';
 import { EntityRepository, Repository } from 'typeorm';
 import { CreateUserQuoteDto } from './dto/create-user-quote.dto';
 import { UpdateUserQuoteDto } from './dto/update-user-quote.dto';
@@ -42,5 +43,23 @@ export class UserQuotesRepository extends Repository<UserQuote> {
       .map((userQuote) => userQuote.quotePrice)
       .reduce((a, b) => a + b, 0);
     return { userQuote, price: totalPrice };
+  }
+
+  async getCSVData(getCsvFileDto: GetCsvFileDto) {
+    const query = this.createQueryBuilder('userQuote');
+    const start = new Date(getCsvFileDto.startDate);
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(getCsvFileDto.endDate);
+    end.setHours(24, 0, 0, 0);
+    try {
+      const userQuotes = await query
+        .where('userQuote.createdAt >= :start', { start })
+        .andWhere('userQuote.createdAt <= :end', { end })
+        .loadAllRelationIds()
+        .getMany();
+      return userQuotes;
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
   }
 }

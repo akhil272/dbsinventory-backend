@@ -7,6 +7,10 @@ import {
   Param,
   Delete,
   UseGuards,
+  HttpCode,
+  InternalServerErrorException,
+  Query,
+  Res,
 } from '@nestjs/common';
 import { UserQuoteService } from './user-quote.service';
 import { CreateUserQuoteDto } from './dto/create-user-quote.dto';
@@ -15,6 +19,8 @@ import JwtAuthenticationGuard from 'src/auth/jwt-authentication.guard';
 import { Role } from 'src/users/entities/role.enum';
 import { Roles } from 'src/users/roles.decorator';
 import { RolesGuard } from 'src/users/roles.guard';
+import { Response } from 'express';
+import { GetCsvFileDto } from 'src/users/dto/get-csv-file.dto';
 
 @Controller('user-quote')
 @UseGuards(JwtAuthenticationGuard, RolesGuard)
@@ -32,6 +38,25 @@ export class UserQuoteController {
   @Roles(Role.ADMIN, Role.MANAGER, Role.USER, Role.EMPLOYEE)
   findAll() {
     return this.userQuoteService.findAll();
+  }
+
+  @Get('csv')
+  @Roles(Role.ADMIN)
+  @HttpCode(200)
+  async getCSVFile(
+    @Query() getCsvFileDto: GetCsvFileDto,
+    @Res() res: Response,
+  ) {
+    try {
+      const csv = await this.userQuoteService.getCSVData(getCsvFileDto);
+      res.header('Content-Type', 'text/csv');
+      res.attachment('userQuotes.csv');
+      res.send(csv);
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Failed to fetch data from system.',
+      );
+    }
   }
 
   @Get(':id')

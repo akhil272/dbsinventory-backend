@@ -1,10 +1,12 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Parser } from 'json2csv';
 import { CustomersService } from 'src/customers/customers.service';
 import { GetOverviewDto } from 'src/manage-quotations/dto/get-overview.dto';
 import { NotificationService } from 'src/notification/notification.service';
 import { QuotationServicesService } from 'src/quotation-services/quotation-services.service';
 import { UserQuoteService } from 'src/user-quote/user-quote.service';
+import { GetCsvFileDto } from 'src/users/dto/get-csv-file.dto';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { CreateQuotationDto } from './dto/create-quotation.dto';
@@ -112,5 +114,44 @@ export class QuotationsService {
 
   checkForValidity() {
     return this.quotationsRepository.checkForValidity();
+  }
+
+  async getCSVData(getCsvFileDto: GetCsvFileDto) {
+    const parser = new Parser({
+      fields: [
+        'QuotationId',
+        'UserQuotes',
+        'Status',
+        'Price',
+        'Notes',
+        'Validity',
+        'Customer',
+        'Count',
+        'QuotationServices',
+        'CreatedAt',
+        'UpdatedAt',
+      ],
+    });
+    const quotations = await this.quotationsRepository.getCSVData(
+      getCsvFileDto,
+    );
+    const json = [];
+    quotations.forEach((quotation) => {
+      json.push({
+        QuotationId: quotation.id,
+        UserQuotes: quotation.userQuotes,
+        Status: quotation.status,
+        Price: quotation.price,
+        Notes: quotation.notes,
+        Validity: quotation.validity,
+        Customer: quotation.customer,
+        Count: quotation.count,
+        QuotationServices: quotation.quotationServices,
+        CreatedAt: quotation.createdAt,
+        UpdatedAt: quotation.updatedAt,
+      });
+    });
+    const csv = parser.parse(json);
+    return csv;
   }
 }

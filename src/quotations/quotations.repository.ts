@@ -3,6 +3,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { GetOverviewDto } from 'src/manage-quotations/dto/get-overview.dto';
+import { GetCsvFileDto } from 'src/users/dto/get-csv-file.dto';
 import { EntityRepository, Repository } from 'typeorm';
 import { GetQuotationsFilterDto } from './dto/get-quotations-filter.dto';
 import { QuotationsResponseDto } from './dto/quotation-response.dto';
@@ -188,5 +189,23 @@ export class QuotationsRepository extends Repository<Quotation> {
         this.save(quotation);
       }
     });
+  }
+
+  async getCSVData(getCsvFileDto: GetCsvFileDto) {
+    const query = this.createQueryBuilder('quotation');
+    const start = new Date(getCsvFileDto.startDate);
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(getCsvFileDto.endDate);
+    end.setHours(24, 0, 0, 0);
+    try {
+      const quotations = await query
+        .where('quotation.createdAt >= :start', { start })
+        .andWhere('quotation.createdAt <= :end', { end })
+        .loadAllRelationIds()
+        .getMany();
+      return quotations;
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
   }
 }
