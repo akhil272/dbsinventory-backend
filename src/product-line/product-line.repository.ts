@@ -22,4 +22,14 @@ export class ProductLineRepository extends Repository<ProductLine> {
       throw new InternalServerErrorException();
     }
   }
+
+  async getCSVData() {
+    const query = this.createQueryBuilder('productLine');
+    try {
+      const productLines = await query.loadAllRelationIds().getMany();
+      return productLines;
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
 }

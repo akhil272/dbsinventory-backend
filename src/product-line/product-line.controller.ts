@@ -7,6 +7,9 @@ import {
   Param,
   Delete,
   Query,
+  HttpCode,
+  InternalServerErrorException,
+  Res,
 } from '@nestjs/common';
 import { ProductLineService } from './product-line.service';
 import { CreateProductLineDto } from './dto/create-product-line.dto';
@@ -14,6 +17,7 @@ import { UpdateProductLineDto } from './dto/update-product-line.dto';
 import { GetProductLineFilterDto } from './dto/get-product-line-filter.dto';
 import { ProductLine } from './entities/product-line.entity';
 import { ApiResponse } from 'src/utils/types/common';
+import { Response } from 'express';
 
 @Controller('product-line')
 export class ProductLineController {
@@ -29,6 +33,21 @@ export class ProductLineController {
     @Query() filterDto: GetProductLineFilterDto,
   ): Promise<ApiResponse<ProductLine[]>> {
     return this.productLineService.findAll(filterDto);
+  }
+
+  @Get('csv')
+  @HttpCode(200)
+  async getCSVFile(@Res() res: Response) {
+    try {
+      const csv = await this.productLineService.getCSVData();
+      res.header('Content-Type', 'text/csv');
+      res.attachment('productLines.csv');
+      return res.send(csv);
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Failed to fetch data from system.',
+      );
+    }
   }
 
   @Get(':id')

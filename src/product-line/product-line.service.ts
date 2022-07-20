@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Parser } from 'json2csv';
 import PostgresErrorCode from 'src/database/postgresErrorCodes.enum';
 import { ApiResponse } from 'src/utils/types/common';
 import { CreateProductLineDto } from './dto/create-product-line.dto';
@@ -56,5 +57,22 @@ export class ProductLineService {
 
   remove(id: number) {
     return this.productLineRepository.delete(id);
+  }
+
+  async getCSVData() {
+    const parser = new Parser({
+      fields: ['PatternId', 'Name', 'Stocks'],
+    });
+    const productLines = await this.productLineRepository.getCSVData();
+    const json = [];
+    productLines.forEach((productLine) => {
+      json.push({
+        PatternId: productLine.id,
+        Name: productLine.name,
+        Stocks: productLine.stocks,
+      });
+    });
+    const csv = parser.parse(json);
+    return csv;
   }
 }
