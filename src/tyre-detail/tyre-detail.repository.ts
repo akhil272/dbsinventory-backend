@@ -28,4 +28,14 @@ export class TyreDetailRepository extends Repository<TyreDetail> {
       throw new InternalServerErrorException();
     }
   }
+
+  async getCSVData() {
+    const query = this.createQueryBuilder('tyre-detail');
+    try {
+      const tyreDetails = await query.loadAllRelationIds().getMany();
+      return tyreDetails;
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
 }

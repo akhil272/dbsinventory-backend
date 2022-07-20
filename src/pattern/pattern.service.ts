@@ -97,9 +97,9 @@ export class PatternService {
     const parser = new Parser({
       fields: ['PatternId', 'Name', 'Brand', 'TyreDetails'],
     });
-    const brands = await this.patternRepository.getCSVData();
+    const patterns = await this.patternRepository.getCSVData();
     const json = [];
-    brands.forEach((pattern) => {
+    patterns.forEach((pattern) => {
       json.push({
         PatternId: pattern.id,
         Name: pattern.name,
