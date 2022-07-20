@@ -20,4 +20,14 @@ export class BrandRepository extends Repository<Brand> {
       throw new InternalServerErrorException();
     }
   }
+
+  async getCSVData() {
+    const query = this.createQueryBuilder('brand');
+    try {
+      const brands = await query.loadAllRelationIds().getMany();
+      return brands;
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
 }

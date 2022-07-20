@@ -21,4 +21,14 @@ export class PatternRepository extends Repository<Pattern> {
       throw new InternalServerErrorException();
     }
   }
+
+  async getCSVData() {
+    const query = this.createQueryBuilder('pattern');
+    try {
+      const patterns = await query.loadAllRelationIds().getMany();
+      return patterns;
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
 }

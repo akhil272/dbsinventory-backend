@@ -6,6 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Parser } from 'json2csv';
 import { BrandService } from 'src/brand/brand.service';
 import PostgresErrorCode from 'src/database/postgresErrorCodes.enum';
 import { ApiResponse } from 'src/utils/types/common';
@@ -90,5 +91,23 @@ export class PatternService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  async getCSVData() {
+    const parser = new Parser({
+      fields: ['PatternId', 'Name', 'Brand', 'TyreDetails'],
+    });
+    const brands = await this.patternRepository.getCSVData();
+    const json = [];
+    brands.forEach((pattern) => {
+      json.push({
+        PatternId: pattern.id,
+        Name: pattern.name,
+        Brand: pattern.brand,
+        TyreDetails: pattern.tyreDetails,
+      });
+    });
+    const csv = parser.parse(json);
+    return csv;
   }
 }

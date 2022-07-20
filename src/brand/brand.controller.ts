@@ -8,7 +8,11 @@ import {
   Delete,
   UseGuards,
   Query,
+  HttpCode,
+  Res,
+  InternalServerErrorException,
 } from '@nestjs/common';
+import { Response } from 'express';
 import JwtAuthenticationGuard from 'src/auth/jwt-authentication.guard';
 import { Role } from 'src/users/entities/role.enum';
 import { Roles } from 'src/users/roles.decorator';
@@ -37,6 +41,21 @@ export class BrandController {
     @Query() filterDto: GetBrandsFilterDto,
   ): Promise<ApiResponse<Brand[]>> {
     return this.brandService.findAll(filterDto);
+  }
+
+  @Get('csv')
+  @HttpCode(200)
+  async getCSVFile(@Res() res: Response) {
+    try {
+      const csv = await this.brandService.getCSVData();
+      res.header('Content-Type', 'text/csv');
+      res.attachment('brands.csv');
+      return res.send(csv);
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Failed to fetch data from system.',
+      );
+    }
   }
 
   @Get(':id')
