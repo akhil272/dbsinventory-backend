@@ -18,4 +18,14 @@ export class TransportRepository extends Repository<Transport> {
       throw new InternalServerErrorException();
     }
   }
+
+  async getCSVData() {
+    const query = this.createQueryBuilder('transport');
+    try {
+      const transports = await query.loadAllRelationIds().getMany();
+      return transports;
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
 }
