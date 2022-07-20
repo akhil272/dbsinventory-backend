@@ -8,6 +8,9 @@ import {
   Delete,
   UseGuards,
   Query,
+  HttpCode,
+  InternalServerErrorException,
+  Res,
 } from '@nestjs/common';
 import { VendorService } from './vendor.service';
 import { CreateVendorDto } from './dto/create-vendor.dto';
@@ -19,6 +22,7 @@ import { RolesGuard } from 'src/users/roles.guard';
 import { GetVendorsFilterDto } from './dto/get-vendors-filter.dto';
 import { Vendor } from './entities/vendor.entity';
 import { ApiResponse } from 'src/utils/types/common';
+import { Response } from 'express';
 
 @Controller('vendor')
 @UseGuards(JwtAuthenticationGuard, RolesGuard)
@@ -36,6 +40,21 @@ export class VendorController {
     @Query() filterDto: GetVendorsFilterDto,
   ): Promise<ApiResponse<Vendor[]>> {
     return this.vendorService.findAll(filterDto);
+  }
+
+  @Get('csv')
+  @HttpCode(200)
+  async getCSVFile(@Res() res: Response) {
+    try {
+      const csv = await this.vendorService.getCSVData();
+      res.header('Content-Type', 'text/csv');
+      res.attachment('vendors.csv');
+      return res.send(csv);
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Failed to fetch data from system.',
+      );
+    }
   }
 
   @Get(':id')

@@ -5,6 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Parser } from 'json2csv';
 import PostgresErrorCode from 'src/database/postgresErrorCodes.enum';
 import { ApiResponse } from 'src/utils/types/common';
 import { CreateVendorDto } from './dto/create-vendor.dto';
@@ -89,5 +90,22 @@ export class VendorService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  async getCSVData() {
+    const parser = new Parser({
+      fields: ['VendorId', 'Name', 'Stocks'],
+    });
+    const vendors = await this.vendorRepo.getCSVData();
+    const json = [];
+    vendors.forEach((vendor) => {
+      json.push({
+        VendorId: vendor.id,
+        Name: vendor.name,
+        Stocks: vendor.stocks,
+      });
+    });
+    const csv = parser.parse(json);
+    return csv;
   }
 }

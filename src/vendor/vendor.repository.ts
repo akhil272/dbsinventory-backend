@@ -18,4 +18,14 @@ export class VendorRepository extends Repository<Vendor> {
       throw new InternalServerErrorException();
     }
   }
+
+  async getCSVData() {
+    const query = this.createQueryBuilder('vendor');
+    try {
+      const vendors = await query.loadAllRelationIds().getMany();
+      return vendors;
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
 }
