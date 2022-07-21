@@ -12,6 +12,7 @@ import { CustomersService } from 'src/customers/customers.service';
 import { GetOverviewDto } from 'src/manage-quotations/dto/get-overview.dto';
 import { NotificationService } from 'src/notification/notification.service';
 import { Stock } from 'src/stocks/entities/stock.entity';
+import { GetCsvFileDto } from 'src/users/dto/get-csv-file.dto';
 import { User } from 'src/users/entities/user.entity';
 import { ApiResponse } from 'src/utils/types/common';
 import { Repository } from 'typeorm';
@@ -108,7 +109,7 @@ export class OrdersService {
     };
   }
 
-  async export(exportFileDto: ExportFileDto) {
+  async getCSVData(getCsvFileDto: GetCsvFileDto) {
     const parser = new Parser({
       fields: [
         'OrderId',
@@ -120,9 +121,10 @@ export class OrdersService {
         'Profit',
         'Stock',
         'CreatedAt',
+        'DeletedAt',
       ],
     });
-    const orders = await this.ordersRepository.getExportData(exportFileDto);
+    const orders = await this.ordersRepository.getCSVData(getCsvFileDto);
     const json = [];
     orders.forEach((order) => {
       json.push({
@@ -135,6 +137,7 @@ export class OrdersService {
         Profit: order.profit,
         Stock: order.stock,
         CreatedAt: order.createdAt,
+        DeletedAt: order.deletedAt,
       });
     });
     const csv = parser.parse(json);

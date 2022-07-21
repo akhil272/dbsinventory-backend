@@ -1,7 +1,7 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { GetOverviewDto } from 'src/manage-quotations/dto/get-overview.dto';
+import { GetCsvFileDto } from 'src/users/dto/get-csv-file.dto';
 import { EntityRepository, Repository } from 'typeorm';
-import { ExportFileDto } from './dto/export-file-dto';
 import { Order } from './entities/order.entity';
 
 @EntityRepository(Order)
@@ -31,11 +31,12 @@ export class OrdersRepository extends Repository<Order> {
     }
   }
 
-  async getExportData(exportFileDto: ExportFileDto) {
+  async getCSVData(getCsvFileDto: GetCsvFileDto) {
+    console.log(getCsvFileDto);
     const query = this.createQueryBuilder('order');
-    const start = new Date(exportFileDto.startDate);
+    const start = new Date(getCsvFileDto.startDate);
     start.setHours(0, 0, 0, 0);
-    const end = new Date(exportFileDto.endDate);
+    const end = new Date(getCsvFileDto.endDate);
     end.setHours(24, 0, 0, 0);
     try {
       const orders = await query
