@@ -5,6 +5,7 @@ import {
   Delete,
   Get,
   HttpCode,
+  InternalServerErrorException,
   Param,
   Patch,
   Post,
@@ -43,6 +44,25 @@ export class StocksController {
     return this.stocksService.getStocks(filterDto);
   }
 
+  @Get('csv')
+  @Roles(Role.ADMIN)
+  @HttpCode(200)
+  async getCSVFile(
+    @Query() getCsvFileDto: StocksExportFileDto,
+    @Res() res: Response,
+  ) {
+    try {
+      const csv = await this.stocksService.getCSVData(getCsvFileDto);
+      res.header('Content-Type', 'text/csv');
+      res.attachment('stocks.csv');
+      res.send(csv);
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Failed to fetch data from system.',
+      );
+    }
+  }
+
   @Get('/:id')
   @Roles(Role.ADMIN, Role.MANAGER, Role.USER, Role.EMPLOYEE)
   getStockById(@Param('id') id: string): Promise<Stock> {
@@ -70,19 +90,5 @@ export class StocksController {
     @Body() updateStockDto: UpdateStockDto,
   ): Promise<Stock> {
     return this.stocksService.updateStockById(+id, updateStockDto);
-  }
-
-  @Post('export')
-  @Roles(Role.ADMIN)
-  @HttpCode(200)
-  async export(
-    @Body() stocksExportFileDto: StocksExportFileDto,
-    @Res() res: Response,
-  ): Promise<{ success: boolean }> {
-    const csv = await this.stocksService.export(stocksExportFileDto);
-    res.header('Content-type', 'text/csv');
-    res.attachment('stocks.csv');
-    res.send(csv);
-    return { success: true };
   }
 }

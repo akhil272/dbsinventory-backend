@@ -151,7 +151,7 @@ export class StocksRepository extends Repository<Stock> {
     }
   }
 
-  async getExportData(stocksExportFileDto: StocksExportFileDto) {
+  async getCSVData(stocksExportFileDto: StocksExportFileDto) {
     const query = this.createQueryBuilder('stock');
     const start = new Date(stocksExportFileDto.startDate);
     start.setHours(0, 0, 0, 0);

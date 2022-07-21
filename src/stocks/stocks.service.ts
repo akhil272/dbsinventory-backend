@@ -178,7 +178,7 @@ export class StocksService {
     }
   }
 
-  async export(stocksExportFileDto: StocksExportFileDto) {
+  async getCSVData(stocksExportFileDto: StocksExportFileDto) {
     const parser = new Parser({
       fields: [
         'StockId',
@@ -198,11 +198,10 @@ export class StocksService {
         'UserId',
         'OrdersId',
         'CreatedAt',
+        'DeletedAt',
       ],
     });
-    const stocks = await this.stocksRepository.getExportData(
-      stocksExportFileDto,
-    );
+    const stocks = await this.stocksRepository.getCSVData(stocksExportFileDto);
     const json = [];
     stocks.forEach((stock) => {
       json.push({
@@ -223,6 +222,7 @@ export class StocksService {
         UserId: stock.user,
         OrdersId: stock.orders,
         CreatedAt: stock.createdAt,
+        DeletedAt: stock.deletedAt,
       });
     });
     const csv = parser.parse(json);
