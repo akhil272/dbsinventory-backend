@@ -32,7 +32,6 @@ export class OrdersRepository extends Repository<Order> {
   }
 
   async getCSVData(getCsvFileDto: GetCsvFileDto) {
-    console.log(getCsvFileDto);
     const query = this.createQueryBuilder('order');
     const start = new Date(getCsvFileDto.startDate);
     start.setHours(0, 0, 0, 0);

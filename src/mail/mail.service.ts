@@ -36,8 +36,8 @@ export class MailService {
       )}s`,
     });
     const url = `${this.configService.get(
-      'EMAIL_CONFIRMATION_URL',
-    )}?token=${token}`;
+      'BASE_URL',
+    )}/auth/confirm-mail?token=${token}`;
     await this.mailerService.sendMail({
       to: user.email,
       // from: '"Support Team" <support@example.com>', // override default from
@@ -79,9 +79,9 @@ export class MailService {
   }
 
   async sendQuotationToUserByMail(user: User, quotation: Quotation) {
-    const url = `${this.configService.get('QUOTATION_URL')}?quotationId=${
-      quotation.id
-    }`;
+    const url = `${this.configService.get(
+      'BASE_URL',
+    )}/user/quotation?quotationId=${quotation.id}`;
     try {
       await this.mailerService.sendMail({
         to: user.email,
@@ -105,7 +105,7 @@ export class MailService {
   }
 
   async sendInvoiceToUserByMail(user: User, order: Order) {
-    const url = `${this.configService.get('USER_DASHBOARD_URL')}${user.id}`;
+    const url = `${this.configService.get('BASE_URL')}/user?userId=${user.id}`;
     try {
       await this.mailerService.sendMail({
         to: user.email,
@@ -133,7 +133,9 @@ export class MailService {
   }
 
   welcomeMail(user: User) {
-    const url = `${this.configService.get('PROFILE_URL')}${user.id}`;
+    const url = `${this.configService.get('BASE_URL')}/user/profile?userId=${
+      user.id
+    }`;
     try {
       this.mailerService.sendMail({
         to: user.email,
