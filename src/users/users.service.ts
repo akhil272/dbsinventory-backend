@@ -16,7 +16,6 @@ import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from './dto/create-user-dto';
 import PostgresErrorCode from 'src/database/postgresErrorCodes.enum';
 import LocalFilesService from 'src/local-files/local-files.service';
-import { ApiResponse } from 'src/utils/types/common';
 import { Role } from './entities/role.enum';
 import { RegisterUserDto } from 'src/auth/dto/register-user.dto';
 import { UpdateUserProfileDto } from './dto/update-user-profile.dto';

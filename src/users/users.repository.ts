@@ -68,6 +68,7 @@ export class UsersRepository extends Repository<User> {
         { search: `%${search}%` },
       );
     }
+    query.orderBy('user.createdAt', 'DESC');
     const [users, total] = await query.take(take).skip(skip).getManyAndCount();
     if (total === 0) {
       throw new NotFoundException('No users available.');
