@@ -22,7 +22,10 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { Roles } from './roles.decorator';
 import { Role } from './entities/role.enum';
 import { User } from './entities/user.entity';
-import { GetUsersFilterDto } from './dto/get-users-filter.dto';
+import {
+  GetUsersFilterDto,
+  UsersWithMetaDto,
+} from './dto/get-users-filter.dto';
 import { RolesGuard } from './roles.guard';
 import JwtAuthenticationGuard from 'src/auth/jwt-authentication.guard';
 import RequestWithUser from 'src/auth/request-with-user.interface';
@@ -49,9 +52,7 @@ export class UsersController {
   }
 
   @Get()
-  getUsers(
-    @Query() filterDto: GetUsersFilterDto,
-  ): Promise<ApiResponse<User[]>> {
+  getUsers(@Query() filterDto: GetUsersFilterDto): Promise<UsersWithMetaDto> {
     return this.usersService.getUsers(filterDto);
   }
 

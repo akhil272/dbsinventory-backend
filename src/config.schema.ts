@@ -12,7 +12,12 @@ export const configValidationSchema = Joi.object({
   TWILIO_VERIFICATION_SERVICE_SID: Joi.string().required(),
   TWILIO_SENDER_PHONE_NUMBER: Joi.string().required(),
   UPLOADED_FILES_DESTINATION: Joi.string().required(),
+  JWT_ACCESS_TOKEN_SECRET: Joi.string().required(),
+  JWT_ACCESS_TOKEN_EXPIRATION_TIME: Joi.string().required(),
+  JWT_REFRESH_TOKEN_SECRET: Joi.string().required(),
+  JWT_REFRESH_TOKEN_EXPIRATION_TIME: Joi.string().required(),
   JWT_VERIFICATION_TOKEN_SECRET: Joi.string().required(),
   JWT_VERIFICATION_TOKEN_EXPIRATION_TIME: Joi.string().required(),
   MAIL_TRANSPORT: Joi.string().required(),
+  BASE_URL: Joi.string().required(),
 });

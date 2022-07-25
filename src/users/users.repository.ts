@@ -2,13 +2,18 @@ import {
   HttpException,
   HttpStatus,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { EntityRepository, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
-import { GetUsersFilterDto } from './dto/get-users-filter.dto';
+import {
+  GetUsersFilterDto,
+  UsersWithMetaDto,
+} from './dto/get-users-filter.dto';
 import PostgresErrorCode from 'src/database/postgresErrorCodes.enum';
 import { RegisterUserDto } from 'src/auth/dto/register-user.dto';
 import { GetCsvFileDto } from './dto/get-csv-file.dto';
+import { Role } from './entities/role.enum';
 
 @EntityRepository(User)
 export class UsersRepository extends Repository<User> {
@@ -44,14 +49,47 @@ export class UsersRepository extends Repository<User> {
     );
   }
 
-  async getUsers(filterDto: GetUsersFilterDto): Promise<User[]> {
+  async getUsers(filterDto: GetUsersFilterDto): Promise<UsersWithMetaDto> {
+    const { search, role, take = 25, page = 1 } = filterDto;
     const query = this.createQueryBuilder('user');
-    const users = await query
-      .where('user.role IN (:...roles)', {
-        roles: ['admin', 'manager', 'user', 'employee'],
-      })
-      .getMany();
-    return users;
+    const skip = (page - 1) * take;
+    const count = await query.getCount();
+    if (count <= 0) {
+      throw new NotFoundException('No users available.');
+    }
+    if (role) {
+      query.where('user.role IN (:...role)', {
+        role: [role],
+      });
+    }
+    if (search) {
+      query.where(
+        '(LOWER(user.firstName) LIKE LOWER(:search) or LOWER(user.lastName) LIKE LOWER(:search))',
+        { search: `%${search}%` },
+      );
+    }
+    const [users, total] = await query.take(take).skip(skip).getManyAndCount();
+    if (total === 0) {
+      throw new NotFoundException('No users available.');
+    }
+    const lastPage = Math.ceil(total / take);
+    if (lastPage < page) {
+      throw new InternalServerErrorException('Requested page does not exists.');
+    }
+    try {
+      return {
+        users,
+        meta: {
+          total,
+          page,
+          lastPage,
+        },
+      };
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Failed to fetch users data from system',
+      );
+    }
   }
 
   async deleteUser(id: number): Promise<{ success: boolean }> {

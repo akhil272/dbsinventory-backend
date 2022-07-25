@@ -5,7 +5,10 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { GetUsersFilterDto } from './dto/get-users-filter.dto';
+import {
+  GetUsersFilterDto,
+  UsersWithMetaDto,
+} from './dto/get-users-filter.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { UsersRepository } from './users.repository';
@@ -71,12 +74,8 @@ export class UsersService {
     return this.usersRepository.getUserByPhoneNumber(phoneNumber);
   }
 
-  async getUsers(filterDto: GetUsersFilterDto): Promise<ApiResponse<User[]>> {
-    const users = await this.usersRepository.getUsers(filterDto);
-    return {
-      success: true,
-      data: users,
-    };
+  async getUsers(filterDto: GetUsersFilterDto): Promise<UsersWithMetaDto> {
+    return await this.usersRepository.getUsers(filterDto);
   }
 
   async getUserById(id: number): Promise<User> {
