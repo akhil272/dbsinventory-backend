@@ -89,7 +89,8 @@ export class AuthController {
     return this.authService.loginWithOtp(validateOtpDto);
   }
 
-  @Get('/refresh')
+  @Post('/refresh')
+  @HttpCode(201)
   async refresh(
     @Req() request: RequestWithUser,
     @Body() refreshTokenDto: RefreshTokenDto,
