@@ -5,6 +5,12 @@ export class CreateUserQuoteDto {
   brandName: string;
 
   @IsString()
+  vehicleBrand: string;
+
+  @IsString()
+  vehicleModel: string;
+
+  @IsString()
   @IsOptional()
   patternName: string;
 

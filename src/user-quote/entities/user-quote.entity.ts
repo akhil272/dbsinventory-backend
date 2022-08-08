@@ -29,6 +29,12 @@ export class UserQuote {
   @Column()
   quantity: number;
 
+  @Column()
+  vehicleBrand: string;
+
+  @Column()
+  vehicleModel: string;
+
   @Column({ nullable: true })
   tyreSpeedRating: string;
 
