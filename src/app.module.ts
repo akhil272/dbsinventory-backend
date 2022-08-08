@@ -31,6 +31,8 @@ import { ServicesModule } from './services/services.module';
 import { QuotationServicesModule } from './quotation-services/quotation-services.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { NotificationModule } from './notification/notification.module';
+import { VehicleBrandModule } from './vehicle-brand/vehicle-brand.module';
+import { VehicleModelModule } from './vehicle-model/vehicle-model.module';
 
 @Module({
   imports: [
@@ -66,6 +68,8 @@ import { NotificationModule } from './notification/notification.module';
     QuotationServicesModule,
     ScheduleModule.forRoot(),
     NotificationModule,
+    VehicleBrandModule,
+    VehicleModelModule,
   ],
   controllers: [AppController],
   providers: [AppService],
