@@ -8,5 +8,6 @@ import { VehicleBrandRepository } from './vehicle-brand.repository';
   imports: [TypeOrmModule.forFeature([VehicleBrandRepository])],
   controllers: [VehicleBrandController],
   providers: [VehicleBrandService],
+  exports: [VehicleBrandService],
 })
 export class VehicleBrandModule {}

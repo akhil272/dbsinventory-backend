@@ -9,6 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Parser } from 'json2csv';
 import PostgresErrorCode from 'src/database/postgresErrorCodes.enum';
 import { ApiResponse } from 'src/utils/types/common';
+import { VehicleBrandService } from 'src/vehicle-brand/vehicle-brand.service';
 import { CreateVehicleModelDto } from './dto/create-vehicle-model.dto';
 import { GetVehicleModelFilterDto } from './dto/get-vehicle-model-filter.dto';
 import { UpdateVehicleModelDto } from './dto/update-vehicle-model.dto';
@@ -20,25 +21,24 @@ export class VehicleModelService {
   constructor(
     @InjectRepository(VehicleModelRepository)
     private readonly vehicleModelRepository: VehicleModelRepository,
+    private readonly vehicleBrandService: VehicleBrandService,
   ) {}
 
   async create(createVehicleModelDto: CreateVehicleModelDto) {
     try {
-      const vehicleModel = this.vehicleModelRepository.create(
-        createVehicleModelDto,
+      const { model, vehicleBrandId } = createVehicleModelDto;
+      const vehicleBrand = await this.vehicleBrandService.findOne(
+        vehicleBrandId,
       );
+      const vehicleModel = this.vehicleModelRepository.create({
+        model,
+        vehicleBrand,
+      });
       await this.vehicleModelRepository.save(vehicleModel);
       return vehicleModel;
     } catch (error) {
-      if (error?.code === PostgresErrorCode.UniqueViolation) {
-        throw new HttpException(
-          'Vehicle Model already exists in the system.',
-          HttpStatus.CONFLICT,
-        );
-      }
-      throw new HttpException(
-        'Something went wrong',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+      throw new InternalServerErrorException(
+        'Failed to add vehicle model to system.',
       );
     }
   }
@@ -69,6 +69,10 @@ export class VehicleModelService {
     try {
       const vehicleModel = await this.findOne(id);
       vehicleModel.model = updateVehicleModelDto.model;
+      const vehicleBrand = await this.vehicleBrandService.findOne(
+        updateVehicleModelDto.vehicleBrandId,
+      );
+      vehicleModel.vehicleBrand = vehicleBrand;
       await this.vehicleModelRepository.save(vehicleModel);
       return vehicleModel;
     } catch (error) {

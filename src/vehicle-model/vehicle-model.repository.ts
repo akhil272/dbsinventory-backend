@@ -16,7 +16,10 @@ export class VehicleModelRepository extends Repository<VehicleModel> {
       });
     }
     try {
-      const vehicleModels = await query.getMany();
+      const vehicleModels = await query
+        .leftJoinAndSelect('vehicle-model.vehicleBrand', 'vehicle-brand')
+        .orderBy('vehicle-model.id', 'ASC')
+        .getMany();
       return vehicleModels;
     } catch (error) {
       throw new InternalServerErrorException();
